@@ -1,0 +1,55 @@
+workflows:
+  ios-testflight:
+    name: YiCai iOS TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+
+    integrations:
+      app_store_connect: yicai_app_store_6ZHD34VZQJ
+
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.chainnexlink.yicaitrade
+      flutter: stable
+      xcode: 26.4
+      cocoapods: default
+      vars:
+        APP_STORE_APPLE_ID: 6791591302
+        BUNDLE_ID: com.chainnexlink.yicaitrade
+
+    cache:
+      cache_paths:
+        - $HOME/.pub-cache
+        - $HOME/Library/Caches/CocoaPods
+
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios
+          pod install
+
+      - name: Apply App Store signing profiles
+        script: xcode-project use-profiles
+
+      - name: Build signed IPA
+        script: |
+          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo 0)
+          BUILD_NUMBER=$((LATEST_BUILD_NUMBER + 1))
+          flutter build ipa --release \
+            --build-name=1.0.0 \
+            --build-number="$BUILD_NUMBER" \
+            --export-options-plist=/Users/builder/export_options.plist
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/ios/archive/*.xcarchive
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      app_store_connect:
+        auth: integration
