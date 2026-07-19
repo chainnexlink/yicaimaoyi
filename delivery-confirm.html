@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="deliveryConfirm.tp8t6q3">交付确认 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .delivery-page {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            padding-bottom: 40px;
+        }
+
+        /* 页面头部 */
+        .delivery-header {
+            background: linear-gradient(135deg, rgba(0, 229, 204, 0.1) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 32px 24px;
+        }
+
+        .delivery-header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .delivery-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .delivery-title h1 {
+            font-size: 24px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .delivery-meta {
+            display: flex;
+            gap: 24px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .delivery-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .delivery-meta a {
+            color: var(--primary-cyan);
+            text-decoration: none;
+        }
+
+        .delivery-status {
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            background: rgba(255, 193, 7, 0.15);
+            color: #FFC107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .delivery-status.delivered {
+            background: rgba(0, 229, 204, 0.15);
+            color: var(--primary-cyan);
+            border-color: rgba(0, 229, 204, 0.3);
+        }
+
+        /* 交付步骤 */
+        .delivery-steps {
+            display: flex;
+            justify-content: space-between;
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .step-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 60%;
+            width: 80%;
+            height: 2px;
+            background: var(--border-color);
+        }
+
+        .step-item.completed:not(:last-child)::after {
+            background: var(--primary-cyan);
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-darker);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-item.completed .step-icon {
+            background: var(--primary-cyan);
+            border-color: var(--primary-cyan);
+        }
+
+        .step-item.active .step-icon {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 0 4px rgba(0, 229, 204, 0.2);
+        }
+
+        .step-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+        }
+
+        .step-item.completed .step-icon svg {
+            color: var(--bg-dark);
+        }
+
+        .step-item.active .step-icon svg {
+            color: var(--primary-cyan);
+        }
+
+        .step-title {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .step-item.completed .step-title,
+        .step-item.active .step-title {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .step-time {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* 主内容区 */
+        .delivery-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 24px;
+        }
+
+        /* 内容卡片 */
+        .content-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* 物流信息 */
+        .logistics-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .logistics-item {
+            background: var(--bg-darker);
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .logistics-item label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .logistics-item span {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .logistics-item a {
+            color: var(--primary-cyan);
+            text-decoration: none;
+        }
+
+        /* 物流时间线 */
+        .logistics-timeline {
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+
+        .logistics-timeline h4 {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .timeline-list {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .timeline-list::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: var(--border-color);
+        }
+
+        .timeline-entry {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .timeline-entry:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-entry::before {
+            content: '';
+            position: absolute;
+            left: -18px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+        }
+
+        .timeline-entry:first-child::before {
+            border-color: var(--primary-cyan);
+            background: var(--primary-cyan);
+        }
+
+        .timeline-entry-time {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .timeline-entry-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .timeline-entry:first-child .timeline-entry-content {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* 产品清单 */
+        .product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .product-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-darker);
+            border-radius: 8px;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .product-spec {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .product-qty {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* 验收检查 */
+        .inspection-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .inspection-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-darker);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .inspection-item:hover {
+            background: rgba(0, 229, 204, 0.05);
+        }
+
+        .inspection-checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .inspection-item.checked .inspection-checkbox {
+            background: var(--primary-cyan);
+            border-color: var(--primary-cyan);
+        }
+
+        .inspection-checkbox svg {
+            width: 16px;
+            height: 16px;
+            color: var(--bg-dark);
+            opacity: 0;
+        }
+
+        .inspection-item.checked .inspection-checkbox svg {
+            opacity: 1;
+        }
+
+        .inspection-text {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .inspection-item.checked .inspection-text {
+            color: var(--text-primary);
+        }
+
+        /* 凭证上传 */
+        .upload-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .upload-section h4 {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .upload-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .upload-item {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            background: var(--bg-darker);
+            border: 2px dashed var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-item:hover {
+            border-color: var(--primary-cyan);
+        }
+
+        .upload-item.has-image {
+            border-style: solid;
+            overflow: hidden;
+        }
+
+        .upload-item svg {
+            width: 24px;
+            height: 24px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .upload-item span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .upload-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 评价区域 */
+        .rating-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .rating-section h4 {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .rating-categories {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .rating-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .rating-label {
+            min-width: 80px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 8px;
+        }
+
+        .star {
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .star svg {
+            width: 100%;
+            height: 100%;
+            fill: transparent;
+            stroke: var(--text-muted);
+            stroke-width: 2;
+        }
+
+        .star.active svg {
+            fill: #FFD700;
+            stroke: #FFD700;
+        }
+
+        .star:hover svg {
+            stroke: #FFD700;
+        }
+
+        .rating-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 16px;
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            resize: none;
+            margin-top: 16px;
+        }
+
+        .rating-textarea:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+        }
+
+        /* 确认按钮 */
+        .confirm-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-confirm {
+            flex: 1;
+            padding: 16px;
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-confirm:hover {
+            background: #00B8A9;
+        }
+
+        .btn-confirm:disabled {
+            background: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .btn-reject {
+            padding: 16px 32px;
+            background: transparent;
+            color: #FF6B6B;
+            border: 1px solid #FF6B6B;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reject:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        /* 右侧边栏 */
+        .delivery-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+        }
+
+        .sidebar-card h3 {
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* 订单摘要 */
+        .order-summary-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .summary-item label {
+            color: var(--text-muted);
+        }
+
+        .summary-item span {
+            color: var(--text-primary);
+        }
+
+        .summary-item.total {
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 8px;
+        }
+
+        .summary-item.total span {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-cyan);
+        }
+
+        /* 供应商卡片 */
+        .supplier-mini {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 16px;
+            background: var(--bg-darker);
+            border-radius: 8px;
+        }
+
+        .supplier-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary-cyan), #00B8A9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .supplier-info h4 {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .supplier-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .btn-contact {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--primary-cyan);
+            color: var(--primary-cyan);
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-contact:hover {
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+        }
+
+        /* 相关链接 */
+        .related-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .related-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-darker);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .related-link:hover {
+            background: rgba(0, 229, 204, 0.05);
+            color: var(--primary-cyan);
+        }
+
+        .related-link svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* 收货地址 */
+        .address-card {
+            padding: 16px;
+            background: var(--bg-darker);
+            border-radius: 8px;
+        }
+
+        .address-name {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .address-detail {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .address-phone {
+            font-size: 13px;
+            color: var(--primary-cyan);
+            margin-top: 8px;
+        }
+
+        /* 成功弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(0, 229, 204, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            color: var(--primary-cyan);
+        }
+
+        .modal-content h3 {
+            font-size: 24px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .modal-content p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back-orders {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-back-home {
+            background: var(--primary-cyan);
+            border: none;
+            color: var(--bg-dark);
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .delivery-content {
+                grid-template-columns: 1fr;
+            }
+
+            .delivery-sidebar {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .delivery-header-top {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .delivery-meta {
+                flex-wrap: wrap;
+            }
+
+            .delivery-steps {
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+
+            .step-item {
+                flex: 0 0 calc(50% - 10px);
+            }
+
+            .step-item:not(:last-child)::after {
+                display: none;
+            }
+
+            .logistics-info {
+                grid-template-columns: 1fr;
+            }
+
+            .upload-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="javascript:history.back()" class="inline-back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                返回
+            </a>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">G</span>
+                <span data-i18n="deliveryConfirm.t9tyf6h">全球供应链平台</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="smart-match.html">智能匹配</a>
+                <a href="suppliers.html">供应商库</a>
+                <a href="orders.html" class="active">订单管理</a>
+                <a href="production-monitor.html">生产监控</a>
+            </div>
+            <div class="nav-actions">
+                <a href="messages.html" class="nav-icon" title="消息">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span class="badge">3</span>
+                </a>
+                <a href="user-center.html" class="nav-icon" title="个人中心">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="delivery-page">
+        <!-- 页面头部 -->
+        <div class="delivery-header">
+            <div class="delivery-header-inner">
+                <div class="delivery-header-top">
+                    <div class="delivery-title">
+                        <h1 data-i18n="deliveryConfirm.ta97rmy">交付确认</h1>
+                        <div class="delivery-meta">
+                            <span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="1" y="3" width="15" height="13"></rect>
+                                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                                </svg>
+                                物流单号：--
+                            </span>
+                            <span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                订单号：<a href="order-detail.html"></a>
+                            </span>
+                            <span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                送达时间：--
+                            </span>
+                        </div>
+                    </div>
+                    <div class="delivery-status delivered">已送达</div>
+                </div>
+
+                <!-- 交付步骤 -->
+                <div class="delivery-steps">
+                    <div class="step-item completed">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="step-title">生产完成</div>
+                        <div class="step-time">02-25 18:00</div>
+                    </div>
+                    <div class="step-item completed">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="step-title">发货</div>
+                        <div class="step-time">02-25 20:00</div>
+                    </div>
+                    <div class="step-item completed">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="step-title">运输中</div>
+                        <div class="step-time">02-26 08:00</div>
+                    </div>
+                    <div class="step-item completed">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="step-title">已送达</div>
+                        <div class="step-time">02-26 10:30</div>
+                    </div>
+                    <div class="step-item active">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div class="step-title">待确认收货</div>
+                        <div class="step-time">等待操作</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="delivery-content">
+            <div class="main-section">
+                <!-- 物流信息 -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 data-i18n="deliveryConfirm.tevvycm">物流信息</h3>
+                        <span style="font-size: 14px; color: var(--primary-cyan);">顺丰速运</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="logistics-info">
+                            <div class="logistics-item">
+                                <label data-i18n="deliveryConfirm.tevwh16">物流单号</label>
+                                <span>--</span>
+                            </div>
+                            <div class="logistics-item">
+                                <label data-i18n="deliveryConfirm.tf4aph">承运商</label>
+                                <span data-i18n="deliveryConfirm.tjkhr0n">顺丰速运</span>
+                            </div>
+                            <div class="logistics-item">
+                                <label data-i18n="deliveryConfirm.tcyg6y">发货地</label>
+                                <span data-i18n="deliveryConfirm.tgg80xw">广东省深圳市</span>
+                            </div>
+                            <div class="logistics-item">
+                                <label data-i18n="deliveryConfirm.tfi65b">收货地</label>
+                                <span data-i18n="deliveryConfirm.tr701rp">上海市浦东新区</span>
+                            </div>
+                        </div>
+
+                        <div class="logistics-timeline">
+                            <h4 data-i18n="deliveryConfirm.tew70qx">物流轨迹</h4>
+                            <div class="timeline-list">
+                                <div class="timeline-entry">
+                                    <div class="timeline-entry-time">--</div>
+                                    <div class="timeline-entry-content">【上海市】已送达，签收人：前台代收</div>
+                                </div>
+                                <div class="timeline-entry">
+                                    <div class="timeline-entry-time">--</div>
+                                    <div class="timeline-entry-content">【上海市】派送中，派送员：王师傅 --</div>
+                                </div>
+                                <div class="timeline-entry">
+                                    <div class="timeline-entry-time">--</div>
+                                    <div class="timeline-entry-content">【上海市】快件已到达上海浦东集散中心</div>
+                                </div>
+                                <div class="timeline-entry">
+                                    <div class="timeline-entry-time">--</div>
+                                    <div class="timeline-entry-content">【深圳市】快件已发出，下一站：上海浦东集散中心</div>
+                                </div>
+                                <div class="timeline-entry">
+                                    <div class="timeline-entry-time">--</div>
+                                    <div class="timeline-entry-content">【深圳市】卖家已发货，顺丰速运已揽件</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 产品清单 -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 data-i18n="deliveryConfirm.taa2rmy">产品清单</h3>
+                        <span style="font-size: 14px; color: var(--text-muted);">共 2 件商品</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="product-list">
+                            <div class="product-item">
+                                <div class="product-image">产品图</div>
+                                <div class="product-details">
+                                    <div class="product-name">--</div>
+                                    <div class="product-spec">规格：标准版 | 型号：--</div>
+                                    <div class="product-qty">数量：100 件 | 单价：¥800.00</div>
+                                </div>
+                            </div>
+                            <div class="product-item">
+                                <div class="product-image">产品图</div>
+                                <div class="product-details">
+                                    <div class="product-name">电源适配器 PA-500</div>
+                                    <div class="product-spec">规格：100-240V | 型号：PA-500-UNI</div>
+                                    <div class="product-qty">数量：100 件 | 单价：¥450.00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 验收检查 -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 data-i18n="deliveryConfirm.tjx2nkf">验收检查</h3>
+                        <span style="font-size: 14px; color: var(--text-muted);">请核对以下项目</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="inspection-list">
+                            <div class="inspection-item" onclick="toggleInspection(this)">
+                                <div class="inspection-checkbox">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="inspection-text">外包装完好，无破损、挤压痕迹</div>
+                            </div>
+                            <div class="inspection-item" onclick="toggleInspection(this)">
+                                <div class="inspection-checkbox">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="inspection-text">产品数量与订单一致</div>
+                            </div>
+                            <div class="inspection-item" onclick="toggleInspection(this)">
+                                <div class="inspection-checkbox">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="inspection-text">产品型号、规格与订单一致</div>
+                            </div>
+                            <div class="inspection-item" onclick="toggleInspection(this)">
+                                <div class="inspection-checkbox">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="inspection-text">产品外观无明显瑕疵或损坏</div>
+                            </div>
+                            <div class="inspection-item" onclick="toggleInspection(this)">
+                                <div class="inspection-checkbox">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="inspection-text">配件齐全（说明书、合格证、保修卡等）</div>
+                            </div>
+                            <div class="inspection-item" onclick="toggleInspection(this)">
+                                <div class="inspection-checkbox">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="inspection-text">已完成基本功能测试</div>
+                            </div>
+                        </div>
+
+                        <!-- 凭证上传 -->
+                        <div class="upload-section">
+                            <h4 data-i18n="deliveryConfirm.tfcrnil">上传验收凭证（选填）</h4>
+                            <div class="upload-grid">
+                                <div class="upload-item">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                    <span data-i18n="deliveryConfirm.te7wrf2">添加图片</span>
+                                </div>
+                                <div class="upload-item">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                    <span data-i18n="deliveryConfirm.te7wrf2">添加图片</span>
+                                </div>
+                                <div class="upload-item">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                    <span data-i18n="deliveryConfirm.te7wrf2">添加图片</span>
+                                </div>
+                                <div class="upload-item">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                    <span data-i18n="deliveryConfirm.ta6fdb9">上传文件</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 评价 -->
+                        <div class="rating-section">
+                            <h4 data-i18n="deliveryConfirm.tdcotlz">服务评价</h4>
+                            <div class="rating-categories">
+                                <div class="rating-row">
+                                    <span class="rating-label">产品质量</span>
+                                    <div class="rating-stars" data-category="quality">
+                                        <div class="star" data-value="1"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                        <div class="star" data-value="2"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                        <div class="star" data-value="3"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                        <div class="star" data-value="4"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                        <div class="star" data-value="5"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                    </div>
+                                </div>
+                                <div class="rating-row">
+                                    <span class="rating-label">交付时效</span>
+                                    <div class="rating-stars" data-category="delivery">
+                                        <div class="star" data-value="1"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                        <div class="star" data-value="2"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                        <div class="star" data-value="3"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                        <div class="star" data-value="4"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                        <div class="star" data-value="5"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                    </div>
+                                </div>
+                                <div class="rating-row">
+                                    <span class="rating-label">沟通服务</span>
+                                    <div class="rating-stars" data-category="service">
+                                        <div class="star" data-value="1"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                        <div class="star" data-value="2"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                        <div class="star" data-value="3"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                        <div class="star" data-value="4"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                        <div class="star" data-value="5"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <textarea class="rating-textarea" placeholder="请分享您的采购体验，帮助其他买家做出更好的选择..."></textarea>
+                        </div>
+
+                        <!-- 确认按钮 -->
+                        <div class="confirm-actions">
+                            <button class="btn-reject" onclick="openRejectModal()">拒收/退货</button>
+                            <button class="btn-confirm" id="confirmBtn" onclick="confirmDelivery()">确认收货</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧边栏 -->
+            <div class="delivery-sidebar">
+                <!-- 订单摘要 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="deliveryConfirm.thypxek">订单摘要</h3>
+                    <div class="order-summary-list">
+                        <div class="summary-item">
+                            <label data-i18n="deliveryConfirm.thyu6l0">订单编号</label>
+                            <span></span>
+                        </div>
+                        <div class="summary-item">
+                            <label data-i18n="deliveryConfirm.ta72nl4">下单时间</label>
+                            <span>--</span>
+                        </div>
+                        <div class="summary-item">
+                            <label data-i18n="deliveryConfirm.tb43y6y">商品数量</label>
+                            <span data-i18n="deliveryConfirm.trh3n56">2 种 / 200 件</span>
+                        </div>
+                        <div class="summary-item">
+                            <label data-i18n="deliveryConfirm.tb4bjaf">商品金额</label>
+                            <span>--.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <label data-i18n="deliveryConfirm.tp8ix">运费</label>
+                            <span>¥500.00</span>
+                        </div>
+                        <div class="summary-item total">
+                            <label data-i18n="deliveryConfirm.tbw9c2u">实付金额</label>
+                            <span>¥125,500.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 供应商信息 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="deliveryConfirm.tc4b9p">供应商</h3>
+                    <div class="supplier-mini">
+                        <div class="supplier-avatar">深</div>
+                        <div class="supplier-info">
+                            <h4 data-i18n="deliveryConfirm.tvkrwa4">深圳精密科技有限公司</h4>
+                            <p data-i18n="deliveryConfirm.t466nbt">认证供应商 | 电子制造</p>
+                        </div>
+                    </div>
+                    <button class="btn-contact" onclick="location.href='chat.html'">联系供应商</button>
+                </div>
+
+                <!-- 相关链接 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="deliveryConfirm.tfclyp6">相关操作</h3>
+                    <div class="related-links">
+                        <a href="order-detail.html" class="related-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            查看订单详情
+                        </a>
+                        <a href="production-detail.html" class="related-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                            查看生产记录
+                        </a>
+                        <a href="contract-detail.html" class="related-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            查看合同
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 收货地址 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="deliveryConfirm.tdcnrsx">收货地址</h3>
+                    <div class="address-card">
+                        <div class="address-name">--（收）</div>
+                        <div class="address-detail">上海市浦东新区张江高科技园区博云路2号601室</div>
+                        <div class="address-phone">138-0000-1234</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成功弹窗 -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <h3 data-i18n="deliveryConfirm.tl7pia2">收货确认成功</h3>
+            <p data-i18n="deliveryConfirm.te7y0n4">感谢您的确认！订单已完成，您的评价已提交。</p>
+            <div class="modal-buttons">
+                <button class="btn-back-orders" onclick="location.href='orders.html'">查看订单</button>
+                <button class="btn-back-home" onclick="location.href='index.html'">返回首页</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 切换验收项勾选
+        function toggleInspection(item) {
+            item.classList.toggle('checked');
+            updateConfirmButton();
+        }
+
+        // 更新确认按钮状态
+        function updateConfirmButton() {
+            const items = document.querySelectorAll('.inspection-item');
+            const checkedItems = document.querySelectorAll('.inspection-item.checked');
+            const btn = document.getElementById('confirmBtn');
+            
+            // 至少勾选4项才能确认
+            if (checkedItems.length >= 4) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
+        }
+
+        // 评分星星交互
+        document.querySelectorAll('.rating-stars').forEach(container => {
+            const stars = container.querySelectorAll('.star');
+            
+            stars.forEach((star, index) => {
+                star.addEventListener('click', () => {
+                    stars.forEach((s, i) => {
+                        if (i <= index) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+                
+                star.addEventListener('mouseenter', () => {
+                    stars.forEach((s, i) => {
+                        if (i <= index) {
+                            s.style.transform = 'scale(1.1)';
+                        }
+                    });
+                });
+                
+                star.addEventListener('mouseleave', () => {
+                    stars.forEach(s => {
+                        s.style.transform = 'scale(1)';
+                    });
+                });
+            });
+        });
+
+        // 确认收货
+        function confirmDelivery() {
+            document.getElementById('successModal').classList.add('show');
+        }
+
+        // 拒收/退货
+        function openRejectModal() {
+            alert(t('delivery.msg.redirectReturn'));
+            // 实际应用中跳转到退货页面
+        }
+
+        // 点击弹窗外部关闭
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('show');
+                }
+            });
+        });
+
+        // 初始化
+        updateConfirmButton();
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+<script src="auth-check.js"></script>
+</body>
+</html>
+</html>

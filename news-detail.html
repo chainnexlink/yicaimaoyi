@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="newsDetail.ts3at6d">新闻详情 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="javascript:history.back()" class="inline-back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    返回
+                </a>
+                <a href="index.html" class="logo-link"><span class="logo-text">全球供应链智能匹配平台</span></a>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+                <a href="certification.html" class="nav-link" data-i18n="nav.certification">资质认证</a>
+                <a href="messages.html" class="nav-link" data-i18n="nav.messages">消息中心</a>
+                <a href="help.html" class="nav-link" data-i18n="footer.service">客服中心</a>
+            </nav>
+            <div class="header-right">
+                <a href="user-center.html" class="user-link"><span class="user-avatar-sm">A</span><span>admin</span></a>
+            </div>
+        </div>
+    </header>
+
+    <section class="news-detail-section">
+        <!-- ==================== L1: 文章详情 ==================== -->
+        <div class="page-view active" id="view-article">
+            <div class="view-breadcrumb">
+                <a href="index.html">首页</a><span class="sep">/</span><a onclick="showView('view-news-category')">资讯中心</a><span class="sep">/</span><span data-i18n="newsDetail.tdbo4uw">文章详情</span>
+            </div>
+            
+            <div class="msg-tabs-bar" style="margin-bottom:24px;">
+                <button class="msg-tab-btn active" onclick="showView('view-article')">文章内容</button>
+                <button class="msg-tab-btn" onclick="showView('view-related-news')">相关资讯 <span class="badge">6</span></button>
+                <button class="msg-tab-btn" onclick="showView('view-news-category')">资讯分类</button>
+                <button class="msg-tab-btn" onclick="showView('view-author')">作者专栏</button>
+                <button class="msg-tab-btn" onclick="showView('view-comments')">评论互动 <span class="badge">23</span></button>
+            </div>
+
+            <div class="news-article">
+                <div class="news-article-header">
+                    <h1 data-i18n="newsDetail.tr6oazq">2026年全球供应链发展趋势分析</h1>
+                    <div class="news-article-meta">
+                        <span data-i18n="newsDetail.ts8o1u1">发布时间：2026-02-10</span>
+                        <span data-i18n="newsDetail.tfpei7">来源：<a onclick="showView('view-author')" style="color:var(--primary-cyan);cursor:pointer;">平台研究院</a></span>
+                        <span data-i18n="newsDetail.tak4d3k">阅读：1,286次</span>
+                        <span data-i18n="newsDetail.tl65b8">评论：<a onclick="showView('view-comments')" style="color:var(--primary-cyan);cursor:pointer;">23条</a></span>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:12px;">
+                        <span class="status-badge info">行业趋势</span>
+                        <span class="status-badge success">供应链</span>
+                        <span class="status-badge warning">深度分析</span>
+                    </div>
+                </div>
+                <div class="news-article-cover">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                </div>
+                <div class="news-article-body">
+                    <p data-i18n="newsDetail.tvs1o9s">随着数字化转型加速，智能供应链管理成为企业核心竞争力。2026年，全球供应链将呈现以下几大发展趋势：</p>
+                    
+                    <h2 data-i18n="newsDetail.tu3coeo">一、智能化程度持续提升</h2>
+                    <p data-i18n="newsDetail.t9nfb4k">人工智能和机器学习技术的广泛应用，使得供应链决策更加智能化。从需求预测、库存优化到物流调度，AI正在重塑供应链的每一个环节。根据最新研究数据显示，采用AI技术的企业，其供应链效率平均提升了35%。</p>
+                    
+                    <h2 data-i18n="newsDetail.tof0mgj">二、绿色供应链成为主流</h2>
+                    <p data-i18n="newsDetail.tfilt98">环保意识的增强和政策法规的推动，使得绿色供应链成为企业的必然选择。越来越多的企业开始关注碳足迹追踪、可持续采购和循环经济。预计到2026年底，超过60%的大型企业将建立完善的绿色供应链体系。</p>
+                    
+                    <h2 data-i18n="newsDetail.txxdn6y">三、供应链韧性备受重视</h2>
+                    <p data-i18n="newsDetail.tsjxa16">近年来的全球性事件让企业深刻认识到供应链韧性的重要性。多元化供应商布局、区域化生产、安全库存策略成为企业标配。平台数据显示，已有78%的采购商开始实施供应商多元化策略。</p>
+                    
+                    <h2 data-i18n="newsDetail.t6gpt7g">四、数字孪生技术应用加速</h2>
+                    <p data-i18n="newsDetail.t9yl40n">数字孪生技术在供应链领域的应用正在加速。通过创建供应链的数字副本，企业可以进行模拟、预测和优化，从而更好地应对市场变化和突发事件。</p>
+                    
+                    <h2 data-i18n="newsDetail.t2rvyhe">五、协同平台价值凸显</h2>
+                    <p data-i18n="newsDetail.tjkhj6">供应链协同平台成为连接上下游企业的重要纽带。通过平台化运营，企业可以实现信息共享、资源整合和协同创新。全球供应链智能匹配平台正是顺应这一趋势，为企业提供一站式供应链服务。</p>
+                    
+                    <p style="margin-top: 32px; padding: 20px; background: var(--bg-darker); border-radius: 8px; border-left: 4px solid var(--primary-cyan);">
+                        <strong data-i18n="newsDetail.tgkb1nk">编者按：</strong>面对复杂多变的市场环境，企业需要不断提升供应链管理能力。全球供应链智能匹配平台将持续为企业提供优质的供应商资源和智能匹配服务，助力企业实现供应链转型升级。
+                    </p>
+                </div>
+                
+                <!-- 文章操作区 -->
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:32px;padding-top:24px;border-top:1px solid var(--border-color);">
+                    <div style="display:flex;gap:16px;">
+                        <button class="btn-secondary" style="display:flex;align-items:center;gap:6px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                            点赞 (156)
+                        </button>
+                        <button class="btn-secondary" style="display:flex;align-items:center;gap:6px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                            收藏 (89)
+                        </button>
+                        <button class="btn-secondary" style="display:flex;align-items:center;gap:6px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                            分享
+                        </button>
+                    </div>
+                    <button class="btn-primary" onclick="showView('view-comments')">发表评论</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== L2: 相关资讯 ==================== -->
+        <div class="page-view" id="view-related-news">
+            <div class="view-breadcrumb">
+                <a onclick="showView('view-article')">文章详情</a><span class="sep">/</span><span data-i18n="newsDetail.tfct6ee">相关资讯</span>
+            </div>
+            <button class="btn-back-sm" onclick="showView('view-article')">返回文章</button>
+            <h2 style="margin-bottom:20px;">相关资讯</h2>
+            <p style="color:var(--text-secondary);margin-bottom:24px;">基于当前文章内容为您推荐的相关资讯，共 6 篇</p>
+            
+            <div class="news-grid" style="grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                <div class="news-card" onclick="showView('view-article-detail-1')" style="cursor:pointer;">
+                    <div class="news-image">
+                        <div class="news-placeholder">
+                            <svg viewBox="0 0 64 64" fill="none">
+                                <path d="M32 8 L56 24 L56 56 L8 56 L8 24 Z" stroke="#4ECDC4" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="news-content">
+                        <span class="news-date">2026-02-08</span>
+                        <h3 class="news-title">平台助力中小企业出海新机遇</h3>
+                        <p style="color:var(--text-secondary);font-size:13px;margin-top:8px;">详解中小企业如何借助智能供应链平台开拓海外市场...</p>
+                        <div style="display:flex;gap:8px;margin-top:8px;">
+                            <span class="status-badge info" style="font-size:11px;">企业出海</span>
+                            <span style="font-size:12px;color:var(--text-muted);">阅读 892</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="news-card" onclick="showView('view-article-detail-2')" style="cursor:pointer;">
+                    <div class="news-image">
+                        <div class="news-placeholder">
+                            <svg viewBox="0 0 64 64" fill="none">
+                                <circle cx="32" cy="32" r="24" stroke="#4ECDC4" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="news-content">
+                        <span class="news-date">2026-02-05</span>
+                        <h3 class="news-title">跨境贸易新政策解读与应对策略</h3>
+                        <p style="color:var(--text-secondary);font-size:13px;margin-top:8px;">深入解读2026年跨境贸易新政策，帮助企业合规经营...</p>
+                        <div style="display:flex;gap:8px;margin-top:8px;">
+                            <span class="status-badge warning" style="font-size:11px;">政策解读</span>
+                            <span style="font-size:12px;color:var(--text-muted);">阅读 1,456</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="news-card" onclick="showView('view-article-detail-3')" style="cursor:pointer;">
+                    <div class="news-image">
+                        <div class="news-placeholder">
+                            <svg viewBox="0 0 64 64" fill="none">
+                                <rect x="8" y="8" width="48" height="48" rx="4" stroke="#4ECDC4" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="news-content">
+                        <span class="news-date">2026-02-01</span>
+                        <h3 class="news-title">数字化采购如何提升企业效率</h3>
+                        <p style="color:var(--text-secondary);font-size:13px;margin-top:8px;">从传统采购到数字化采购的转型路径与实践案例...</p>
+                        <div style="display:flex;gap:8px;margin-top:8px;">
+                            <span class="status-badge success" style="font-size:11px;">数字化转型</span>
+                            <span style="font-size:12px;color:var(--text-muted);">阅读 1,128</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="news-card" style="cursor:pointer;">
+                    <div class="news-image">
+                        <div class="news-placeholder">
+                            <svg viewBox="0 0 64 64" fill="none">
+                                <polygon points="32,8 56,56 8,56" stroke="#4ECDC4" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="news-content">
+                        <span class="news-date">2026-01-28</span>
+                        <h3 class="news-title">AI驱动的供应链风险预警系统</h3>
+                        <p style="color:var(--text-secondary);font-size:13px;margin-top:8px;">人工智能如何帮助企业提前识别和应对供应链风险...</p>
+                        <div style="display:flex;gap:8px;margin-top:8px;">
+                            <span class="status-badge info" style="font-size:11px;">AI应用</span>
+                            <span style="font-size:12px;color:var(--text-muted);">阅读 2,034</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="news-card" style="cursor:pointer;">
+                    <div class="news-image">
+                        <div class="news-placeholder">
+                            <svg viewBox="0 0 64 64" fill="none">
+                                <ellipse cx="32" cy="32" rx="28" ry="16" stroke="#4ECDC4" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="news-content">
+                        <span class="news-date">2026-01-25</span>
+                        <h3 class="news-title">碳中和目标下的绿色采购实践</h3>
+                        <p style="color:var(--text-secondary);font-size:13px;margin-top:8px;">企业如何通过绿色采购助力碳中和目标实现...</p>
+                        <div style="display:flex;gap:8px;margin-top:8px;">
+                            <span class="status-badge success" style="font-size:11px;">绿色采购</span>
+                            <span style="font-size:12px;color:var(--text-muted);">阅读 1,567</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="news-card" style="cursor:pointer;">
+                    <div class="news-image">
+                        <div class="news-placeholder">
+                            <svg viewBox="0 0 64 64" fill="none">
+                                <path d="M8 32 Q32 8 56 32 Q32 56 8 32" stroke="#4ECDC4" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="news-content">
+                        <span class="news-date">2026-01-20</span>
+                        <h3 class="news-title">区块链技术在供应链溯源中的应用</h3>
+                        <p style="color:var(--text-secondary);font-size:13px;margin-top:8px;">区块链如何确保供应链透明度和产品可追溯性...</p>
+                        <div style="display:flex;gap:8px;margin-top:8px;">
+                            <span class="status-badge warning" style="font-size:11px;">区块链</span>
+                            <span style="font-size:12px;color:var(--text-muted);">阅读 1,823</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== L3: 相关文章详情1 ==================== -->
+        <div class="page-view" id="view-article-detail-1">
+            <div class="view-breadcrumb">
+                <a onclick="showView('view-article')">文章详情</a><span class="sep">/</span><a onclick="showView('view-related-news')">相关资讯</a><span class="sep">/</span><span data-i18n="newsDetail.t11kti1">平台助力中小企业出海</span>
+            </div>
+            <button class="btn-back-sm" onclick="showView('view-related-news')">返回相关资讯</button>
+            
+            <div class="detail-card">
+                <div class="news-article-header">
+                    <h1 style="font-size:24px;">平台助力中小企业出海新机遇</h1>
+                    <div class="news-article-meta">
+                        <span data-i18n="newsDetail.ts8o1te">发布时间：2026-02-08</span>
+                        <span data-i18n="newsDetail.t4mwpi1">来源：平台运营部</span>
+                        <span data-i18n="newsDetail.tb2l87g">阅读：892次</span>
+                    </div>
+                </div>
+                <div class="news-article-body" style="margin-top:20px;">
+                    <p data-i18n="newsDetail.tkwbihh">随着全球化进程的深入，越来越多的中小企业开始将目光投向海外市场。全球供应链智能匹配平台为这些企业提供了前所未有的出海机遇。</p>
+                    <h2 data-i18n="newsDetail.t1j0soe">一、降低出海门槛</h2>
+                    <p data-i18n="newsDetail.tn9xra7">平台通过整合全球供应商资源，为中小企业提供一站式海外采购服务。企业无需自行寻找海外供应商，只需在平台上发布需求，即可获得精准匹配的供应商推荐。</p>
+                    <h2 data-i18n="newsDetail.t2z45kp">二、智能风险管控</h2>
+                    <p data-i18n="newsDetail.tlsvjxq">平台的AI风险预警系统能够实时监控国际贸易环境变化，帮助企业提前识别潜在风险，制定应对策略。</p>
+                    <h2 data-i18n="newsDetail.tq1kmqo">三、全流程服务支持</h2>
+                    <p data-i18n="newsDetail.tz6ron9">从供应商筛选、询价比价、合同签订到物流跟踪，平台提供全流程数字化服务，让出海更加便捷高效。</p>
+                </div>
+                <div style="display:flex;gap:12px;margin-top:24px;">
+                    <button class="btn-secondary">点赞 (68)</button>
+                    <button class="btn-secondary">收藏</button>
+                    <button class="btn-primary" onclick="showView('view-comments')">查看评论</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== L3: 相关文章详情2 ==================== -->
+        <div class="page-view" id="view-article-detail-2">
+            <div class="view-breadcrumb">
+                <a onclick="showView('view-article')">文章详情</a><span class="sep">/</span><a onclick="showView('view-related-news')">相关资讯</a><span class="sep">/</span><span data-i18n="newsDetail.t2dwk2f">跨境贸易新政策解读</span>
+            </div>
+            <button class="btn-back-sm" onclick="showView('view-related-news')">返回相关资讯</button>
+            
+            <div class="detail-card">
+                <div class="news-article-header">
+                    <h1 style="font-size:24px;">跨境贸易新政策解读与应对策略</h1>
+                    <div class="news-article-meta">
+                        <span data-i18n="newsDetail.ts8o1tb">发布时间：2026-02-05</span>
+                        <span data-i18n="newsDetail.tl8wvpe">来源：政策研究中心</span>
+                        <span data-i18n="newsDetail.tak5kuj">阅读：1,456次</span>
+                    </div>
+                </div>
+                <div class="news-article-body" style="margin-top:20px;">
+                    <p data-i18n="newsDetail.t20xana">2026年，多项跨境贸易新政策相继出台，对企业的国际化运营产生深远影响。本文将为您详细解读这些政策变化及应对建议。</p>
+                    <h2 data-i18n="newsDetail.t8sbbjw">一、关税政策调整</h2>
+                    <p data-i18n="newsDetail.thbb8am">新的关税政策对部分商品类目进行了调整，企业需要及时了解变化，优化采购策略和成本结构。</p>
+                    <h2 data-i18n="newsDetail.t26vpp1">二、跨境电商新规</h2>
+                    <p data-i18n="newsDetail.tpk96ko">跨境电商监管政策进一步完善，对商品质量、数据安全、消费者权益保护等方面提出了更高要求。</p>
+                    <h2 data-i18n="newsDetail.t2r0jeg">三、合规建议</h2>
+                    <p data-i18n="newsDetail.tfs4jj">建议企业建立完善的合规体系，关注政策动态，确保业务合法合规运营。</p>
+                </div>
+                <div style="display:flex;gap:12px;margin-top:24px;">
+                    <button class="btn-secondary">点赞 (124)</button>
+                    <button class="btn-secondary">收藏</button>
+                    <button class="btn-primary" onclick="showView('view-comments')">查看评论</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== L3: 相关文章详情3 ==================== -->
+        <div class="page-view" id="view-article-detail-3">
+            <div class="view-breadcrumb">
+                <a onclick="showView('view-article')">文章详情</a><span class="sep">/</span><a onclick="showView('view-related-news')">相关资讯</a><span class="sep">/</span><span data-i18n="newsDetail.tmjakr8">数字化采购实践</span>
+            </div>
+            <button class="btn-back-sm" onclick="showView('view-related-news')">返回相关资讯</button>
+            
+            <div class="detail-card">
+                <div class="news-article-header">
+                    <h1 style="font-size:24px;">数字化采购如何提升企业效率</h1>
+                    <div class="news-article-meta">
+                        <span data-i18n="newsDetail.ts8o1t7">发布时间：2026-02-01</span>
+                        <span data-i18n="newsDetail.t7ly33z">来源：数字化转型研究院</span>
+                        <span data-i18n="newsDetail.tak3lpl">阅读：1,128次</span>
+                    </div>
+                </div>
+                <div class="news-article-body" style="margin-top:20px;">
+                    <p data-i18n="newsDetail.th0dmi">数字化采购正在成为企业提升运营效率的关键举措。通过引入智能化工具和流程优化，企业可以大幅降低采购成本，提高采购效率。</p>
+                    <h2 data-i18n="newsDetail.taczepq">一、采购流程数字化</h2>
+                    <p data-i18n="newsDetail.t88bjzu">从需求提报、供应商寻源、询价比价到合同签订，全流程线上化操作，大幅缩短采购周期。</p>
+                    <h2 data-i18n="newsDetail.tpiv1gz">二、数据驱动决策</h2>
+                    <p data-i18n="newsDetail.ty48m8g">通过采购数据分析，识别成本优化机会，支持更科学的采购决策。</p>
+                    <h2 data-i18n="newsDetail.ty00or6">三、供应商协同</h2>
+                    <p data-i18n="newsDetail.ti6dpkr">数字化平台实现与供应商的实时协同，提升供应链响应速度和透明度。</p>
+                </div>
+                <div style="display:flex;gap:12px;margin-top:24px;">
+                    <button class="btn-secondary">点赞 (92)</button>
+                    <button class="btn-secondary">收藏</button>
+                    <button class="btn-primary" onclick="showView('view-comments')">查看评论</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== L2: 资讯分类 ==================== -->
+        <div class="page-view" id="view-news-category">
+            <div class="view-breadcrumb">
+                <a onclick="showView('view-article')">文章详情</a><span class="sep">/</span><span data-i18n="newsDetail.tieas80">资讯分类</span>
+            </div>
+            <button class="btn-back-sm" onclick="showView('view-article')">返回文章</button>
+            <h2 style="margin-bottom:20px;">资讯分类</h2>
+            <p style="color:var(--text-secondary);margin-bottom:24px;">浏览不同类别的行业资讯，获取您关注的领域动态</p>
+            
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+                <div class="detail-card" onclick="showView('view-category-list-1')" style="cursor:pointer;text-align:center;">
+                    <div style="width:64px;height:64px;margin:0 auto 16px;background:linear-gradient(135deg,var(--primary-cyan),var(--primary-purple));border-radius:16px;display:flex;align-items:center;justify-content:center;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                    </div>
+                    <h3 style="margin-bottom:8px;">行业趋势</h3>
+                    <p style="color:var(--text-secondary);font-size:14px;">共 42 篇文章</p>
+                    <p style="color:var(--text-muted);font-size:12px;margin-top:8px;">供应链行业发展趋势与前沿洞察</p>
+                </div>
+                <div class="detail-card" onclick="showView('view-category-list-2')" style="cursor:pointer;text-align:center;">
+                    <div style="width:64px;height:64px;margin:0 auto 16px;background:linear-gradient(135deg,#FF6B6B,#FFE66D);border-radius:16px;display:flex;align-items:center;justify-content:center;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    </div>
+                    <h3 style="margin-bottom:8px;">政策解读</h3>
+                    <p style="color:var(--text-secondary);font-size:14px;">共 28 篇文章</p>
+                    <p style="color:var(--text-muted);font-size:12px;margin-top:8px;">最新政策法规解读与合规指南</p>
+                </div>
+                <div class="detail-card" style="cursor:pointer;text-align:center;">
+                    <div style="width:64px;height:64px;margin:0 auto 16px;background:linear-gradient(135deg,#4ECDC4,#44CF6C);border-radius:16px;display:flex;align-items:center;justify-content:center;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    </div>
+                    <h3 style="margin-bottom:8px;">技术前沿</h3>
+                    <p style="color:var(--text-secondary);font-size:14px;">共 35 篇文章</p>
+                    <p style="color:var(--text-muted);font-size:12px;margin-top:8px;">AI、区块链等新技术应用案例</p>
+                </div>
+                <div class="detail-card" style="cursor:pointer;text-align:center;">
+                    <div style="width:64px;height:64px;margin:0 auto 16px;background:linear-gradient(135deg,#A855F7,#6366F1);border-radius:16px;display:flex;align-items:center;justify-content:center;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    </div>
+                    <h3 style="margin-bottom:8px;">企业案例</h3>
+                    <p style="color:var(--text-secondary);font-size:14px;">共 56 篇文章</p>
+                    <p style="color:var(--text-muted);font-size:12px;margin-top:8px;">优秀企业供应链管理实践分享</p>
+                </div>
+                <div class="detail-card" style="cursor:pointer;text-align:center;">
+                    <div style="width:64px;height:64px;margin:0 auto 16px;background:linear-gradient(135deg,#F59E0B,#EF4444);border-radius:16px;display:flex;align-items:center;justify-content:center;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+                    </div>
+                    <h3 style="margin-bottom:8px;">市场分析</h3>
+                    <p style="color:var(--text-secondary);font-size:14px;">共 31 篇文章</p>
+                    <p style="color:var(--text-muted);font-size:12px;margin-top:8px;">全球市场动态与投资机会分析</p>
+                </div>
+                <div class="detail-card" style="cursor:pointer;text-align:center;">
+                    <div style="width:64px;height:64px;margin:0 auto 16px;background:linear-gradient(135deg,#06B6D4,#3B82F6);border-radius:16px;display:flex;align-items:center;justify-content:center;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                    </div>
+                    <h3 style="margin-bottom:8px;">平台公告</h3>
+                    <p style="color:var(--text-secondary);font-size:14px;">共 18 篇文章</p>
+                    <p style="color:var(--text-muted);font-size:12px;margin-top:8px;">平台功能更新与重要通知</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== L3: 分类文章列表1 - 行业趋势 ==================== -->
+        <div class="page-view" id="view-category-list-1">
+            <div class="view-breadcrumb">
+                <a onclick="showView('view-article')">文章详情</a><span class="sep">/</span><a onclick="showView('view-news-category')">资讯分类</a><span class="sep">/</span><span data-i18n="newsDetail.thizr6q">行业趋势</span>
+            </div>
+            <button class="btn-back-sm" onclick="showView('view-news-category')">返回分类</button>
+            <h2 style="margin-bottom:8px;">行业趋势</h2>
+            <p style="color:var(--text-secondary);margin-bottom:24px;">共 42 篇文章，为您呈现供应链行业最新发展趋势</p>
+            
+            <div style="display:flex;flex-direction:column;gap:16px;">
+                <div class="msg-card" style="cursor:pointer;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <div style="flex:1;">
+                            <h4 style="margin-bottom:8px;">2026年全球供应链发展趋势分析</h4>
+                            <p style="color:var(--text-secondary);font-size:13px;">随着数字化转型加速，智能供应链管理成为企业核心竞争力...</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                                <span>2026-02-10</span>
+                                <span data-i18n="newsDetail.t4pmg8b">阅读 1,286</span>
+                                <span data-i18n="newsDetail.t4553h1">评论 23</span>
+                            </div>
+                        </div>
+                        <span class="status-badge info">热门</span>
+                    </div>
+                </div>
+                <div class="msg-card" style="cursor:pointer;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <div style="flex:1;">
+                            <h4 style="margin-bottom:8px;">供应链韧性建设：从理论到实践</h4>
+                            <p style="color:var(--text-secondary);font-size:13px;">探讨如何构建具有韧性的供应链体系，应对不确定性挑战...</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                                <span>2026-02-06</span>
+                                <span data-i18n="newsDetail.tl266eo">阅读 956</span>
+                                <span data-i18n="newsDetail.t4553hu">评论 15</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="msg-card" style="cursor:pointer;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <div style="flex:1;">
+                            <h4 style="margin-bottom:8px;">智能化仓储物流的发展与展望</h4>
+                            <p style="color:var(--text-secondary);font-size:13px;">自动化仓储、智能分拣、无人配送等技术正在重塑物流行业...</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                                <span>2026-01-30</span>
+                                <span data-i18n="newsDetail.t4pmfce">阅读 1,124</span>
+                                <span data-i18n="newsDetail.t4553hr">评论 18</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="msg-card" style="cursor:pointer;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <div style="flex:1;">
+                            <h4 style="margin-bottom:8px;">全球化与本地化：供应链的双向策略</h4>
+                            <p style="color:var(--text-secondary);font-size:13px;">在全球化与逆全球化并存的背景下，企业如何平衡供应链布局...</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                                <span>2026-01-25</span>
+                                <span data-i18n="newsDetail.tl2674h">阅读 867</span>
+                                <span data-i18n="newsDetail.t4553hx">评论 12</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align:center;margin-top:24px;">
+                <button class="btn-secondary">加载更多</button>
+            </div>
+        </div>
+
+        <!-- ==================== L3: 分类文章列表2 - 政策解读 ==================== -->
+        <div class="page-view" id="view-category-list-2">
+            <div class="view-breadcrumb">
+                <a onclick="showView('view-article')">文章详情</a><span class="sep">/</span><a onclick="showView('view-news-category')">资讯分类</a><span class="sep">/</span><span data-i18n="newsDetail.tdaghin">政策解读</span>
+            </div>
+            <button class="btn-back-sm" onclick="showView('view-news-category')">返回分类</button>
+            <h2 style="margin-bottom:8px;">政策解读</h2>
+            <p style="color:var(--text-secondary);margin-bottom:24px;">共 28 篇文章，最新政策法规解读与合规指南</p>
+            
+            <div style="display:flex;flex-direction:column;gap:16px;">
+                <div class="msg-card" style="cursor:pointer;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <div style="flex:1;">
+                            <h4 style="margin-bottom:8px;">跨境贸易新政策解读与应对策略</h4>
+                            <p style="color:var(--text-secondary);font-size:13px;">2026年多项跨境贸易新政策出台，企业如何合规经营...</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                                <span>2026-02-05</span>
+                                <span data-i18n="newsDetail.t4pmhn4">阅读 1,456</span>
+                                <span data-i18n="newsDetail.t4553gw">评论 28</span>
+                            </div>
+                        </div>
+                        <span class="status-badge warning">重要</span>
+                    </div>
+                </div>
+                <div class="msg-card" style="cursor:pointer;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <div style="flex:1;">
+                            <h4 style="margin-bottom:8px;">出口退税政策最新调整解读</h4>
+                            <p style="color:var(--text-secondary);font-size:13px;">详解2026年出口退税政策变化，帮助企业优化税务筹划...</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                                <span>2026-01-28</span>
+                                <span data-i18n="newsDetail.t4pmer0">阅读 1,089</span>
+                                <span data-i18n="newsDetail.t4553hq">评论 19</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="msg-card" style="cursor:pointer;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <div style="flex:1;">
+                            <h4 style="margin-bottom:8px;">数据安全法在供应链领域的应用</h4>
+                            <p style="color:var(--text-secondary);font-size:13px;">数据安全法对供应链数据管理的要求与合规建议...</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                                <span>2026-01-20</span>
+                                <span data-i18n="newsDetail.tl267w2">阅读 756</span>
+                                <span data-i18n="newsDetail.t4553hy">评论 11</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align:center;margin-top:24px;">
+                <button class="btn-secondary">加载更多</button>
+            </div>
+        </div>
+
+        <!-- ==================== L2: 作者专栏 ==================== -->
+        <div class="page-view" id="view-author">
+            <div class="view-breadcrumb">
+                <a onclick="showView('view-article')">文章详情</a><span class="sep">/</span><span data-i18n="newsDetail.tajh5qd">作者专栏</span>
+            </div>
+            <button class="btn-back-sm" onclick="showView('view-article')">返回文章</button>
+            
+            <div class="detail-card" style="text-align:center;margin-bottom:24px;">
+                <div style="width:80px;height:80px;margin:0 auto 16px;background:linear-gradient(135deg,var(--primary-cyan),var(--primary-purple));border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                    <span style="font-size:28px;color:white;font-weight:600;">研</span>
+                </div>
+                <h2 style="margin-bottom:8px;">平台研究院</h2>
+                <p style="color:var(--text-secondary);margin-bottom:16px;">专注供应链行业研究与趋势分析</p>
+                <div style="display:flex;justify-content:center;gap:32px;margin-bottom:20px;">
+                    <div>
+                        <div style="font-size:24px;font-weight:600;color:var(--primary-cyan);">86</div>
+                        <div style="color:var(--text-muted);font-size:13px;">发布文章</div>
+                    </div>
+                    <div>
+                        <div style="font-size:24px;font-weight:600;color:var(--primary-purple);">52,840</div>
+                        <div style="color:var(--text-muted);font-size:13px;">总阅读量</div>
+                    </div>
+                    <div>
+                        <div style="font-size:24px;font-weight:600;color:var(--success-color);">3,256</div>
+                        <div style="color:var(--text-muted);font-size:13px;">粉丝数</div>
+                    </div>
+                </div>
+                <button class="btn-primary">+ 关注作者</button>
+            </div>
+            
+            <h3 style="margin-bottom:16px;">最新文章</h3>
+            <div style="display:flex;flex-direction:column;gap:16px;">
+                <div class="msg-card" onclick="showView('view-author-article-detail')" style="cursor:pointer;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <div style="flex:1;">
+                            <h4 style="margin-bottom:8px;">2026年全球供应链发展趋势分析</h4>
+                            <p style="color:var(--text-secondary);font-size:13px;">随着数字化转型加速，智能供应链管理成为企业核心竞争力...</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                                <span>2026-02-10</span>
+                                <span data-i18n="newsDetail.t4pmg8b">阅读 1,286</span>
+                            </div>
+                        </div>
+                        <span class="status-badge info">当前阅读</span>
+                    </div>
+                </div>
+                <div class="msg-card" style="cursor:pointer;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <div style="flex:1;">
+                            <h4 style="margin-bottom:8px;">2025年度供应链行业白皮书发布</h4>
+                            <p style="color:var(--text-secondary);font-size:13px;">回顾2025年供应链行业发展，展望2026年发展方向...</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                                <span>2026-01-15</span>
+                                <span data-i18n="newsDetail.t4qq3lf">阅读 3,567</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="msg-card" style="cursor:pointer;">
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                        <div style="flex:1;">
+                            <h4 style="margin-bottom:8px;">智能采购：从概念到落地的实践指南</h4>
+                            <p style="color:var(--text-secondary);font-size:13px;">系统介绍智能采购的核心技术与实施方法...</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                                <span>2026-01-08</span>
+                                <span data-i18n="newsDetail.t4q67ym">阅读 2,134</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align:center;margin-top:24px;">
+                <button class="btn-secondary" onclick="showView('view-author-all-articles')">查看全部文章</button>
+            </div>
+        </div>
+
+        <!-- ==================== L3: 作者全部文章 ==================== -->
+        <div class="page-view" id="view-author-all-articles">
+            <div class="view-breadcrumb">
+                <a onclick="showView('view-article')">文章详情</a><span class="sep">/</span><a onclick="showView('view-author')">作者专栏</a><span class="sep">/</span><span data-i18n="newsDetail.tavcvqx">全部文章</span>
+            </div>
+            <button class="btn-back-sm" onclick="showView('view-author')">返回作者主页</button>
+            <h2 style="margin-bottom:8px;">平台研究院 - 全部文章</h2>
+            <p style="color:var(--text-secondary);margin-bottom:24px;">共 86 篇文章</p>
+            
+            <div style="display:flex;gap:12px;margin-bottom:24px;">
+                <button class="msg-tab-btn active" style="font-size:13px;padding:6px 16px;">全部</button>
+                <button class="msg-tab-btn" style="font-size:13px;padding:6px 16px;">行业趋势</button>
+                <button class="msg-tab-btn" style="font-size:13px;padding:6px 16px;">深度分析</button>
+                <button class="msg-tab-btn" style="font-size:13px;padding:6px 16px;">白皮书</button>
+            </div>
+            
+            <div style="display:flex;flex-direction:column;gap:16px;">
+                <div class="msg-card" style="cursor:pointer;">
+                    <h4 style="margin-bottom:8px;">2026年全球供应链发展趋势分析</h4>
+                    <p style="color:var(--text-secondary);font-size:13px;">随着数字化转型加速，智能供应链管理成为企业核心竞争力...</p>
+                    <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                        <span>2026-02-10</span>
+                        <span data-i18n="newsDetail.t4pmg8b">阅读 1,286</span>
+                        <span class="status-badge info" style="font-size:11px;">行业趋势</span>
+                    </div>
+                </div>
+                <div class="msg-card" style="cursor:pointer;">
+                    <h4 style="margin-bottom:8px;">2025年度供应链行业白皮书发布</h4>
+                    <p style="color:var(--text-secondary);font-size:13px;">回顾2025年供应链行业发展，展望2026年发展方向...</p>
+                    <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                        <span>2026-01-15</span>
+                        <span data-i18n="newsDetail.t4qq3lf">阅读 3,567</span>
+                        <span class="status-badge warning" style="font-size:11px;">白皮书</span>
+                    </div>
+                </div>
+                <div class="msg-card" style="cursor:pointer;">
+                    <h4 style="margin-bottom:8px;">智能采购：从概念到落地的实践指南</h4>
+                    <p style="color:var(--text-secondary);font-size:13px;">系统介绍智能采购的核心技术与实施方法...</p>
+                    <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                        <span>2026-01-08</span>
+                        <span data-i18n="newsDetail.t4q67ym">阅读 2,134</span>
+                        <span class="status-badge success" style="font-size:11px;">深度分析</span>
+                    </div>
+                </div>
+                <div class="msg-card" style="cursor:pointer;">
+                    <h4 style="margin-bottom:8px;">供应链金融创新模式研究</h4>
+                    <p style="color:var(--text-secondary);font-size:13px;">探讨供应链金融的创新模式与发展趋势...</p>
+                    <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:12px;">
+                        <span>2025-12-28</span>
+                        <span data-i18n="newsDetail.t4pmklw">阅读 1,856</span>
+                        <span class="status-badge info" style="font-size:11px;">行业趋势</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align:center;margin-top:24px;">
+                <button class="btn-secondary">加载更多</button>
+            </div>
+        </div>
+
+        <!-- ==================== L3: 作者文章详情 ==================== -->
+        <div class="page-view" id="view-author-article-detail">
+            <div class="view-breadcrumb">
+                <a onclick="showView('view-article')">文章详情</a><span class="sep">/</span><a onclick="showView('view-author')">作者专栏</a><span class="sep">/</span><span data-i18n="newsDetail.tdbo4uw">文章详情</span>
+            </div>
+            <button class="btn-back-sm" onclick="showView('view-author')">返回作者主页</button>
+            
+            <div class="detail-card">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-color);">
+                    <div style="width:48px;height:48px;background:linear-gradient(135deg,var(--primary-cyan),var(--primary-purple));border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                        <span style="font-size:18px;color:white;font-weight:600;">研</span>
+                    </div>
+                    <div>
+                        <div style="font-weight:500;">平台研究院</div>
+                        <div style="color:var(--text-muted);font-size:13px;">发布于 2026-02-10</div>
+                    </div>
+                </div>
+                <h2 style="margin-bottom:16px;">2026年全球供应链发展趋势分析</h2>
+                <p style="color:var(--text-secondary);line-height:1.8;">随着数字化转型加速，智能供应链管理成为企业核心竞争力。本文分析了2026年全球供应链的五大发展趋势，包括智能化程度提升、绿色供应链、供应链韧性、数字孪生技术应用以及协同平台价值等方面...</p>
+                <div style="display:flex;gap:12px;margin-top:24px;">
+                    <button class="btn-secondary">点赞 (156)</button>
+                    <button class="btn-secondary">收藏 (89)</button>
+                    <button class="btn-primary" onclick="showView('view-article')">阅读全文</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== L2: 评论互动 ==================== -->
+        <div class="page-view" id="view-comments">
+            <div class="view-breadcrumb">
+                <a onclick="showView('view-article')">文章详情</a><span class="sep">/</span><span data-i18n="newsDetail.ti7h00c">评论互动</span>
+            </div>
+            <button class="btn-back-sm" onclick="showView('view-article')">返回文章</button>
+            <h2 style="margin-bottom:20px;">评论互动 <span style="color:var(--text-muted);font-size:16px;font-weight:400;">(23条)</span></h2>
+            
+            <!-- 发表评论 -->
+            <div class="detail-card" style="margin-bottom:24px;">
+                <h4 style="margin-bottom:12px;">发表评论</h4>
+                <textarea class="form-input" rows="3" placeholder="分享您对这篇文章的看法..." style="width:100%;resize:none;"></textarea>
+                <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+                    <button class="btn-primary">发布评论</button>
+                </div>
+            </div>
+            
+            <!-- 评论列表 -->
+            <div style="display:flex;flex-direction:column;gap:16px;">
+                <div class="msg-card" onclick="showView('view-comment-detail')" style="cursor:pointer;">
+                    <div style="display:flex;gap:12px;">
+                        <div style="width:40px;height:40px;background:var(--bg-darker);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <span style="font-size:14px;color:var(--primary-cyan);">李</span>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                                <span style="font-weight:500;">李经理</span>
+                                <span style="color:var(--text-muted);font-size:12px;">2小时前</span>
+                            </div>
+                            <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;">这篇文章分析得很透彻！特别是关于供应链韧性的部分，我们公司正在考虑多元化供应商布局，这篇文章给了很好的参考。</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:13px;">
+                                <span style="cursor:pointer;">点赞 (12)</span>
+                                <span style="cursor:pointer;">回复 (3)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="msg-card" style="cursor:pointer;">
+                    <div style="display:flex;gap:12px;">
+                        <div style="width:40px;height:40px;background:var(--bg-darker);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <span style="font-size:14px;color:var(--primary-purple);">王</span>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                                <span style="font-weight:500;">王总监</span>
+                                <span style="color:var(--text-muted);font-size:12px;">5小时前</span>
+                            </div>
+                            <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;">数字孪生技术确实是未来的趋势，我们已经在部分产线上开始试点了，效果很不错。期待平台能推出更多这方面的深度内容。</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:13px;">
+                                <span style="cursor:pointer;">点赞 (8)</span>
+                                <span style="cursor:pointer;">回复 (1)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="msg-card" style="cursor:pointer;">
+                    <div style="display:flex;gap:12px;">
+                        <div style="width:40px;height:40px;background:var(--bg-darker);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <span style="font-size:14px;color:var(--success-color);">张</span>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                                <span style="font-weight:500;">张采购</span>
+                                <span style="color:var(--text-muted);font-size:12px;">1天前</span>
+                            </div>
+                            <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;">绿色供应链是大势所趋，我们已经开始要求供应商提供碳排放数据了。请问平台有相关的碳足迹追踪工具吗？</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:13px;">
+                                <span style="cursor:pointer;">点赞 (15)</span>
+                                <span style="cursor:pointer;">回复 (5)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="msg-card" style="cursor:pointer;">
+                    <div style="display:flex;gap:12px;">
+                        <div style="width:40px;height:40px;background:var(--bg-darker);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <span style="font-size:14px;color:var(--warning-color);">陈</span>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                                <span style="font-weight:500;">陈工程师</span>
+                                <span style="color:var(--text-muted);font-size:12px;">2天前</span>
+                            </div>
+                            <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;">AI技术在供应链的应用确实越来越广泛了，我们用AI做需求预测后，库存周转率提升了20%以上。</p>
+                            <div style="display:flex;gap:16px;margin-top:12px;color:var(--text-muted);font-size:13px;">
+                                <span style="cursor:pointer;">点赞 (6)</span>
+                                <span style="cursor:pointer;">回复 (2)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align:center;margin-top:24px;">
+                <button class="btn-secondary">加载更多评论</button>
+            </div>
+        </div>
+
+        <!-- ==================== L3: 评论详情与回复 ==================== -->
+        <div class="page-view" id="view-comment-detail">
+            <div class="view-breadcrumb">
+                <a onclick="showView('view-article')">文章详情</a><span class="sep">/</span><a onclick="showView('view-comments')">评论互动</a><span class="sep">/</span><span data-i18n="newsDetail.ti7ric5">评论详情</span>
+            </div>
+            <button class="btn-back-sm" onclick="showView('view-comments')">返回评论列表</button>
+            
+            <!-- 原评论 -->
+            <div class="detail-card" style="margin-bottom:24px;">
+                <div style="display:flex;gap:12px;">
+                    <div style="width:48px;height:48px;background:var(--bg-darker);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span style="font-size:18px;color:var(--primary-cyan);">李</span>
+                    </div>
+                    <div style="flex:1;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                            <div>
+                                <span style="font-weight:500;font-size:16px;">李经理</span>
+                                <span style="color:var(--text-muted);font-size:13px;margin-left:12px;">采购部经理 · 某制造企业</span>
+                            </div>
+                            <span style="color:var(--text-muted);font-size:13px;">2小时前</span>
+                        </div>
+                        <p style="color:var(--text-primary);font-size:15px;line-height:1.8;">这篇文章分析得很透彻！特别是关于供应链韧性的部分，我们公司正在考虑多元化供应商布局，这篇文章给了很好的参考。希望平台能出更多关于供应商多元化策略的具体案例分析。</p>
+                        <div style="display:flex;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border-color);">
+                            <button class="btn-secondary" style="font-size:13px;">点赞 (12)</button>
+                            <button class="btn-secondary" style="font-size:13px;">分享</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 回复列表 -->
+            <h4 style="margin-bottom:16px;">回复 (3)</h4>
+            <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:24px;">
+                <div class="msg-card">
+                    <div style="display:flex;gap:12px;">
+                        <div style="width:36px;height:36px;background:linear-gradient(135deg,var(--primary-cyan),var(--primary-purple));border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <span style="font-size:12px;color:white;">研</span>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                                <div>
+                                    <span style="font-weight:500;">平台研究院</span>
+                                    <span class="status-badge info" style="font-size:11px;margin-left:8px;">作者</span>
+                                </div>
+                                <span style="color:var(--text-muted);font-size:12px;">1小时前</span>
+                            </div>
+                            <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;">感谢您的认可！关于供应商多元化策略的案例分析，我们正在筹备一期专题内容，预计下周发布，敬请期待！</p>
+                            <div style="display:flex;gap:12px;margin-top:8px;color:var(--text-muted);font-size:12px;">
+                                <span style="cursor:pointer;">点赞 (5)</span>
+                                <span style="cursor:pointer;">回复</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="msg-card">
+                    <div style="display:flex;gap:12px;">
+                        <div style="width:36px;height:36px;background:var(--bg-darker);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <span style="font-size:12px;color:var(--success-color);">刘</span>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                                <span style="font-weight:500;">刘副总</span>
+                                <span style="color:var(--text-muted);font-size:12px;">1小时前</span>
+                            </div>
+                            <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;">同意！我们也在做类似的规划，可以加个联系方式交流一下吗？</p>
+                            <div style="display:flex;gap:12px;margin-top:8px;color:var(--text-muted);font-size:12px;">
+                                <span style="cursor:pointer;">点赞 (2)</span>
+                                <span style="cursor:pointer;">回复</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="msg-card">
+                    <div style="display:flex;gap:12px;">
+                        <div style="width:36px;height:36px;background:var(--bg-darker);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <span style="font-size:12px;color:var(--primary-cyan);">李</span>
+                        </div>
+                        <div style="flex:1;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                                <div>
+                                    <span style="font-weight:500;">李经理</span>
+                                    <span class="status-badge success" style="font-size:11px;margin-left:8px;">楼主</span>
+                                </div>
+                                <span style="color:var(--text-muted);font-size:12px;">30分钟前</span>
+                            </div>
+                            <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;"><span style="color:var(--primary-cyan);">@刘副总</span> 可以的，您可以通过平台私信联系我，我们可以深入交流。</p>
+                            <div style="display:flex;gap:12px;margin-top:8px;color:var(--text-muted);font-size:12px;">
+                                <span style="cursor:pointer;">点赞 (1)</span>
+                                <span style="cursor:pointer;">回复</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 发表回复 -->
+            <div class="detail-card">
+                <h4 style="margin-bottom:12px;">发表回复</h4>
+                <textarea class="form-input" rows="2" placeholder="回复 李经理..." style="width:100%;resize:none;"></textarea>
+                <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+                    <button class="btn-primary">发布回复</button>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <footer class="footer">
+        <div class="footer-copyright"><p data-i18n="footer.copyright">&copy; 2026 全球供应链智能匹配平台 | 版权所有</p></div>
+        <nav class="footer-nav">
+            <a href="#">帮助中心</a><a href="#">客服中心</a><a href="#">关于我们</a><a href="#">隐私政策</a><a href="#" data-i18n="footer.terms">服务条款</a>
+        </nav>
+        <div style="text-align:center;padding:8px 0;font-size:12px;"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow noopener" style="color:#888;text-decoration:none;">粤ICP备2026015135号-2</a></div>
+    </footer>
+<script src="auth-check.js"></script>
+    <script src="platform-scripts.js"></script>
+    <script>
+        function showView(viewId) {
+            document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+            const target = document.getElementById(viewId);
+            if (target) {
+                target.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // 根据 URL 参数 ?id= 显示对应文章
+        (function initFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if (!id) return; // 无参数，保持默认显示第一篇
+            const viewMap = {
+                '1': 'view-article',
+                '2': 'view-article-detail-1',
+                '3': 'view-article-detail-2'
+            };
+            const targetView = viewMap[id];
+            if (targetView) {
+                showView(targetView);
+            }
+        })();
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+</body>
+</html>

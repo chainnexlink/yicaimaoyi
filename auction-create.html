@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="auctionCreate.tu35fgb">发起反向竞价 - 智能采购反向竞价</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <style>
+        .auction-create-page {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            padding-top: 80px;
+        }
+        .page-header {
+            background: linear-gradient(135deg, rgba(0, 229, 204, 0.1) 0%, transparent 100%);
+            padding: 40px 5%;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .page-header h1 {
+            font-size: 32px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .form-card h2 {
+            font-size: 18px;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        .form-group label .required {
+            color: #FF6B6B;
+        }
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 14px 16px;
+            background: #0a0f1a;
+            border: 2px solid #2a3441;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #ffffff;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #00E5CC;
+            box-shadow: 0 0 0 3px rgba(0, 229, 204, 0.2);
+        }
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-hint {
+            font-size: 12px;
+            color: #8b9cb5;
+            margin-top: 8px;
+        }
+        .form-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .btn-submit {
+            padding: 16px 48px;
+            background: linear-gradient(135deg, #00E5CC 0%, #00b3a0 100%);
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #0a0f1a;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 229, 204, 0.4);
+        }
+        .btn-submit:disabled {
+            background: #2a3441;
+            color: #8b9cb5;
+            cursor: not-allowed;
+        }
+        .btn-draft {
+            padding: 16px 32px;
+            background: transparent;
+            border: 2px solid #2a3441;
+            border-radius: 10px;
+            font-size: 16px;
+            color: #b8c5d6;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-draft:hover {
+            border-color: #00E5CC;
+            color: #00E5CC;
+        }
+        .toast {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 9999;
+            animation: toastIn 0.3s ease;
+        }
+        .toast.success {
+            background: rgba(0, 229, 204, 0.95);
+            color: #0a0f1a;
+        }
+        .toast.error {
+            background: rgba(255, 107, 107, 0.95);
+            color: white;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        @media (max-width: 640px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="auction-list.html" style="color:#00E5CC;text-decoration:none;display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:20px;">&#8592;</span> 返回竞价列表
+                </a>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                <a href="auction-list.html" class="nav-link active">智能采购反向竞价</a>
+                <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+            </nav>
+            <div class="header-right">
+                <button class="btn-login" id="loginBtn" onclick="window.location.href='login.html'">登录/注册</button>
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <div class="user-menu-trigger">
+                        <span class="user-name">admin</span>
+                    </div>
+                    <div class="user-dropdown">
+                        <a href="user-center.html" class="dropdown-item">个人中心</a>
+                        <a href="login.html" class="dropdown-item logout-item" id="logoutBtn" data-i18n="common.logout">退出登录</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="auction-create-page">
+        <div class="page-header">
+            <h1 data-i18n="auctionCreate.txb59ko">提交反向竞价需求</h1>
+            <p data-i18n="auctionCreate.tb062by">提交后由易采核对规格、贸易条款、供应商范围和检验要求，再组织同口径报价</p>
+        </div>
+        <div id="templateNotice" style="display:none;margin:0 auto 18px;max-width:900px;padding:14px 16px;border:1px solid rgba(0,229,204,.35);background:rgba(0,229,204,.08);border-radius:10px;color:#B8C5D6;line-height:1.7;"></div>
+        
+        <div class="form-container">
+            <form id="auctionForm">
+                <div class="form-card">
+                    <h2 data-i18n="auctionCreate.ta9xpns">产品信息</h2>
+                    <div class="form-group">
+                        <label data-i18n="auctionCreate.ta9yk8t">产品名称 <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="productName" placeholder="例如：304不锈钢保温杯" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="auctionCreate.ta9y8bz">产品分类</label>
+                        <select class="form-select" id="productCategory">
+                            <option value="">请选择分类</option>
+                            <option value="日用品">日用品</option>
+                            <option value="电子产品">电子产品</option>
+                            <option value="服装纺织">服装纺织</option>
+                            <option value="食品饮料">食品饮料</option>
+                            <option value="机械设备">机械设备</option>
+                            <option value="建材装饰">建材装饰</option>
+                            <option value="办公用品">办公用品</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="auctionCreate.t9ay5qk">产品规格说明 <span class="required">*</span></label>
+                        <textarea class="form-textarea" id="specification" placeholder="请详细描述产品规格、材质、尺寸、颜色等要求..." required></textarea>
+                        <div class="form-hint">描述越详细，供应商报价越准确</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.tiz3kf9">采购数量 <span class="required">*</span></label>
+                            <input type="number" class="form-input" id="quantity" placeholder="例如：1000" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.tdecnqv">数量单位</label>
+                            <select class="form-select" id="unit">
+                                <option value="pcs">pcs</option>
+                                <option value="sets">sets</option>
+                                <option value="cartons">cartons</option>
+                                <option value="件">件</option>
+                                <option value="个">个</option>
+                                <option value="套">套</option>
+                                <option value="箱">箱</option>
+                                <option value="吨">吨</option>
+                                <option value="公斤">公斤</option>
+                                <option value="米">米</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-card">
+                    <h2 data-i18n="auctionCreate.tcti3ix">竞价设置</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>统一报价币种 <span class="required">*</span></label>
+                            <select class="form-select" id="currency" required>
+                                <option value="USD" selected>USD — 美元</option>
+                                <option value="EUR">EUR — 欧元</option>
+                                <option value="GBP">GBP — 英镑</option>
+                                <option value="CNY">CNY — 人民币</option>
+                                <option value="JPY">JPY — 日元</option>
+                            </select>
+                            <div class="form-hint">所有供应商必须按同一币种和贸易条款报价</div>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.tsult7n">最高单价 <span class="required">*</span></label>
+                            <input type="number" class="form-input" id="startingPrice" placeholder="例如：1.2850" step="0.0001" min="0.0001" required>
+                            <div class="form-hint">供应商出价不得高于此价格</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.tsd57h5">最低降价幅度</label>
+                            <input type="number" class="form-input" id="minDecrement" value="0.01" step="0.0001" min="0.0001">
+                            <div class="form-hint">每次报价至少需降低的金额</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.t9aa4sx">报名开始时间</label>
+                            <input type="datetime-local" class="form-input" id="signupStartTime">
+                            <div class="form-hint">留空则使用竞价开始时间</div>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.t9r837i">报名截止时间</label>
+                            <input type="datetime-local" class="form-input" id="signupEndTime">
+                            <div class="form-hint">留空则使用竞价开始时间</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.td5668y">竞价开始时间 <span class="required">*</span></label>
+                            <input type="datetime-local" class="form-input" id="startTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.th7ntvn">竞价结束时间 <span class="required">*</span></label>
+                            <input type="datetime-local" class="form-input" id="endTime" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-card">
+                    <h2 data-i18n="auctionCreate.tazn4hh">反拍规则</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.tyvi7io">最少参与供应商</label>
+                            <input type="number" class="form-input" id="minParticipants" value="3" min="1" max="20">
+                            <div class="form-hint">报名人数不足则流标</div>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.t76ah0x">延时触发时间(分钟)</label>
+                            <input type="number" class="form-input" id="extensionTriggerMinutes" value="5" min="1" max="30">
+                            <div class="form-hint">结束前N分钟内有新报价触发延时</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.tnr6nwj">每次延时时长(分钟)</label>
+                            <input type="number" class="form-input" id="extensionMinutes" value="5" min="1" max="30">
+                            <div class="form-hint">触发延时后增加的时间</div>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.tb1o0fe">最大延时次数</label>
+                            <input type="number" class="form-input" id="maxExtensions" value="10" min="1" max="50">
+                            <div class="form-hint">超过后不再延时</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label style="display:flex;align-items:center;gap:8px;">
+                                <input type="checkbox" id="showRanking" checked style="width:auto;">
+                                允许供应商查看排名
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label style="display:flex;align-items:center;gap:8px;">
+                                <input type="checkbox" id="showLowestPrice" checked style="width:auto;">
+                                允许供应商查看最低价
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-card">
+                    <h2 data-i18n="auctionCreate.tai56nl">交货信息</h2>
+                    <div class="form-group">
+                        <label data-i18n="auctionCreate.tai6dlf">交货地址</label>
+                        <input type="text" class="form-input" id="deliveryAddress" placeholder="例如：广东省深圳市南山区xxx路xxx号">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.thwjvcy">要求交货日期</label>
+                            <input type="date" class="form-input" id="requiredDeliveryDate">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="auctionCreate.tae7ae4">付款方式</label>
+                            <input type="text" class="form-input" id="paymentTerms" placeholder="例如：款到发货 / 30天账期">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="auctionCreate.talv8bl">其他备注</label>
+                        <textarea class="form-textarea" id="remark" placeholder="其他需要说明的事项..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-card" id="deposit-section">
+                    <h2><span data-i18n="auctionCreate.tayu4x3">需求审核凭证</span> <span style="font-size:14px;color:#94A3B8;font-weight:normal;">（抵用券或平台人工审核）</span></h2>
+                    <div style="padding:15px;background:rgba(0,229,204,0.05);border:1px solid rgba(0,229,204,0.2);border-radius:8px;margin-bottom:15px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                            <span style="font-size:16px;font-weight:600;">发布押金: <span id="deposit-amount" style="color:#00E5CC;">$50.00</span> USD</span>
+                            <span id="deposit-status" style="color:#888;">未缴纳</span>
+                        </div>
+                        <p style="font-size:13px;color:#94A3B8;margin-bottom:12px;">当前仅支持有效抵用券或平台人工审核；在线押金通道在完成持牌支付接入前不会生成“已支付”记录。</p>
+                        <div id="voucher-list" style="margin-bottom:12px;"></div>
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                            <button type="button" class="btn-submit" id="btnPayDeposit" onclick="payDepositForAuction()" disabled title="在线押金支付尚未接入" style="background:#2a3441;color:#8b9cb5;padding:10px 24px;border:none;border-radius:6px;cursor:not-allowed;font-weight:600;">在线支付待接入</button>
+                            <button type="button" id="btnPayVoucher" onclick="payDepositWithVoucher()" style="background:#8B5CF6;color:#fff;padding:10px 24px;border:none;border-radius:6px;cursor:pointer;font-weight:600;">使用抵用券</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-draft" id="btnDraft">保存草稿</button>
+                    <button type="submit" class="btn-submit" id="btnSubmit">提交竞价需求</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="auth-check.js"></script>
+    <script src="paypal-payment.js"></script>
+    <script src="auction-demo-data.js?v=20260715a"></script>
+    <script>
+        var API_BASE = (function() {
+            var port = window.location.port;
+            if (!port || port === '80' || port === '443' || port === '8081') return '/api/v1/auction';
+            return 'http://' + window.location.hostname + ':8081/api/v1/auction';
+        })();
+        var DEPOSIT_API = (function() {
+            var port = window.location.port;
+            if (!port || port === '80' || port === '443' || port === '8081') return '/api/v1/auction/deposit';
+            return 'http://' + window.location.hostname + ':8081/api/v1/auction/deposit';
+        })();
+        var draftAuctionId = null;
+        var depositPaid = false;
+        var selectedVoucherId = null;
+        var myVouchers = [];
+
+        function getAuthHeaders(json) {
+            var token = localStorage.getItem('accessToken') || localStorage.getItem('token') || '';
+            var h = {};
+            if (token) h['Authorization'] = 'Bearer ' + token;
+            if (json) h['Content-Type'] = 'application/json';
+            return h;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var now = new Date();
+            var signupStart = new Date(now.getTime() + 30 * 60 * 1000);
+            var signupEnd = new Date(now.getTime() + 60 * 60 * 1000);
+            var startTime = new Date(now.getTime() + 60 * 60 * 1000);
+            var endTime = new Date(now.getTime() + 25 * 60 * 60 * 1000);
+            document.getElementById('signupStartTime').value = formatDateTimeLocal(signupStart);
+            document.getElementById('signupEndTime').value = formatDateTimeLocal(signupEnd);
+            document.getElementById('startTime').value = formatDateTimeLocal(startTime);
+            document.getElementById('endTime').value = formatDateTimeLocal(endTime);
+
+            applyDemoTemplate();
+
+            document.getElementById('auctionForm').addEventListener('submit', submitAuction);
+            document.getElementById('btnDraft').addEventListener('click', saveDraft);
+
+            loadDepositInfo();
+            updatePublishBtnState();
+        });
+
+        // ========== 押金相关 ==========
+
+        function loadDepositInfo() {
+            // 加载押金配置金额
+            fetch(DEPOSIT_API + '/admin/config', { headers: getAuthHeaders(false) })
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (res.code === 200 && res.data) {
+                        var amt = '50.00';
+                        for (var i = 0; i < res.data.length; i++) {
+                            if (res.data[i].key === 'BUYER_DEPOSIT_AMOUNT') {
+                                amt = res.data[i].value;
+                                break;
+                            }
+                        }
+                        document.getElementById('deposit-amount').textContent = '$' + parseFloat(amt).toFixed(2);
+                    }
+                }).catch(function() {});
+
+            // 加载用户可用抵用券
+            fetch(DEPOSIT_API + '/vouchers/my?voucherType=BUYER_DEPOSIT', { headers: getAuthHeaders(false) })
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (res.code === 200 && res.data) {
+                        myVouchers = res.data;
+                        renderVoucherList();
+                    }
+                }).catch(function() {
+                    // 未登录或无抵用券
+                    document.getElementById('voucher-list').innerHTML =
+                        '<p style="font-size:12px;color:#94A3B8;">登录后可查看您的抵用券</p>';
+                });
+        }
+
+        function renderVoucherList() {
+            var container = document.getElementById('voucher-list');
+            if (!myVouchers || myVouchers.length === 0) {
+                container.innerHTML = '<p style="font-size:12px;color:#94A3B8;">暂无可用抵用券</p>';
+                document.getElementById('btnPayVoucher').style.display = 'none';
+                return;
+            }
+            document.getElementById('btnPayVoucher').style.display = '';
+            var html = '<div style="font-size:13px;color:#B8C5D6;margin-bottom:8px;">可用抵用券 (' + myVouchers.length + '张):</div>';
+            html += '<div style="display:flex;flex-wrap:wrap;gap:8px;">';
+            for (var i = 0; i < myVouchers.length; i++) {
+                var v = myVouchers[i];
+                var sel = (selectedVoucherId === v.id) ? 'border-color:#00E5CC;background:rgba(0,229,204,0.15);' : '';
+                var exp = v.expiresAt ? new Date(v.expiresAt).toLocaleDateString('zh-CN') : '-';
+                html += '<div onclick="selectVoucher(' + v.id + ')" style="cursor:pointer;padding:8px 14px;border:2px solid #2a3441;border-radius:8px;font-size:12px;' + sel + '">';
+                html += '<div style="color:#00E5CC;font-weight:600;">$' + parseFloat(v.faceValue).toFixed(2) + '</div>';
+                html += '<div style="color:#8b9cb5;margin-top:2px;">' + v.voucherNo + '</div>';
+                html += '<div style="color:#8b9cb5;">有效期至 ' + exp + '</div>';
+                html += '</div>';
+            }
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function selectVoucher(voucherId) {
+            selectedVoucherId = (selectedVoucherId === voucherId) ? null : voucherId;
+            renderVoucherList();
+        }
+
+        function ensureDraftCreated() {
+            if (draftAuctionId) {
+                return Promise.resolve(draftAuctionId);
+            }
+            var pn = document.getElementById('productName').value;
+            var sp = document.getElementById('startingPrice').value;
+            var st = document.getElementById('startTime').value;
+            var et = document.getElementById('endTime').value;
+            if (!pn || !sp || !st || !et) {
+                showToast(t('ac.msg.t3'), 'error');
+                return Promise.reject(new Error('必填项未填'));
+            }
+            var data = collectFormData();
+            return fetch(API_BASE + '/create', {
+                method: 'POST',
+                headers: getAuthHeaders(true),
+                body: JSON.stringify(data)
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+                if (res.code === 200 && res.data) {
+                    draftAuctionId = res.data.id;
+                    showToast('草稿已自动保存 (ID:' + draftAuctionId + ')', 'success');
+                    return draftAuctionId;
+                }
+                throw new Error(res.message || '创建草稿失败');
+            });
+        }
+
+        function payDepositForAuction() {
+            var btn = document.getElementById('btnPayDeposit');
+            btn.disabled = true;
+            btn.textContent = '处理中...';
+
+            ensureDraftCreated().then(function(auctionId) {
+                return fetch(DEPOSIT_API + '/buyer/pay?auctionId=' + auctionId, {
+                    method: 'POST',
+                    headers: getAuthHeaders(false)
+                });
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+                if (res.code === 200) {
+                    depositPaid = true;
+                    updateDepositStatus();
+                    showToast(t('ac.msg.t5'), 'success');
+                } else {
+                    throw new Error(res.message || '缴纳失败');
+                }
+            })
+            .catch(function(err) {
+                showToast(err.message || '缴纳押金失败', 'error');
+            })
+            .finally(function() {
+                btn.disabled = false;
+                btn.textContent = '缴纳押金';
+            });
+        }
+
+        function payDepositWithVoucher() {
+            if (!selectedVoucherId) {
+                showToast(t('ac.msg.t4'), 'error');
+                return;
+            }
+            var btn = document.getElementById('btnPayVoucher');
+            btn.disabled = true;
+            btn.textContent = '处理中...';
+
+            ensureDraftCreated().then(function(auctionId) {
+                return fetch(DEPOSIT_API + '/buyer/pay?auctionId=' + auctionId + '&voucherId=' + selectedVoucherId, {
+                    method: 'POST',
+                    headers: getAuthHeaders(false)
+                });
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+                if (res.code === 200) {
+                    depositPaid = true;
+                    selectedVoucherId = null;
+                    // 移除已使用的抵用券
+                    myVouchers = myVouchers.filter(function(v) { return v.id !== res.data.voucherId; });
+                    renderVoucherList();
+                    updateDepositStatus();
+                    showToast(t('ac.msg.t0'), 'success');
+                } else {
+                    throw new Error(res.message || '支付失败');
+                }
+            })
+            .catch(function(err) {
+                showToast(err.message || '使用抵用券失败', 'error');
+            })
+            .finally(function() {
+                btn.disabled = false;
+                btn.textContent = '使用抵用券';
+            });
+        }
+
+        function payDepositWithPayPal() {
+            showToast('PayPal deposit unavailable', 'Auction deposits require a dedicated escrow integration.', 'warning');
+        }
+
+        function updateDepositStatus() {
+            var statusEl = document.getElementById('deposit-status');
+            var btnPay = document.getElementById('btnPayDeposit');
+            var btnVoucher = document.getElementById('btnPayVoucher');
+            if (depositPaid) {
+                statusEl.innerHTML = '<span style="color:#00E5CC;font-weight:600;">&#10003; 已缴纳</span>';
+                btnPay.disabled = true;
+                btnPay.textContent = '已缴纳';
+                btnPay.style.background = '#2a3441';
+                btnPay.style.color = '#8b9cb5';
+                btnVoucher.style.display = 'none';
+                var btnPayPal = document.getElementById('btnPayPayPal');
+                if (btnPayPal) { btnPayPal.style.display = 'none'; }
+                var paypalContainer = document.getElementById('paypal-deposit-container');
+                if (paypalContainer) { paypalContainer.style.display = 'none'; }
+                document.getElementById('voucher-list').innerHTML = '';
+            }
+            updatePublishBtnState();
+        }
+
+        function updatePublishBtnState() {
+            var btn = document.getElementById('btnSubmit');
+            if (!depositPaid) {
+                btn.disabled = true;
+                btn.title = '请先缴纳押金';
+            } else {
+                btn.disabled = false;
+                btn.title = '';
+            }
+        }
+
+        // ========== 表单提交 ==========
+
+        function formatDateTimeLocal(date) {
+            function pad(value) { return String(value).padStart(2, '0'); }
+            return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate())
+                + 'T' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+        }
+
+        function applyDemoTemplate() {
+            var key = new URLSearchParams(window.location.search).get('template');
+            if (!key || !window.YICAI_AUCTION_DEMO) return;
+            var demo = window.YICAI_AUCTION_DEMO.getByKey(key);
+            if (!demo) return;
+            document.getElementById('productName').value = demo.productName || '';
+            document.getElementById('productCategory').value = '其他';
+            document.getElementById('specification').value = demo.specification || '';
+            document.getElementById('quantity').value = demo.quantity || '';
+            document.getElementById('unit').value = demo.unit || 'pcs';
+            document.getElementById('currency').value = demo.currency || 'USD';
+            document.getElementById('startingPrice').value = demo.startingPrice || '';
+            document.getElementById('minDecrement').value = demo.minDecrement || '';
+            document.getElementById('deliveryAddress').value = demo.deliveryAddress || '';
+            document.getElementById('requiredDeliveryDate').value = demo.requiredDeliveryDate || '';
+            document.getElementById('paymentTerms').value = demo.paymentTerms || '';
+            document.getElementById('remark').value = demo.remark || '';
+            var notice = document.getElementById('templateNotice');
+            notice.style.display = 'block';
+            notice.innerHTML = '<strong style="color:#00E5CC;">已载入演示模板</strong>：请把示例规格、数量、交期和贸易条款替换为您的真实需求。提交前易采团队会再次核对报价口径。';
+        }
+
+        function submitAuction(event) {
+            event.preventDefault();
+            if (!depositPaid) {
+                showToast(t('ac.msg.t1'), 'error');
+                return;
+            }
+            var btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.textContent = '提交中...';
+
+            var doPublish = function(auctionId) {
+                return fetch(API_BASE + '/' + auctionId + '/publish', {
+                    method: 'POST',
+                    headers: getAuthHeaders(false)
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (res.code === 200) {
+                        showToast(t('ac.msg.t2'), 'success');
+                        setTimeout(function() {
+                            window.location.href = 'auction-detail.html?id=' + auctionId;
+                        }, 1500);
+                    } else {
+                        throw new Error(res.message || '发布失败');
+                    }
+                });
+            };
+
+            // 如果已有草稿直接发布，否则先创建再发布
+            var p = draftAuctionId ? Promise.resolve(draftAuctionId) : ensureDraftCreated();
+            p.then(function(auctionId) { return doPublish(auctionId); })
+            .catch(function(err) {
+                showToast(err.message || '发布失败，请重试', 'error');
+                btn.disabled = false;
+                btn.textContent = '发起竞价';
+            });
+        }
+
+        function saveDraft() {
+            if (draftAuctionId) {
+                showToast('草稿已保存 (ID:' + draftAuctionId + ')', 'success');
+                return;
+            }
+            var data = collectFormData();
+            fetch(API_BASE + '/create', {
+                method: 'POST',
+                headers: getAuthHeaders(true),
+                body: JSON.stringify(data)
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+                if (res.code === 200) {
+                    draftAuctionId = res.data.id;
+                    showToast('草稿保存成功 (ID:' + draftAuctionId + ')', 'success');
+                } else {
+                    throw new Error(res.message || '保存失败');
+                }
+            })
+            .catch(function(err) {
+                showToast(err.message || '保存失败', 'error');
+            });
+        }
+
+        function collectFormData() {
+            return {
+                productName: document.getElementById('productName').value,
+                productCategory: document.getElementById('productCategory').value,
+                specification: document.getElementById('specification').value,
+                quantity: parseInt(document.getElementById('quantity').value) || 1,
+                unit: document.getElementById('unit').value,
+                startingPrice: parseFloat(document.getElementById('startingPrice').value) || 0,
+                minDecrement: parseFloat(document.getElementById('minDecrement').value) || 1,
+                signupStartTime: document.getElementById('signupStartTime').value || null,
+                signupEndTime: document.getElementById('signupEndTime').value || null,
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
+                minParticipants: parseInt(document.getElementById('minParticipants').value) || 3,
+                extensionTriggerMinutes: parseInt(document.getElementById('extensionTriggerMinutes').value) || 5,
+                extensionMinutes: parseInt(document.getElementById('extensionMinutes').value) || 5,
+                maxExtensions: parseInt(document.getElementById('maxExtensions').value) || 10,
+                showRanking: document.getElementById('showRanking').checked,
+                showLowestPrice: document.getElementById('showLowestPrice').checked,
+                deliveryAddress: document.getElementById('deliveryAddress').value,
+                requiredDeliveryDate: document.getElementById('requiredDeliveryDate').value || null,
+                paymentTerms: document.getElementById('paymentTerms').value,
+                remark: document.getElementById('remark').value,
+                currency: document.getElementById('currency').value
+            };
+        }
+
+        function showToast(message, type) {
+            var existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            var toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(function() { toast.remove(); }, 3000);
+        }
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+</body>
+</html>

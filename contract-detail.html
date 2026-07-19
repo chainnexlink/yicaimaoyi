@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="contractDetail.tjal78u">合同详情 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .contract-detail-page {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            padding-bottom: 40px;
+        }
+
+        .contract-header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 24px;
+        }
+
+        .contract-header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .contract-title-area h1 {
+            font-size: 24px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .contract-meta {
+            display: flex;
+            gap: 24px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .contract-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .contract-status {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-badge-lg {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .status-badge-lg.pending { background: rgba(255, 217, 61, 0.15); color: var(--accent-yellow); }
+        .status-badge-lg.signed { background: rgba(78, 205, 196, 0.15); color: var(--accent-green); }
+        .status-badge-lg.executing { background: rgba(59, 130, 246, 0.15); color: #3B82F6; }
+        .status-badge-lg.completed { background: rgba(16, 185, 129, 0.15); color: #10B981; }
+        .status-badge-lg.terminated { background: rgba(239, 68, 68, 0.15); color: #EF4444; }
+        .status-badge-lg.draft { background: rgba(156, 163, 175, 0.15); color: #9CA3AF; }
+
+        .contract-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 32px;
+        }
+
+        .contract-main {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .contract-section {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .contract-section:last-child { border-bottom: none; }
+
+        .contract-section h2 {
+            font-size: 16px;
+            color: var(--primary-cyan);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .contract-section h2 svg { width: 20px; height: 20px; }
+
+        .contract-parties {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .party-card {
+            padding: 20px;
+            background: var(--bg-darker);
+            border-radius: 10px;
+        }
+
+        .party-card h3 { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+        .party-card .company-name { font-size: 18px; color: var(--text-primary); margin-bottom: 16px; }
+
+        .party-info { font-size: 14px; color: var(--text-secondary); }
+        .party-info p { margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .party-info p span:first-child { color: var(--text-muted); }
+
+        .contract-terms {
+            background: var(--bg-darker);
+            border-radius: 10px;
+            padding: 24px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .contract-terms h3 { font-size: 16px; color: var(--text-primary); margin-bottom: 16px; text-align: center; }
+        .contract-terms h4 { font-size: 14px; color: var(--primary-cyan); margin: 20px 0 12px; }
+        .contract-terms p { font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 12px; text-indent: 2em; }
+
+        .product-table { width: 100%; border-collapse: collapse; }
+        .product-table th, .product-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .product-table th { background: var(--bg-darker); font-size: 13px; font-weight: 500; color: var(--text-muted); }
+        .product-table td { font-size: 14px; color: var(--text-primary); }
+        .product-table tfoot td { font-weight: 600; }
+        .total-amount { color: var(--primary-cyan); font-size: 18px; }
+
+        .signature-area { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .signature-box { padding: 24px; background: var(--bg-darker); border-radius: 10px; text-align: center; }
+        .signature-box h4 { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; }
+        .signature-placeholder { height: 100px; border: 2px dashed var(--border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; transition: var(--transition-fast); }
+        .signature-placeholder.signed { border-color: var(--primary-cyan); background: rgba(0, 229, 204, 0.05); }
+        .signature-placeholder span { color: var(--text-muted); font-size: 14px; }
+        .signature-info { font-size: 13px; color: var(--text-muted); }
+
+        .contract-sidebar { display: flex; flex-direction: column; gap: 24px; }
+        .sidebar-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; }
+        .sidebar-card h3 { font-size: 15px; color: var(--text-primary); margin-bottom: 20px; }
+        .action-buttons { display: flex; flex-direction: column; gap: 12px; }
+
+        .btn-sign { padding: 14px; background: var(--primary-cyan); border: none; border-radius: 8px; color: #000; font-size: 15px; font-weight: 600; cursor: pointer; transition: var(--transition-fast); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-sign:hover { background: var(--primary-cyan-light); }
+        .btn-sign:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-sign svg { width: 20px; height: 20px; }
+
+        .btn-action { padding: 12px; background: var(--bg-darker); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-secondary); font-size: 14px; cursor: pointer; transition: var(--transition-fast); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-action:hover { border-color: var(--primary-cyan); color: var(--primary-cyan); }
+        .btn-action:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-action svg { width: 18px; height: 18px; }
+        .btn-action.danger { border-color: rgba(239,68,68,0.3); color: #EF4444; }
+        .btn-action.danger:hover { border-color: #EF4444; background: rgba(239,68,68,0.08); }
+
+        .process-timeline { position: relative; padding-left: 24px; }
+        .process-timeline::before { content: ''; position: absolute; left: 6px; top: 0; bottom: 0; width: 2px; background: var(--border-color); }
+        .process-step { position: relative; padding-bottom: 20px; }
+        .process-step:last-child { padding-bottom: 0; }
+        .process-step::before { content: ''; position: absolute; left: -24px; top: 2px; width: 14px; height: 14px; background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 50%; }
+        .process-step.completed::before { background: var(--primary-cyan); border-color: var(--primary-cyan); }
+        .process-step.active::before { border-color: var(--primary-cyan); box-shadow: 0 0 0 4px rgba(0, 229, 204, 0.2); }
+        .process-step h4 { font-size: 14px; color: var(--text-primary); margin-bottom: 4px; }
+        .process-step.completed h4 { color: var(--primary-cyan); }
+        .process-step p { font-size: 12px; color: var(--text-muted); }
+
+        .document-list { display: flex; flex-direction: column; gap: 12px; }
+        .document-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-darker); border-radius: 8px; cursor: pointer; transition: var(--transition-fast); }
+        .document-item:hover { background: rgba(0, 229, 204, 0.05); }
+        .document-icon { width: 40px; height: 40px; background: rgba(0, 229, 204, 0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .document-icon svg { width: 20px; height: 20px; color: var(--primary-cyan); }
+        .document-info { flex: 1; }
+        .document-info h5 { font-size: 14px; color: var(--text-primary); margin-bottom: 2px; }
+        .document-info p { font-size: 12px; color: var(--text-muted); }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; width: 100%; max-width: 500px; padding: 32px; }
+        .modal-header { text-align: center; margin-bottom: 24px; }
+        .modal-header h2 { font-size: 20px; color: var(--text-primary); margin-bottom: 8px; }
+        .modal-header p { color: var(--text-muted); font-size: 14px; }
+        .signature-canvas-area { background: var(--bg-darker); border: 2px dashed var(--border-color); border-radius: 12px; height: 200px; margin-bottom: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .signature-canvas-area svg { width: 48px; height: 48px; color: var(--text-muted); margin-bottom: 12px; }
+        .signature-canvas-area p { color: var(--text-muted); font-size: 14px; }
+        .modal-actions { display: flex; gap: 12px; }
+        .modal-actions button { flex: 1; padding: 14px; border-radius: 8px; font-size: 15px; cursor: pointer; transition: var(--transition-fast); }
+        .btn-cancel { background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); }
+        .btn-cancel:hover { border-color: var(--text-primary); color: var(--text-primary); }
+        .btn-confirm-sign { background: var(--primary-cyan); border: none; color: #000; font-weight: 600; }
+        .btn-confirm-sign:hover { background: var(--primary-cyan-light); }
+        .btn-confirm-sign:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .change-log-item { padding: 16px; background: var(--bg-darker); border-radius: 8px; margin-bottom: 12px; border-left: 3px solid var(--border-color); }
+        .change-log-item.pending { border-left-color: #F59E0B; }
+        .change-log-item.approved { border-left-color: #10B981; }
+        .change-log-item.rejected { border-left-color: #EF4444; }
+
+        /* Change request modal */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+        .form-group select, .form-group textarea { width: 100%; background: var(--bg-darker); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: var(--text-primary); font-size: 14px; font-family: inherit; }
+        .form-group select:focus, .form-group textarea:focus { border-color: var(--primary-cyan); outline: none; }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+
+        .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; z-index: 2000; }
+        .loading-spinner { text-align: center; color: var(--text-muted); }
+        .loading-spinner .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--primary-cyan); margin: 0 4px; animation: bounce 1.4s ease-in-out infinite; }
+        .loading-spinner .dot:nth-child(2) { animation-delay: 0.2s; }
+        .loading-spinner .dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        .platform-badge { display: inline-block; font-size: 11px; padding: 3px 10px; background: rgba(255,217,61,0.2); color: #D4A00D; border-radius: 12px; margin-left: 10px; }
+
+        .physical-contract-section { margin-top: 16px; padding: 20px; background: var(--bg-darker); border-radius: 10px; border: 1px dashed var(--border-color); }
+        .physical-contract-section h4 { font-size: 14px; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .physical-contract-section .upload-area { padding: 24px; background: rgba(0,229,204,0.03); border: 2px dashed rgba(0,229,204,0.2); border-radius: 8px; text-align: center; cursor: pointer; transition: var(--transition-fast); }
+        .physical-contract-section .upload-area:hover { border-color: var(--primary-cyan); background: rgba(0,229,204,0.06); }
+        .physical-contract-section .upload-area p { color: var(--text-muted); font-size: 13px; margin-top: 8px; }
+        .physical-contract-section .uploaded-preview { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(16,185,129,0.08); border-radius: 8px; }
+        .physical-contract-section .uploaded-preview a { color: var(--primary-cyan); font-size: 14px; }
+        .review-status-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+        .review-status-badge.pending-upload { background: rgba(156,163,175,0.15); color: #9CA3AF; }
+        .review-status-badge.pending-review { background: rgba(255,217,61,0.15); color: #D4A00D; }
+        .review-status-badge.approved { background: rgba(16,185,129,0.15); color: #10B981; }
+        .review-status-badge.rejected { background: rgba(239,68,68,0.15); color: #EF4444; }
+
+        @media (max-width: 1024px) {
+            .contract-container { grid-template-columns: 1fr; }
+            .contract-parties, .signature-area { grid-template-columns: 1fr; }
+        }
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <p style="margin-top:16px;">加载合同详情...</p>
+        </div>
+    </div>
+
+    <div class="contract-detail-page" id="contractPage" style="display:none;">
+        <!-- 顶部导航 -->
+        <header class="header">
+            <div class="header-container">
+                <div class="header-left">
+                    <a href="javascript:history.back()" class="inline-back">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        返回
+                    </a>
+                    <a href="index.html" style="color: var(--primary-cyan); font-size: 18px; font-weight: 700; text-decoration: none;">
+                        全球供应链智能匹配平台
+                    </a>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                    <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+                    <a href="user-center.html#contracts" class="nav-link" data-i18n="user.contracts">合同管理</a>
+                    <a href="chat.html" class="nav-link">消息</a>
+                    <a href="user-center.html" class="nav-link">个人中心</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- 合同头部 -->
+        <div class="contract-header">
+            <div class="contract-header-inner">
+                <div class="contract-title-area">
+                    <h1 id="headerTitle">合同详情</h1>
+                    <div class="contract-meta">
+                        <span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            <span id="headerCreatedAt">--</span>
+                        </span>
+                        <span id="headerOrderLink" style="display:none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+                            <a id="headerOrderA" href="#" style="color:var(--primary-cyan);text-decoration:none;">--</a>
+                        </span>
+                        <span id="headerMode" style="display:none;"></span>
+                    </div>
+                </div>
+                <div class="contract-status">
+                    <span class="status-badge-lg" id="headerStatus">--</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="contract-container">
+            <!-- 合同主体 -->
+            <div class="contract-main">
+                <!-- 合同双方 -->
+                <div class="contract-section">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        合同双方
+                    </h2>
+                    <div class="contract-parties" id="partiesArea">
+                        <div class="party-card">
+                            <h3 data-i18n="contractDetail.tvh5azb">甲方（采购方）</h3>
+                            <div class="company-name" id="buyerName">--</div>
+                            <div class="party-info">
+                                <p><span data-i18n="contractDetail.ta9l7mp">买家ID</span><span id="buyerIdDisplay">--</span></p>
+                            </div>
+                        </div>
+                        <div class="party-card">
+                            <h3 data-i18n="contractDetail.tludn9t">乙方（供应方）</h3>
+                            <div class="company-name" id="supplierName">--</div>
+                            <div class="party-info">
+                                <p><span data-i18n="contractDetail.tvmfeag">供应商ID</span><span id="supplierIdDisplay">--</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 商品明细 -->
+                <div class="contract-section">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                        合同信息
+                    </h2>
+                    <table class="product-table" id="contractInfoTable">
+                        <thead><tr><th data-i18n="contractDetail.tql5h">项目</th><th data-i18n="contractDetail.tedas">内容</th></tr></thead>
+                        <tbody id="contractInfoBody"></tbody>
+                        <tfoot>
+                            <tr>
+                                <td style="text-align:right;">合同金额：</td>
+                                <td class="total-amount" id="totalAmountDisplay">--</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- 合同条款 -->
+                <div class="contract-section" id="contractContentSection" style="display:none;">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        合同条款
+                    </h2>
+                    <div class="contract-terms" id="contractTermsContent"></div>
+                </div>
+
+                <!-- 变更记录 -->
+                <div class="contract-section" id="changeLogsSection" style="display:none;">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                        变更记录 <span id="changeLogCount" style="font-size:13px;color:var(--text-muted);font-weight:400;margin-left:8px;"></span>
+                    </h2>
+                    <div id="changeLogsContainer"></div>
+                </div>
+
+                <!-- 签署区域 -->
+                <div class="contract-section">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                        电子签章
+                    </h2>
+                    <div class="signature-area">
+                        <div class="signature-box">
+                            <h4 data-i18n="contractDetail.tf7n2nd">甲方签章</h4>
+                            <div class="signature-placeholder" id="buyerSignPlaceholder">
+                                <span id="buyerSignText">待签署</span>
+                            </div>
+                            <p class="signature-info" id="buyerSignInfo">--</p>
+                        </div>
+                        <div class="signature-box">
+                            <h4 data-i18n="contractDetail.tab8y3m">乙方签章</h4>
+                            <div class="signature-placeholder" id="supplierSignPlaceholder">
+                                <span id="supplierSignText">待签署</span>
+                            </div>
+                            <p class="signature-info" id="supplierSignInfo">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 纸质合同上传审核区域（双方签署后显示） -->
+                <div class="contract-section" id="physicalContractSection" style="display:none;">
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        纸质合同上传审核
+                        <span class="review-status-badge" id="reviewStatusBadge" style="margin-left:12px;"></span>
+                    </h2>
+                    <div style="font-size:13px;color:var(--text-muted);margin-bottom:16px;line-height:1.8;">
+                        双方电子签署完成后，请上传纸质合同扫描件（盖章版）。平台审核通过后，订单将正式生效执行。
+                    </div>
+                    <div class="physical-contract-section" id="physicalContractUploadArea">
+                        <!-- 动态渲染：上传区域或已上传预览 -->
+                    </div>
+                    <div id="reviewNoteArea" style="display:none;margin-top:12px;padding:12px 16px;border-radius:8px;font-size:13px;line-height:1.7;"></div>
+                </div>
+            </div>
+
+            <!-- 右侧操作面板 -->
+            <div class="contract-sidebar">
+                <!-- 操作按钮 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="contractDetail.taycp4j">合同操作</h3>
+                    <div class="action-buttons" id="actionButtons"></div>
+                </div>
+
+                <!-- 签署流程 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="contractDetail.tg3xl0e">签署流程</h3>
+                    <div class="process-timeline" id="processTimeline"></div>
+                </div>
+
+                <!-- 平台服务费说明 -->
+                <div class="sidebar-card" id="serviceFeeCard" style="display:none;border:1px solid rgba(255,193,7,0.25);background:rgba(255,193,7,0.04);">
+                    <h3 style="display:flex;align-items:center;gap:8px;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffc107" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        平台服务费说明
+                    </h3>
+                    <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.8;">
+                        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                            <span data-i18n="contractDetail.t3gjgtx">平台固定佣金</span>
+                            <span style="font-weight:600;color:#ffc107;">合同金额 x 2%</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                            <span data-i18n="contractDetail.tih7urq">返佣比例</span>
+                            <span style="font-weight:600;color:var(--primary-cyan);">合同金额 x 1%-10%</span>
+                        </div>
+                        <div style="margin-top:10px;padding:10px 12px;background:rgba(40,167,69,0.08);border-radius:6px;font-size:12px;color:#28a745;">
+                            <strong data-i18n="contractDetail.t4ppoi9">返佣说明：</strong>您自定义的返佣部分将在合同完成后自动返回至零钱账户。
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 相关文档 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="contractDetail.tfcm83b">相关文档</h3>
+                    <div class="document-list" id="documentList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 签署弹窗（简化为一键确认） -->
+    <div class="modal-overlay" id="signModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-i18n="contractDetail.tid8vkj">电子签章确认</h2>
+                <p data-i18n="contractDetail.tf6zgyv">请确认您已仔细阅读合同条款，并同意签署此合同</p>
+            </div>
+            <div class="signature-canvas-area" id="signatureArea">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
+                <p data-i18n="contractDetail.tcua8pz">点击"确认签署"完成电子签章</p>
+            </div>
+            <div style="padding:12px 16px;background:rgba(255,193,7,0.08);border-radius:8px;font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:20px;line-height:1.8;">
+                <strong style="color:#ffc107;">提示：</strong>双方签署完成后，系统将自动生成盖章PDF。您还需上传纸质合同扫描件，经平台审核通过后订单才会正式执行。
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeSignModal()">取消</button>
+                <button class="btn-confirm-sign" id="confirmSignBtn" onclick="confirmSign()">确认签署</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 变更申请弹窗 -->
+    <div class="modal-overlay" id="changeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="changeModalTitle">申请合同变更</h2>
+                <p id="changeModalDesc">请填写变更信息</p>
+            </div>
+            <div class="form-group">
+                <label data-i18n="contractDetail.tb0dtak">变更类型</label>
+                <select id="changeType">
+                    <option value="AMENDMENT">合同条款修改</option>
+                    <option value="PRICE_ADJUSTMENT">价格调整</option>
+                    <option value="EXTENSION">延期</option>
+                    <option value="TERMINATION">终止合同</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label data-i18n="contractDetail.tb06uyl">变更原因</label>
+                <textarea id="changeReason" placeholder="请详细说明变更原因..."></textarea>
+            </div>
+            <div class="form-group">
+                <label data-i18n="contractDetail.tlwc65r">变更内容说明（可选）</label>
+                <textarea id="changeContent" placeholder="描述变更后的内容..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeChangeModal()">取消</button>
+                <button class="btn-confirm-sign" id="submitChangeBtn" onclick="submitChange()">提交变更</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        // ========== 全局状态 ==========
+        var contractData = null;
+        var currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        var userId = currentUser.id || currentUser.userId || null;
+        var buyerId = currentUser.buyerId || null;
+        var supplierId = currentUser.supplierId || null;
+        var userRole = currentUser.role || currentUser.userType || '';
+
+        var STATUS_MAP = {
+            'DRAFT':            { text: t('cd.status.draft'), cls: 'draft' },
+            'PENDING_BUYER':    { text: t('cd.status.pendingBuyer'), cls: 'pending' },
+            'PENDING_SUPPLIER': { text: t('cd.status.pendingSeller'), cls: 'pending' },
+            'SIGNED':           { text: t('cd.status.signed'), cls: 'signed' },
+            'EXECUTING':        { text: t('cd.status.executing'), cls: 'executing' },
+            'COMPLETED':        { text: t('cd.status.completed'), cls: 'completed' },
+            'TERMINATED':       { text: t('cd.status.terminated'), cls: 'terminated' }
+        };
+
+        var REVIEW_STATUS_MAP = {
+            'PENDING_UPLOAD':  { text: t('cd.review.pendingUpload'), cls: 'pending-upload' },
+            'PENDING_REVIEW':  { text: t('cd.review.pendingReview'), cls: 'pending-review' },
+            'APPROVED':        { text: t('cd.review.approved'), cls: 'approved' },
+            'REJECTED':        { text: t('cd.review.rejected'), cls: 'rejected' }
+        };
+
+        var CHANGE_TYPE_MAP = {
+            'AMENDMENT': '条款修改',
+            'TERMINATION': '终止申请',
+            'EXTENSION': '延期申请',
+            'PRICE_ADJUSTMENT': '价格调整'
+        };
+
+        var CHANGE_STATUS_MAP = {
+            'PENDING': { text: t('cd.change.pending'), cls: 'pending' },
+            'APPROVED': { text: t('cd.change.approved'), cls: 'approved' },
+            'REJECTED': { text: t('cd.change.rejected'), cls: 'rejected' },
+            'CANCELLED': { text: t('cd.change.cancelled'), cls: 'rejected' }
+        };
+
+        // ========== 工具函数 ==========
+        function fmtAmount(v) {
+            var n = parseFloat(v || 0);
+            return '¥' + n.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function fmtDateTime(dt) {
+            if (!dt) return '--';
+            var d = new Date(dt);
+            if (isNaN(d.getTime())) return dt;
+            return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0')
+                + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+        }
+
+        function fmtDate(dt) {
+            if (!dt) return '--';
+            var d = new Date(dt);
+            if (isNaN(d.getTime())) return dt;
+            return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        }
+
+        function showToast(msg, type) {
+            var toast = document.createElement('div');
+            var colors = { success: '#10B981', error: '#EF4444', warning: '#F59E0B', info: '#3B82F6' };
+            toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:14px 24px;background:' + (colors[type] || colors.info) + ';color:#fff;border-radius:8px;font-size:14px;z-index:3000;animation:fadeIn .3s;box-shadow:0 4px 12px rgba(0,0,0,0.3);';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(function() { toast.remove(); }, 3000);
+        }
+
+        // ========== 页面加载 ==========
+        async function loadContract() {
+            var params = new URLSearchParams(window.location.search);
+            var contractId = params.get('id');
+            var contractNo = params.get('no') || params.get('contractNo');
+
+            if (!contractId && !contractNo) {
+                // 尝试从localStorage获取
+                var signingNo = localStorage.getItem('signingContractNo');
+                if (signingNo) contractNo = signingNo;
+            }
+
+            try {
+                var result;
+                if (contractId) {
+                    result = await YicaiAPI.get('/contracts/' + contractId);
+                } else if (contractNo) {
+                    result = await YicaiAPI.get('/contracts/no/' + contractNo);
+                } else {
+                    throw new Error('未指定合同ID或编号');
+                }
+
+                if (result && result.code === 200 && result.data) {
+                    contractData = result.data;
+                    renderContract(contractData);
+                } else {
+                    throw new Error((result && result.message) || '加载失败');
+                }
+            } catch (err) {
+                console.error('加载合同失败:', err);
+                // 尝试从localStorage加载
+                var localContract = loadFromLocalStorage(contractNo || contractId);
+                if (localContract) {
+                    contractData = localContract;
+                    renderContract(contractData);
+                } else {
+                    document.getElementById('loadingOverlay').innerHTML =
+                        '<div style="text-align:center;color:var(--text-muted);">' +
+                        '<p style="font-size:18px;margin-bottom:16px;">合同加载失败</p>' +
+                        '<p style="margin-bottom:24px;">' + (err.message || '未知错误') + '</p>' +
+                        '<a href="javascript:history.back()" style="color:var(--primary-cyan);">返回上一页</a>' +
+                        '</div>';
+                    return;
+                }
+            }
+
+            document.getElementById('loadingOverlay').style.display = 'none';
+            document.getElementById('contractPage').style.display = '';
+        }
+
+        function loadFromLocalStorage(key) {
+            var pending = JSON.parse(localStorage.getItem('pendingContracts') || '[]');
+            return pending.find(function(c) { return c.contractNo === key || String(c.id) === String(key); }) || null;
+        }
+
+        // ========== 渲染合同 ==========
+        function renderContract(c) {
+            document.title = (c.contractTitle || '合同详情') + ' - 全球供应链智能匹配平台';
+
+            // 头部
+            var titleText = (c.contractTitle || '采购合同') + ' ' + (c.contractNo || '');
+            var isPlatform = c.procurementMode === 'PLATFORM_PROCUREMENT';
+            document.getElementById('headerTitle').innerHTML = titleText + (isPlatform ? '<span class="platform-badge">平台代采</span>' : '');
+            document.getElementById('headerCreatedAt').textContent = '创建时间：' + fmtDateTime(c.createdAt);
+
+            // 关联订单
+            if (c.orderId) {
+                document.getElementById('headerOrderLink').style.display = '';
+                var orderA = document.getElementById('headerOrderA');
+                orderA.textContent = '关联订单 #' + c.orderId;
+                orderA.href = 'order-detail.html?id=' + c.orderId;
+            }
+
+            // 采购模式
+            if (isPlatform) {
+                document.getElementById('headerMode').style.display = '';
+                document.getElementById('headerMode').textContent = '平台代采';
+                document.getElementById('serviceFeeCard').style.display = '';
+            }
+
+            // 状态
+            var st = STATUS_MAP[c.status] || { text: c.status || t('cd.status.unknown'), cls: 'draft' };
+            var statusEl = document.getElementById('headerStatus');
+            statusEl.textContent = st.text;
+            statusEl.className = 'status-badge-lg ' + st.cls;
+
+            // 双方信息
+            document.getElementById('buyerName').textContent = c.buyerName || ('采购商 #' + (c.buyerId || ''));
+            document.getElementById('buyerIdDisplay').textContent = c.buyerId || '--';
+            document.getElementById('supplierName').textContent = isPlatform && !c.supplierId ? '易采贸易平台（待分配供应商）' : (c.supplierName || ('供应商 #' + (c.supplierId || '')));
+            document.getElementById('supplierIdDisplay').textContent = c.supplierId || (isPlatform ? '平台代采' : '--');
+
+            // 合同信息表
+            var infoRows = [
+                ['合同编号', c.contractNo || '--'],
+                ['合同类型', c.contractType || '采购合同'],
+                ['采购模式', c.procurementModeDisplay || (isPlatform ? '平台代采' : '直接采购')],
+                ['合同币种', c.currency || 'CNY'],
+                ['交付日期', fmtDate(c.deliveryDate)],
+                ['付款条款', c.paymentTerms || '--'],
+                ['质量标准', c.qualityStandards || '--']
+            ];
+            if (c.smartMatchProductName) {
+                infoRows.splice(3, 0, ['采购产品', c.smartMatchProductName]);
+            }
+            if (c.remark) {
+                infoRows.push(['备注', c.remark]);
+            }
+            document.getElementById('contractInfoBody').innerHTML = infoRows.map(function(r) {
+                return '<tr><td style="color:var(--text-muted);width:140px;">' + r[0] + '</td><td>' + r[1] + '</td></tr>';
+            }).join('');
+            document.getElementById('totalAmountDisplay').textContent = fmtAmount(c.totalAmount);
+
+            // 合同条款
+            if (c.contractContent) {
+                document.getElementById('contractContentSection').style.display = '';
+                document.getElementById('contractTermsContent').innerHTML = c.contractContent;
+            }
+
+            // 变更记录
+            if (c.changeLogs && c.changeLogs.length > 0) {
+                document.getElementById('changeLogsSection').style.display = '';
+                document.getElementById('changeLogCount').textContent = '(' + c.changeLogs.length + '条)';
+                document.getElementById('changeLogsContainer').innerHTML = c.changeLogs.map(function(log) {
+                    var ls = CHANGE_STATUS_MAP[log.status] || { text: log.status, cls: '' };
+                    return '<div class="change-log-item ' + ls.cls + '">'
+                        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+                        + '<span style="font-weight:500;color:var(--text-primary);">' + (CHANGE_TYPE_MAP[log.changeType] || log.changeType) + '</span>'
+                        + '<span style="font-size:12px;padding:3px 10px;border-radius:12px;background:rgba(255,255,255,0.05);color:var(--text-muted);">' + ls.text + '</span>'
+                        + '</div>'
+                        + '<p style="font-size:13px;color:var(--text-secondary);margin-bottom:6px;">' + (log.changeReason || '--') + '</p>'
+                        + '<div style="font-size:12px;color:var(--text-muted);">'
+                        + '申请方：' + (log.initiatorName || log.initiatorType || '--') + ' | '
+                        + '申请时间：' + fmtDateTime(log.createdAt)
+                        + (log.approvedAt ? ' | 审批时间：' + fmtDateTime(log.approvedAt) : '')
+                        + (log.approvalNote ? ' | 审批意见：' + log.approvalNote : '')
+                        + '</div></div>';
+                }).join('');
+            }
+
+            // 签署区域
+            renderSignatures(c);
+
+            // 纸质合同上传审核区域
+            renderPhysicalContract(c);
+
+            // 操作按钮
+            renderActions(c);
+
+            // 签署流程
+            renderTimeline(c);
+
+            // 相关文档
+            renderDocuments(c);
+        }
+
+        function renderSignatures(c) {
+            var buyerPh = document.getElementById('buyerSignPlaceholder');
+            var buyerText = document.getElementById('buyerSignText');
+            var buyerInfo = document.getElementById('buyerSignInfo');
+            var supplierPh = document.getElementById('supplierSignPlaceholder');
+            var supplierText = document.getElementById('supplierSignText');
+            var supplierInfo = document.getElementById('supplierSignInfo');
+
+            if (c.buyerSigned) {
+                buyerPh.classList.add('signed');
+                buyerText.textContent = '已签署';
+                buyerText.style.color = 'var(--primary-cyan)';
+                buyerInfo.textContent = '签署时间：' + fmtDateTime(c.buyerSignedAt);
+            } else {
+                buyerText.textContent = '待签署';
+            }
+
+            if (c.supplierSigned) {
+                supplierPh.classList.add('signed');
+                supplierText.textContent = '已签署';
+                supplierText.style.color = 'var(--primary-cyan)';
+                supplierInfo.textContent = '签署时间：' + fmtDateTime(c.supplierSignedAt);
+            } else {
+                supplierText.textContent = '待签署';
+            }
+        }
+
+        function renderPhysicalContract(c) {
+            var section = document.getElementById('physicalContractSection');
+            var uploadArea = document.getElementById('physicalContractUploadArea');
+            var badge = document.getElementById('reviewStatusBadge');
+            var noteArea = document.getElementById('reviewNoteArea');
+
+            // 只有双方都签署后才显示该区域
+            if (!c.buyerSigned || !c.supplierSigned) {
+                section.style.display = 'none';
+                return;
+            }
+            section.style.display = '';
+
+            // 审核状态标签
+            var rs = REVIEW_STATUS_MAP[c.contractReviewStatus] || { text: c.contractReviewStatus || t('cd.status.unknown'), cls: '' };
+            badge.textContent = rs.text;
+            badge.className = 'review-status-badge ' + rs.cls;
+
+            var isParty = (buyerId && String(c.buyerId) === String(buyerId))
+                || (supplierId && String(c.supplierId) === String(supplierId));
+
+            if (c.physicalContractUrl) {
+                // 已上传 — 显示预览
+                var html = '<div class="uploaded-preview">'
+                    + '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
+                    + '<div style="flex:1;">'
+                    + '<a href="' + c.physicalContractUrl + '" target="_blank">查看纸质合同扫描件</a>'
+                    + '<p style="font-size:12px;color:var(--text-muted);margin-top:4px;">上传时间：' + fmtDateTime(c.physicalContractUploadedAt) + '</p>'
+                    + '</div>';
+                // 如果被驳回，允许重新上传
+                if (c.contractReviewStatus === 'REJECTED' && isParty) {
+                    html += '<button class="btn-action" style="width:auto;padding:8px 16px;" onclick="triggerPhysicalUpload()">'
+                        + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>'
+                        + '重新上传</button>';
+                }
+                html += '</div>';
+                uploadArea.innerHTML = html;
+            } else if (isParty && c.contractReviewStatus === 'PENDING_UPLOAD') {
+                // 未上传 — 显示上传区域
+                uploadArea.innerHTML = '<div class="upload-area" onclick="triggerPhysicalUpload()">'
+                    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="40" height="40"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>'
+                    + '<p data-i18n="contractDetail.tixesqt">点击上传纸质合同扫描件（支持 PDF / JPG / PNG）</p>'
+                    + '</div>'
+                    + '<input type="file" id="physicalFileInput" accept=".pdf,.jpg,.jpeg,.png" style="display:none;" onchange="handlePhysicalFileUpload(this)">';
+            } else {
+                uploadArea.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">'
+                    + (c.contractReviewStatus === 'APPROVED' ? '纸质合同已审核通过，订单已激活执行。' : '等待合同相关方上传纸质合同扫描件...')
+                    + '</div>';
+            }
+
+            // 审核备注
+            if (c.contractReviewNote) {
+                noteArea.style.display = '';
+                var isRejected = c.contractReviewStatus === 'REJECTED';
+                noteArea.style.background = isRejected ? 'rgba(239,68,68,0.08)' : 'rgba(16,185,129,0.08)';
+                noteArea.style.color = isRejected ? '#EF4444' : '#10B981';
+                noteArea.innerHTML = '<strong data-i18n="contractDetail.tgmuvs2">审核备注：</strong>' + c.contractReviewNote
+                    + (c.contractReviewedAt ? '<br><span style="font-size:12px;opacity:0.7;">审核时间：' + fmtDateTime(c.contractReviewedAt) + '</span>' : '');
+            } else {
+                noteArea.style.display = 'none';
+            }
+        }
+
+        function renderActions(c) {
+            var container = document.getElementById('actionButtons');
+            var html = '';
+            var canBuyerSign = !c.buyerSigned && buyerId && String(c.buyerId) === String(buyerId);
+            var canSupplierSign = !c.supplierSigned && supplierId && String(c.supplierId) === String(supplierId);
+            var isActive = ['DRAFT', 'PENDING_BUYER', 'PENDING_SUPPLIER', 'SIGNED', 'EXECUTING'].indexOf(c.status) >= 0;
+
+            if (canBuyerSign || canSupplierSign) {
+                html += '<button class="btn-sign" onclick="openSignModal()">'
+                    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>'
+                    + '签署合同</button>';
+            }
+
+            if (c.contractPdfUrl) {
+                html += '<button class="btn-action" onclick="window.open(\'' + c.contractPdfUrl + '\')">'
+                    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'
+                    + '下载合同PDF</button>';
+            }
+
+            if (isActive) {
+                html += '<button class="btn-action" onclick="openChangeModal(\'change\')">'
+                    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>'
+                    + '申请变更</button>';
+
+                html += '<button class="btn-action danger" onclick="openChangeModal(\'terminate\')">'
+                    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+                    + '申请终止</button>';
+            }
+
+            // 纸质合同上传按钮（双方签署后，且未上传或被驳回）
+            var isParty = (buyerId && String(c.buyerId) === String(buyerId))
+                || (supplierId && String(c.supplierId) === String(supplierId));
+            if (isParty && c.buyerSigned && c.supplierSigned
+                && (c.contractReviewStatus === 'PENDING_UPLOAD' || c.contractReviewStatus === 'REJECTED')) {
+                html += '<button class="btn-sign" onclick="triggerPhysicalUpload()" style="background:#F59E0B;">'
+                    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>'
+                    + (c.contractReviewStatus === 'REJECTED' ? '重新上传纸质合同' : '上传纸质合同') + '</button>';
+            }
+
+            html += '<button class="btn-action" onclick="window.location.href=\'chat.html\'">'
+                + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
+                + '联系对方</button>';
+
+            if (!html) {
+                html = '<p style="color:var(--text-muted);font-size:13px;text-align:center;">合同已' + (STATUS_MAP[c.status] || {}).text + '，暂无可用操作</p>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        function renderTimeline(c) {
+            var steps = [];
+
+            // Step 1: 合同创建
+            steps.push({ title: '合同创建', time: fmtDateTime(c.createdAt), state: 'completed' });
+
+            // Step 2: 平台审核（if applicable）
+            if (c.procurementMode === 'PLATFORM_PROCUREMENT') {
+                if (c.platformReviewed) {
+                    steps.push({ title: '平台审核', time: fmtDateTime(c.platformReviewedAt), state: 'completed' });
+                } else {
+                    steps.push({ title: '平台审核', time: '等待审核...', state: c.buyerSigned || c.supplierSigned ? 'completed' : 'active' });
+                }
+            }
+
+            // Step 3: 买方签署
+            if (c.buyerSigned) {
+                steps.push({ title: '甲方签署', time: fmtDateTime(c.buyerSignedAt), state: 'completed' });
+            } else {
+                steps.push({ title: '甲方签署', time: '等待签署...', state: c.status === 'PENDING_BUYER' ? 'active' : '' });
+            }
+
+            // Step 4: 卖方签署
+            if (c.supplierSigned) {
+                steps.push({ title: '乙方签署', time: fmtDateTime(c.supplierSignedAt), state: 'completed' });
+            } else {
+                steps.push({ title: '乙方签署', time: '等待签署...', state: c.status === 'PENDING_SUPPLIER' ? 'active' : '' });
+            }
+
+            // Step 5: 上传纸质合同
+            if (c.buyerSigned && c.supplierSigned) {
+                if (c.physicalContractUrl) {
+                    steps.push({ title: '上传纸质合同', time: fmtDateTime(c.physicalContractUploadedAt), state: 'completed' });
+                } else if (c.contractReviewStatus === 'PENDING_UPLOAD') {
+                    steps.push({ title: '上传纸质合同', time: '等待上传...', state: 'active' });
+                }
+            }
+
+            // Step 6: 平台审核纸质合同
+            if (c.contractReviewStatus === 'APPROVED') {
+                steps.push({ title: '纸质合同审核', time: fmtDateTime(c.contractReviewedAt) + ' 通过', state: 'completed' });
+            } else if (c.contractReviewStatus === 'REJECTED') {
+                steps.push({ title: '纸质合同审核', time: '审核驳回', state: '' });
+            } else if (c.contractReviewStatus === 'PENDING_REVIEW') {
+                steps.push({ title: '纸质合同审核', time: '等待平台审核...', state: 'active' });
+            } else if (c.buyerSigned && c.supplierSigned) {
+                steps.push({ title: '纸质合同审核', time: '待审核', state: '' });
+            }
+
+            // Step 7: 合同执行
+            if (c.status === 'EXECUTING' || c.status === 'COMPLETED') {
+                steps.push({ title: '订单执行', time: '已激活执行', state: 'completed' });
+            } else if (c.status === 'TERMINATED') {
+                steps.push({ title: '合同终止', time: '已终止', state: '' });
+            } else if (c.buyerSigned && c.supplierSigned) {
+                steps.push({ title: '订单执行', time: '审核通过后执行', state: '' });
+            } else {
+                steps.push({ title: '订单执行', time: '待完成', state: '' });
+            }
+
+            document.getElementById('processTimeline').innerHTML = steps.map(function(s) {
+                return '<div class="process-step ' + s.state + '"><h4>' + s.title + '</h4><p>' + s.time + '</p></div>';
+            }).join('');
+        }
+
+        function renderDocuments(c) {
+            var docs = [];
+            var docIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+            var orderIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>';
+
+            if (c.orderId) {
+                docs.push({ icon: orderIcon, title: '关联订单', desc: '订单 #' + c.orderId, href: 'order-detail.html?id=' + c.orderId });
+            }
+            if (c.quotationId) {
+                docs.push({ icon: docIcon, title: '关联报价单', desc: '报价单 #' + c.quotationId, href: 'quote-detail.html?id=' + c.quotationId });
+            }
+            if (c.inquiryId) {
+                docs.push({ icon: docIcon, title: '关联询价单', desc: '询价单 #' + c.inquiryId, href: 'inquiry.html?id=' + c.inquiryId });
+            }
+            if (c.contractPdfUrl) {
+                docs.push({ icon: docIcon, title: '合同PDF', desc: c.contractNo + '.pdf', href: c.contractPdfUrl });
+            }
+
+            if (docs.length === 0) {
+                docs.push({ icon: docIcon, title: '暂无关联文档', desc: '合同完成后将自动生成', href: '#' });
+            }
+
+            document.getElementById('documentList').innerHTML = docs.map(function(d) {
+                return '<div class="document-item" onclick="' + (d.href !== '#' ? "window.location.href='" + d.href + "'" : '') + '">'
+                    + '<div class="document-icon">' + d.icon + '</div>'
+                    + '<div class="document-info"><h5>' + d.title + '</h5><p>' + d.desc + '</p></div></div>';
+            }).join('');
+        }
+
+        // ========== 签署操作（简化为一键确认） ==========
+        window.openSignModal = function() {
+            document.getElementById('signModal').classList.add('active');
+        };
+
+        window.closeSignModal = function() {
+            document.getElementById('signModal').classList.remove('active');
+        };
+
+        window.confirmSign = async function() {
+            if (!contractData || !contractData.id) {
+                showToast(t('cd.msg.dataError'), 'error');
+                return;
+            }
+
+            var signBtn = document.getElementById('confirmSignBtn');
+            signBtn.disabled = true;
+            signBtn.textContent = '签署中...';
+
+            // 简化签署：无需手动填写签名，后端自动生成
+            var signRequest = {};
+
+            try {
+                var result;
+                var isBuyer = buyerId && String(contractData.buyerId) === String(buyerId);
+                var isSupplier = supplierId && String(contractData.supplierId) === String(supplierId);
+
+                if (isBuyer && !contractData.buyerSigned) {
+                    result = await YicaiAPI.post('/contracts/' + contractData.id + '/sign/buyer?buyerId=' + buyerId, signRequest);
+                } else if (isSupplier && !contractData.supplierSigned) {
+                    result = await YicaiAPI.post('/contracts/' + contractData.id + '/sign/supplier?supplierId=' + supplierId, signRequest);
+                } else {
+                    throw new Error('您没有签署此合同的权限');
+                }
+
+                if (result && result.code === 200) {
+                    showToast(t('cd.msg.signSuccess'), 'success');
+                    closeSignModal();
+
+                    // 更新本地待签合同状态
+                    updateLocalContractStatus(contractData.contractNo);
+
+                    // 刷新页面数据
+                    contractData = result.data || contractData;
+                    if (result.data) {
+                        renderContract(result.data);
+                    } else {
+                        // 重新加载
+                        setTimeout(function() { location.reload(); }, 800);
+                    }
+                } else {
+                    throw new Error((result && result.message) || '签署失败');
+                }
+            } catch (err) {
+                console.error('签署失败:', err);
+                showToast(t('cd.msg.signFail') + (err.message || t('common.networkError')), 'error');
+            } finally {
+                signBtn.disabled = false;
+                signBtn.textContent = '确认签署';
+            }
+        };
+
+        function updateLocalContractStatus(contractNo) {
+            var pending = JSON.parse(localStorage.getItem('pendingContracts') || '[]');
+            pending = pending.filter(function(c) { return c.contractNo !== contractNo; });
+            localStorage.setItem('pendingContracts', JSON.stringify(pending));
+        }
+
+        // ========== 纸质合同上传 ==========
+        window.triggerPhysicalUpload = function() {
+            var existingInput = document.getElementById('physicalFileInput');
+            if (!existingInput) {
+                var input = document.createElement('input');
+                input.type = 'file';
+                input.id = 'physicalFileInput';
+                input.accept = '.pdf,.jpg,.jpeg,.png';
+                input.style.display = 'none';
+                input.onchange = function() { handlePhysicalFileUpload(this); };
+                document.body.appendChild(input);
+                existingInput = input;
+            }
+            existingInput.click();
+        };
+
+        window.handlePhysicalFileUpload = async function(input) {
+            if (!input.files || !input.files[0]) return;
+            var file = input.files[0];
+
+            // 文件大小限制 10MB
+            if (file.size > 10 * 1024 * 1024) {
+                showToast(t('cd.msg.fileSizeLimit'), 'warning');
+                return;
+            }
+
+            showToast(t('cd.msg.uploading'), 'info');
+
+            try {
+                // 先上传文件获取URL（模拟：使用FormData上传到通用上传接口）
+                var formData = new FormData();
+                formData.append('file', file);
+                formData.append('contractId', contractData.id);
+
+                var uploadResult = await fetch((window.YicaiAPI ? YicaiAPI.baseUrl || '' : '') + '/api/files/upload', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Authorization': 'Bearer ' + (localStorage.getItem('accessToken') || localStorage.getItem('token') || '')
+                    }
+                });
+
+                var uploadData;
+                var fileUrl;
+                if (uploadResult.ok) {
+                    uploadData = await uploadResult.json();
+                    fileUrl = (uploadData.data && uploadData.data.url) || uploadData.url || '';
+                }
+
+                if (!fileUrl) {
+                    throw new Error('文件上传失败，服务器未返回文件地址');
+                }
+
+                // 调用后端接口关联纸质合同
+                var result = await YicaiAPI.post(
+                    '/contracts/' + contractData.id + '/upload-physical-contract?userId=' + (buyerId || supplierId) + '&physicalContractUrl=' + encodeURIComponent(fileUrl)
+                );
+
+                if (result && result.code === 200) {
+                    showToast(t('cd.msg.uploadSuccess'), 'success');
+                    contractData = result.data || contractData;
+                    if (result.data) {
+                        renderContract(result.data);
+                    } else {
+                        setTimeout(function() { location.reload(); }, 800);
+                    }
+                } else {
+                    throw new Error((result && result.message) || '上传失败');
+                }
+            } catch (err) {
+                console.error('纸质合同上传失败:', err);
+                showToast(t('cd.msg.uploadFail') + (err.message || t('common.networkError')), 'error');
+            }
+        };
+
+        // ========== 变更申请 ==========
+        window.openChangeModal = function(mode) {
+            if (mode === 'terminate') {
+                document.getElementById('changeModalTitle').textContent = '申请终止合同';
+                document.getElementById('changeModalDesc').textContent = '请说明终止原因，提交后将等待对方审批';
+                document.getElementById('changeType').value = 'TERMINATION';
+                document.getElementById('changeType').disabled = true;
+            } else {
+                document.getElementById('changeModalTitle').textContent = '申请合同变更';
+                document.getElementById('changeModalDesc').textContent = '请填写变更信息，提交后将等待对方审批';
+                document.getElementById('changeType').disabled = false;
+            }
+            document.getElementById('changeReason').value = '';
+            document.getElementById('changeContent').value = '';
+            document.getElementById('changeModal').classList.add('active');
+        };
+
+        window.closeChangeModal = function() {
+            document.getElementById('changeModal').classList.remove('active');
+        };
+
+        window.submitChange = async function() {
+            if (!contractData || !contractData.id) return;
+
+            var changeType = document.getElementById('changeType').value;
+            var changeReason = document.getElementById('changeReason').value.trim();
+            if (!changeReason) {
+                showToast(t('cd.msg.fillChangeReason'), 'warning');
+                return;
+            }
+
+            var btn = document.getElementById('submitChangeBtn');
+            btn.disabled = true;
+            btn.textContent = '提交中...';
+
+            var isBuyer = buyerId && String(contractData.buyerId) === String(buyerId);
+            var initiatorType = isBuyer ? 'BUYER' : 'SUPPLIER';
+            var initiatorId = isBuyer ? buyerId : supplierId;
+
+            var requestBody = {
+                changeType: changeType,
+                changeReason: changeReason,
+                newContent: document.getElementById('changeContent').value.trim() || null
+            };
+
+            try {
+                var result = await YicaiAPI.post(
+                    '/contracts/' + contractData.id + '/changes?initiatorId=' + initiatorId + '&initiatorType=' + initiatorType,
+                    requestBody
+                );
+
+                if (result && result.code === 200) {
+                    showToast(t('cd.msg.changeSubmitted'), 'success');
+                    closeChangeModal();
+                    // 刷新页面
+                    setTimeout(function() { location.reload(); }, 1000);
+                } else {
+                    throw new Error((result && result.message) || '提交失败');
+                }
+            } catch (err) {
+                showToast(t('cd.msg.submitFail') + (err.message || t('common.networkError')), 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '提交变更';
+            }
+        };
+
+        // ========== 弹窗关闭 ==========
+        document.getElementById('signModal').addEventListener('click', function(e) {
+            if (e.target === this) closeSignModal();
+        });
+        document.getElementById('changeModal').addEventListener('click', function(e) {
+            if (e.target === this) closeChangeModal();
+        });
+
+        // ========== 初始化 ==========
+        loadContract();
+    })();
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+<script src="auth-check.js"></script>
+</body>
+</html>
+</html>

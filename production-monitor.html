@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="prodMonitor.tbvkew9">生产监控 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css?v=20260320c">
+    <link rel="stylesheet" href="pages-styles.css?v=20260320c">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="javascript:history.back()" class="inline-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>返回</a>
+                <a href="index.html" class="logo-link"><span class="logo-text">全球供应链智能匹配平台</span></a>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+                <a href="certification.html" class="nav-link" data-i18n="nav.certification">资质认证</a>
+                <a href="messages.html" class="nav-link" data-i18n="nav.messages">消息中心</a>
+                <a href="help.html" class="nav-link" data-i18n="nav.customerService">客服中心</a>
+            </nav>
+            <div class="header-right"><a href="user-center.html" class="user-link"><span class="user-avatar-sm">A</span><span>admin</span></a></div>
+        </div>
+    </header>
+
+    <!-- ==================== L1: 生产监控概览 ==================== -->
+    <div class="page-view active" id="view-overview">
+        <!-- 顶部横幅 -->
+        <div class="monitor-hero">
+            <div class="monitor-hero-bg">
+                <div class="monitor-hero-orb monitor-orb-1"></div>
+                <div class="monitor-hero-orb monitor-orb-2"></div>
+            </div>
+            <div class="monitor-hero-content">
+                <div class="monitor-hero-left">
+                    <h1>Production Monitoring</h1>
+                    <p class="monitor-hero-cn">订单生产实时监控中心</p>
+                    <p class="monitor-hero-desc">实时掌握订单生产进度，质量检测节点追踪，确保按时交付</p>
+                </div>
+                <div class="monitor-hero-right">
+                    <div class="monitor-hero-stat">
+                        <span class="monitor-hero-stat-num" id="hero-monitor-orders" data-target="0">0</span>
+                        <span class="monitor-hero-stat-label">监控中订单</span>
+                    </div>
+                    <div class="monitor-hero-stat-divider"></div>
+                    <div class="monitor-hero-stat">
+                        <span class="monitor-hero-stat-num" id="hero-ontime-rate" data-target="0">0</span><small>%</small>
+                        <span class="monitor-hero-stat-label">准时交付率</span>
+                    </div>
+                    <div class="monitor-hero-stat-divider"></div>
+                    <div class="monitor-hero-stat">
+                        <span class="monitor-hero-stat-num" id="hero-active-alerts" data-target="0">0</span>
+                        <span class="monitor-hero-stat-label">活跃预警</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="production-section">
+            <!-- Tab导航 -->
+            <div class="msg-tabs-bar" style="margin-bottom:24px;">
+                <button class="msg-tab-btn active" onclick="showView('view-overview')">数据看板</button>
+                <button class="msg-tab-btn" onclick="showView('view-alert-center')">预警中心 <span class="badge" style="background:#ef4444;">3</span></button>
+                <button class="msg-tab-btn" onclick="showView('view-supplier-monitoring')">供应商评分</button>
+            </div>
+
+            <!-- KPI 数据卡片行 -->
+            <div class="dashboard-kpi-row">
+                <div class="kpi-card">
+                    <div class="kpi-icon kpi-icon-cyan">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">总订单数</span>
+                        <span class="kpi-value" id="kpi-total-orders">0</span>
+                        <span class="kpi-trend kpi-up" id="kpi-total-trend">加载中</span>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon kpi-icon-green">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">生产中</span>
+                        <span class="kpi-value" id="kpi-producing">0</span>
+                        <span class="kpi-trend kpi-up" id="kpi-producing-trend">-</span>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon kpi-icon-yellow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">已完成</span>
+                        <span class="kpi-value" id="kpi-completed">0</span>
+                        <span class="kpi-trend kpi-neutral" id="kpi-completed-trend">-</span>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon kpi-icon-blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">运输中</span>
+                        <span class="kpi-value" id="kpi-shipping">0</span>
+                        <span class="kpi-trend kpi-up" id="kpi-shipping-trend">-</span>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon kpi-icon-red">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">待处理预警</span>
+                        <span class="kpi-value" id="kpi-alerts">0</span>
+                        <span class="kpi-trend kpi-down" id="kpi-alerts-trend">-</span>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon kpi-icon-purple">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">合作供应商</span>
+                        <span class="kpi-value" id="kpi-suppliers">0</span>
+                        <span class="kpi-trend kpi-neutral" id="kpi-suppliers-trend">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图表区域：双列布局 -->
+            <div class="dashboard-charts-row">
+                <!-- 左侧：周生产趋势 -->
+                <div class="dashboard-chart-card">
+                    <div class="chart-card-header">
+                        <h4>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="vertical-align:-3px;margin-right:6px;"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            周生产进度趋势
+                        </h4>
+                        <span class="chart-period">近7天</span>
+                    </div>
+                    <div class="chart-bar-container">
+                        <div class="chart-bar-group">
+                            <div class="chart-bar-wrap">
+                                <div class="chart-bar" style="height:0%;" data-value="3"></div>
+                            </div>
+                            <span class="chart-bar-label">周一</span>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar-wrap">
+                                <div class="chart-bar" style="height:0%;" data-value="5"></div>
+                            </div>
+                            <span class="chart-bar-label">周二</span>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar-wrap">
+                                <div class="chart-bar" style="height:0%;" data-value="4"></div>
+                            </div>
+                            <span class="chart-bar-label">周三</span>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar-wrap">
+                                <div class="chart-bar" style="height:0%;" data-value="7"></div>
+                            </div>
+                            <span class="chart-bar-label">周四</span>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar-wrap">
+                                <div class="chart-bar" style="height:0%;" data-value="6"></div>
+                            </div>
+                            <span class="chart-bar-label">周五</span>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar-wrap">
+                                <div class="chart-bar chart-bar-weekend" style="height:0%;" data-value="2"></div>
+                            </div>
+                            <span class="chart-bar-label">周六</span>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar-wrap">
+                                <div class="chart-bar chart-bar-today" style="height:0%;" data-value="8"></div>
+                            </div>
+                            <span class="chart-bar-label">今天</span>
+                        </div>
+                    </div>
+                    <div class="chart-summary-row">
+                        <div class="chart-summary-item"><span class="chart-summary-dot cyan"></span>本周完成 <strong>8</strong> 个阶段节点</div>
+                        <div class="chart-summary-item"><span class="chart-summary-dot green"></span>环比上周 <strong style="color:#4ECDC4;">+0%</strong></div>
+                    </div>
+                </div>
+
+                <!-- 右侧：订单状态分布 -->
+                <div class="dashboard-chart-card">
+                    <div class="chart-card-header">
+                        <h4>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="vertical-align:-3px;margin-right:6px;"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                            订单状态分布
+                        </h4>
+                    </div>
+                    <div class="chart-donut-container">
+                        <div class="chart-donut">
+                            <svg viewBox="0 0 120 120" width="160" height="160">
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="16"/>
+                                <!-- 生产中 0% -->
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#4ECDC4" stroke-width="16" stroke-dasharray="131.9 314.2" stroke-dashoffset="0" transform="rotate(-90 60 60)" stroke-linecap="round"/>
+                                <!-- 运输中 0% -->
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#45B7D1" stroke-width="16" stroke-dasharray="78.5 314.2" stroke-dashoffset="-131.9" transform="rotate(-90 60 60)" stroke-linecap="round"/>
+                                <!-- 已完成 0% -->
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#FFD93D" stroke-width="16" stroke-dasharray="78.5 314.2" stroke-dashoffset="-210.4" transform="rotate(-90 60 60)" stroke-linecap="round"/>
+                                <!-- 待生产 0% -->
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#FF6B6B" stroke-width="16" stroke-dasharray="25.1 314.2" stroke-dashoffset="-288.9" transform="rotate(-90 60 60)" stroke-linecap="round"/>
+                                <text x="60" y="56" text-anchor="middle" fill="#fff" font-size="22" font-weight="700" id="donut-total">0</text>
+                                <text x="60" y="72" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10">总订单</text>
+                            </svg>
+                        </div>
+                        <div class="chart-donut-legend">
+                            <div class="legend-item"><span class="legend-dot" style="background:#4ECDC4;"></span><span class="legend-label">生产中</span><span class="legend-value" id="legend-producing">0 (0%)</span></div>
+                            <div class="legend-item"><span class="legend-dot" style="background:#45B7D1;"></span><span class="legend-label">运输中</span><span class="legend-value" id="legend-shipping">0 (0%)</span></div>
+                            <div class="legend-item"><span class="legend-dot" style="background:#FFD93D;"></span><span class="legend-label">已完成</span><span class="legend-value" id="legend-completed">0 (0%)</span></div>
+                            <div class="legend-item"><span class="legend-dot" style="background:#FF6B6B;"></span><span class="legend-label">待生产</span><span class="legend-value" id="legend-pending">0 (0%)</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 实时动态 + 交付日历 双列 -->
+            <div class="dashboard-charts-row">
+                <!-- 左侧：实时生产动态 -->
+                <div class="dashboard-chart-card">
+                    <div class="chart-card-header">
+                        <h4>
+                            <span class="live-dot-sm"></span>
+                            实时生产动态
+                        </h4>
+                        <span class="chart-period">Live Feed</span>
+                    </div>
+                    <div class="monitor-feed-list" id="monitorFeedList">
+                        <div class="feed-item">
+                            <div class="feed-dot feed-dot-green"></div>
+                            <div class="feed-content">
+                                <span class="feed-text"><strong>#</strong> 组装调试阶段进度更新至 <strong style="color:var(--primary-cyan);">0%</strong></span>
+                                <span class="feed-time">10 分钟前</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-dot feed-dot-yellow"></div>
+                            <div class="feed-content">
+                                <span class="feed-text"><strong>#</strong> 发现WiFi模组质量异常，已生成预警</span>
+                                <span class="feed-time">35 分钟前</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-dot feed-dot-blue"></div>
+                            <div class="feed-content">
+                                <span class="feed-text"><strong>#</strong> 校准测试阶段完成 0%</span>
+                                <span class="feed-time">1 小时前</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-dot feed-dot-red"></div>
+                            <div class="feed-content">
+                                <span class="feed-text"><strong>#</strong> 原材料交付延迟预警触发</span>
+                                <span class="feed-time">2 小时前</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-dot feed-dot-green"></div>
+                            <div class="feed-content">
+                                <span class="feed-text"><strong>#</strong> 供应商上传精密组装照片 12张</span>
+                                <span class="feed-time">3 小时前</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-dot feed-dot-cyan"></div>
+                            <div class="feed-content">
+                                <span class="feed-text"><strong>#</strong> 订单已完成全部生产流程，等待发货</span>
+                                <span class="feed-time">5 小时前</span>
+                            </div>
+                        </div>
+                        <div class="feed-item">
+                            <div class="feed-dot feed-dot-green"></div>
+                            <div class="feed-content">
+                                <span class="feed-text"><strong>#</strong> 原材料准备阶段开始，进度 0%</span>
+                                <span class="feed-time">昨天 16:30</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：近期交付计划 -->
+                <div class="dashboard-chart-card">
+                    <div class="chart-card-header">
+                        <h4>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="vertical-align:-3px;margin-right:6px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            近期交付计划
+                        </h4>
+                    </div>
+                    <div class="delivery-schedule-list">
+                        <div class="delivery-item delivery-urgent">
+                            <div class="delivery-date">
+                                <span class="delivery-day">13</span>
+                                <span class="delivery-month">2月</span>
+                            </div>
+                            <div class="delivery-info">
+                                <span class="delivery-order">精密仪器订单 #</span>
+                                <span class="delivery-detail">-- x 5台 | --</span>
+                                <div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:0%;"></div></div>
+                            </div>
+                            <span class="delivery-status delivery-status-urgent">明天交付</span>
+                        </div>
+                        <div class="delivery-item">
+                            <div class="delivery-date">
+                                <span class="delivery-day">15</span>
+                                <span class="delivery-month">2月</span>
+                            </div>
+                            <div class="delivery-info">
+                                <span class="delivery-order">智能设备订单 #</span>
+                                <span class="delivery-detail">智能设备-A型号 x 50台 | --</span>
+                                <div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:0%;"></div></div>
+                            </div>
+                            <span class="delivery-status">3天后</span>
+                        </div>
+                        <div class="delivery-item">
+                            <div class="delivery-date">
+                                <span class="delivery-day">20</span>
+                                <span class="delivery-month">2月</span>
+                            </div>
+                            <div class="delivery-info">
+                                <span class="delivery-order">机械配件订单 #</span>
+                                <span class="delivery-detail">机械配件 x 200件 | --有限公司</span>
+                                <div class="delivery-progress-bar"><div class="delivery-progress-fill" style="width:0%;"></div></div>
+                            </div>
+                            <span class="delivery-status">8天后</span>
+                        </div>
+                        <div class="delivery-item delivery-completed">
+                            <div class="delivery-date">
+                                <span class="delivery-day">10</span>
+                                <span class="delivery-month">2月</span>
+                            </div>
+                            <div class="delivery-info">
+                                <span class="delivery-order">电子元件订单 #</span>
+                                <span class="delivery-detail">电容器 x 10000个 | 东莞电子科技</span>
+                                <div class="delivery-progress-bar"><div class="delivery-progress-fill delivery-fill-done" style="width:0%;"></div></div>
+                            </div>
+                            <span class="delivery-status delivery-status-done">已交付</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 供应商绩效横条 -->
+            <div class="dashboard-chart-card" style="margin-bottom:32px;">
+                <div class="chart-card-header">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="vertical-align:-3px;margin-right:6px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        供应商绩效排名
+                    </h4>
+                    <a onclick="showView('view-supplier-monitoring')" class="chart-view-all" style="cursor:pointer;">查看详情 &rarr;</a>
+                </div>
+                <div class="supplier-perf-list">
+                    <div class="supplier-perf-item">
+                        <span class="supplier-perf-rank rank-gold">1</span>
+                        <div class="supplier-perf-info">
+                            <span class="supplier-perf-name">--</span>
+                            <div class="supplier-perf-bars">
+                                <div class="perf-bar-row"><span class="perf-bar-label">准时率</span><div class="perf-bar"><div class="perf-bar-fill" style="width:0%;background:#4ECDC4;"></div></div><span class="perf-bar-val">0%</span></div>
+                                <div class="perf-bar-row"><span class="perf-bar-label">质量</span><div class="perf-bar"><div class="perf-bar-fill" style="width:0%;background:#28a745;"></div></div><span class="perf-bar-val">0%</span></div>
+                            </div>
+                        </div>
+                        <span class="supplier-perf-score">4.9</span>
+                    </div>
+                    <div class="supplier-perf-item">
+                        <span class="supplier-perf-rank rank-silver">2</span>
+                        <div class="supplier-perf-info">
+                            <span class="supplier-perf-name">--公司</span>
+                            <div class="supplier-perf-bars">
+                                <div class="perf-bar-row"><span class="perf-bar-label">准时率</span><div class="perf-bar"><div class="perf-bar-fill" style="width:0%;background:#4ECDC4;"></div></div><span class="perf-bar-val">0%</span></div>
+                                <div class="perf-bar-row"><span class="perf-bar-label">质量</span><div class="perf-bar"><div class="perf-bar-fill" style="width:0%;background:#28a745;"></div></div><span class="perf-bar-val">0%</span></div>
+                            </div>
+                        </div>
+                        <span class="supplier-perf-score">4.7</span>
+                    </div>
+                    <div class="supplier-perf-item">
+                        <span class="supplier-perf-rank rank-bronze">3</span>
+                        <div class="supplier-perf-info">
+                            <span class="supplier-perf-name">--有限公司</span>
+                            <div class="supplier-perf-bars">
+                                <div class="perf-bar-row"><span class="perf-bar-label">准时率</span><div class="perf-bar"><div class="perf-bar-fill" style="width:0%;background:#4ECDC4;"></div></div><span class="perf-bar-val">0%</span></div>
+                                <div class="perf-bar-row"><span class="perf-bar-label">质量</span><div class="perf-bar"><div class="perf-bar-fill" style="width:0%;background:#28a745;"></div></div><span class="perf-bar-val">0%</span></div>
+                            </div>
+                        </div>
+                        <span class="supplier-perf-score">4.3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分割标题：进行中的订单 -->
+            <div class="dashboard-section-divider">
+                <h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20" style="vertical-align:-4px;margin-right:8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    进行中的订单
+                </h3>
+                <span class="divider-count">3 个订单</span>
+            </div>
+
+            <!-- 订单卡片 1: 智能设备 -->
+            <div class="order-track-card" onclick="showView('view-order-monitor')" style="cursor:pointer;">
+                <div class="order-track-top">
+                    <div class="order-track-title-row">
+                        <div class="order-track-icon" style="background:rgba(78,205,196,0.12);color:#4ECDC4;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 0 0-8 0v2"/></svg>
+                        </div>
+                        <div class="order-track-title-info">
+                            <h4 data-i18n="prodMonitor.tfu1ptr">智能设备订单 <span class="order-track-id">#</span></h4>
+                            <div class="order-track-meta">
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> --公司</span>
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg> 智能设备-A型号 x 50台</span>
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg> 交付: --</span>
+                            </div>
+                        </div>
+                        <span class="order-track-status order-track-status-production">生产中</span>
+                    </div>
+                </div>
+                <div class="order-track-body">
+                    <div class="order-track-stages">
+                        <div class="track-stage track-done">
+                            <div class="track-stage-dot"><svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><polyline points="20 6 9 17 4 12" fill="none" stroke="currentColor" stroke-width="3"/></svg></div>
+                            <div class="track-stage-line track-line-done"></div>
+                            <span class="track-stage-label">原材料准备</span>
+                        </div>
+                        <div class="track-stage track-done">
+                            <div class="track-stage-dot"><svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><polyline points="20 6 9 17 4 12" fill="none" stroke="currentColor" stroke-width="3"/></svg></div>
+                            <div class="track-stage-line track-line-done"></div>
+                            <span class="track-stage-label">零部件加工</span>
+                        </div>
+                        <div class="track-stage track-active">
+                            <div class="track-stage-dot">3</div>
+                            <div class="track-stage-line track-line-active" style="--progress:0%;"></div>
+                            <span class="track-stage-label">组装调试 <strong>0%</strong></span>
+                        </div>
+                        <div class="track-stage track-pending">
+                            <div class="track-stage-dot">4</div>
+                            <div class="track-stage-line"></div>
+                            <span class="track-stage-label">质量检测</span>
+                        </div>
+                        <div class="track-stage track-pending">
+                            <div class="track-stage-dot">5</div>
+                            <span class="track-stage-label">包装发货</span>
+                        </div>
+                    </div>
+                    <div class="order-track-progress-row">
+                        <span class="order-track-progress-label">总进度</span>
+                        <div class="order-track-progress-bar"><div class="order-track-progress-fill" style="width:0%;"></div></div>
+                        <span class="order-track-progress-pct">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 订单卡片 2: 机械配件 -->
+            <div class="order-track-card" onclick="showView('view-order-monitor')" style="cursor:pointer;">
+                <div class="order-track-top">
+                    <div class="order-track-title-row">
+                        <div class="order-track-icon" style="background:rgba(255,217,61,0.12);color:#FFD93D;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        </div>
+                        <div class="order-track-title-info">
+                            <h4 data-i18n="prodMonitor.tcdwlo2">机械配件订单 <span class="order-track-id">#</span></h4>
+                            <div class="order-track-meta">
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> --有限公司</span>
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg> 机械配件 x 200件</span>
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg> 交付: --</span>
+                            </div>
+                        </div>
+                        <span class="order-track-status order-track-status-pending">待生产</span>
+                    </div>
+                </div>
+                <div class="order-track-body">
+                    <div class="order-track-stages">
+                        <div class="track-stage track-active">
+                            <div class="track-stage-dot">1</div>
+                            <div class="track-stage-line track-line-active" style="--progress:0%;"></div>
+                            <span class="track-stage-label">原材料准备 <strong data-i18n="prodMonitor.tlq5q4">进行中</strong></span>
+                        </div>
+                        <div class="track-stage track-pending">
+                            <div class="track-stage-dot">2</div>
+                            <div class="track-stage-line"></div>
+                            <span class="track-stage-label">零部件加工</span>
+                        </div>
+                        <div class="track-stage track-pending">
+                            <div class="track-stage-dot">3</div>
+                            <div class="track-stage-line"></div>
+                            <span class="track-stage-label">组装</span>
+                        </div>
+                        <div class="track-stage track-pending">
+                            <div class="track-stage-dot">4</div>
+                            <span class="track-stage-label">质检发货</span>
+                        </div>
+                    </div>
+                    <div class="order-track-progress-row">
+                        <span class="order-track-progress-label">总进度</span>
+                        <div class="order-track-progress-bar"><div class="order-track-progress-fill order-track-fill-warning" style="width:0%;"></div></div>
+                        <span class="order-track-progress-pct">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 订单卡片 3: 精密仪器 -->
+            <div class="order-track-card" onclick="showView('view-order-monitor')" style="cursor:pointer;">
+                <div class="order-track-top">
+                    <div class="order-track-title-row">
+                        <div class="order-track-icon" style="background:rgba(69,183,209,0.12);color:#45B7D1;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        </div>
+                        <div class="order-track-title-info">
+                            <h4 data-i18n="prodMonitor.t4bwnw9">精密仪器订单 <span class="order-track-id">#</span></h4>
+                            <div class="order-track-meta">
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> --</span>
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg> -- x 5台</span>
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg> 交付: --</span>
+                            </div>
+                        </div>
+                        <span class="order-track-status order-track-status-production">生产中</span>
+                    </div>
+                </div>
+                <div class="order-track-body">
+                    <div class="order-track-stages">
+                        <div class="track-stage track-done">
+                            <div class="track-stage-dot"><svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><polyline points="20 6 9 17 4 12" fill="none" stroke="currentColor" stroke-width="3"/></svg></div>
+                            <div class="track-stage-line track-line-done"></div>
+                            <span class="track-stage-label">方案设计</span>
+                        </div>
+                        <div class="track-stage track-done">
+                            <div class="track-stage-dot"><svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><polyline points="20 6 9 17 4 12" fill="none" stroke="currentColor" stroke-width="3"/></svg></div>
+                            <div class="track-stage-line track-line-done"></div>
+                            <span class="track-stage-label">零件加工</span>
+                        </div>
+                        <div class="track-stage track-done">
+                            <div class="track-stage-dot"><svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><polyline points="20 6 9 17 4 12" fill="none" stroke="currentColor" stroke-width="3"/></svg></div>
+                            <div class="track-stage-line track-line-done"></div>
+                            <span class="track-stage-label">精密组装</span>
+                        </div>
+                        <div class="track-stage track-active">
+                            <div class="track-stage-dot">4</div>
+                            <div class="track-stage-line track-line-active" style="--progress:0%;"></div>
+                            <span class="track-stage-label">校准测试 <strong>0%</strong></span>
+                        </div>
+                        <div class="track-stage track-pending">
+                            <div class="track-stage-dot">5</div>
+                            <span class="track-stage-label">包装发货</span>
+                        </div>
+                    </div>
+                    <div class="order-track-progress-row">
+                        <span class="order-track-progress-label">总进度</span>
+                        <div class="order-track-progress-bar"><div class="order-track-progress-fill" style="width:0%;"></div></div>
+                        <span class="order-track-progress-pct">0%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L2: 单订单监控 ==================== -->
+    <div class="page-view" id="view-order-monitor">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><span data-i18n="prodMonitor.thysv1l">订单监控</span></div>
+            <button class="btn-back-sm" onclick="showView('view-overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title"># 智能设备订单</span><span class="status-badge status-in-production">生产中</span></div>
+                <div class="detail-grid">
+                    <div class="detail-row"><span class="detail-label">供应商</span><span class="detail-val">--公司</span></div>
+                    <div class="detail-row"><span class="detail-label">产品</span><span class="detail-val">智能设备-A型号 x 50台</span></div>
+                    <div class="detail-row"><span class="detail-label">订单金额</span><span class="detail-val">¥156,000</span></div>
+                    <div class="detail-row"><span class="detail-label">下单日期</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label">预计交付</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label">总进度</span><span class="detail-val" style="color:var(--primary-cyan);font-weight:700;">0%</span></div>
+                </div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">生产阶段详情</span></div>
+                <div style="padding:16px;">
+                    <div onclick="showView('view-stage-detail')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg-main);border-radius:8px;margin-bottom:8px;border-left:3px solid #28a745;">
+                        <div><span style="color:#28a745;font-weight:600;">&#9989; 原材料准备</span><span style="font-size:12px;color:var(--text-muted);margin-left:8px;">-- ~ 02-09</span></div><span style="color:#28a745;">0%</span>
+                    </div>
+                    <div onclick="showView('view-stage-detail')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg-main);border-radius:8px;margin-bottom:8px;border-left:3px solid #28a745;">
+                        <div><span style="color:#28a745;font-weight:600;">&#9989; 零部件加工</span><span style="font-size:12px;color:var(--text-muted);margin-left:8px;">-- ~ 02-11</span></div><span style="color:#28a745;">0%</span>
+                    </div>
+                    <div onclick="showView('view-stage-detail')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg-main);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--primary-cyan);">
+                        <div><span style="color:var(--primary-cyan);font-weight:600;">&#9881; 组装调试</span><span style="font-size:12px;color:var(--text-muted);margin-left:8px;">-- ~ 进行中</span></div><span style="color:var(--primary-cyan);font-weight:700;">0%</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg-main);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--border-color);">
+                        <div><span style="color:var(--text-muted);">&#128300; 质量检测</span><span style="font-size:12px;color:var(--text-muted);margin-left:8px;">待开始</span></div><span style="color:var(--text-muted);">0%</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg-main);border-radius:8px;border-left:3px solid var(--border-color);">
+                        <div><span style="color:var(--text-muted);">&#128230; 包装发货</span><span style="font-size:12px;color:var(--text-muted);margin-left:8px;">待开始</span></div><span style="color:var(--text-muted);">0%</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:16px;">
+                <button class="btn-primary-sm" onclick="showView('view-quality-reports')">质检报告</button>
+                <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);" onclick="showView('view-schedule-timeline')">生产排期</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 生产阶段详情 ==================== -->
+    <div class="page-view" id="view-stage-detail">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-order-monitor')">订单监控</a><span class="sep">/</span><span data-i18n="prodMonitor.tjei332">阶段详情</span></div>
+            <button class="btn-back-sm" onclick="showView('view-order-monitor')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">组装调试阶段</span><span class="status-badge status-processing">进行中 0%</span></div>
+                <div class="detail-grid">
+                    <div class="detail-row"><span class="detail-label">开始时间</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label">预计完成</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label">负责人</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label">已完成数量</span><span class="detail-val">32/50台</span></div>
+                </div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">阶段时间线</span></div>
+                <div style="padding:16px;">
+                    <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--primary-cyan);"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">--</div><div class="timeline-text">第32台设备组装完成，累计完成率0%</div></div></div>
+                    <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:#ffd93d;"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">--</div><div class="timeline-text">供应商上传了第25-30台的组装照片</div></div></div>
+                    <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">--</div><div class="timeline-text">第20台设备组装完成</div></div></div>
+                    <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot"></div></div><div class="timeline-content"><div class="timeline-time">--</div><div class="timeline-text">组装调试阶段正式开始</div></div></div>
+                </div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:16px;">
+                <button class="btn-primary-sm" onclick="showView('view-stage-uploads')">查看上传记录</button>
+                <button class="btn-primary-sm" style="background:var(--bg-card);color:#ef4444;border:1px solid rgba(239,68,68,.3);" onclick="showView('view-stage-issues')">问题记录 <span class="badge" style="background:#ef4444;">1</span></button>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 上传记录 ==================== -->
+    <div class="page-view" id="view-stage-uploads">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-order-monitor')">订单监控</a><span class="sep">/</span><a onclick="showView('view-stage-detail')">阶段详情</a><span class="sep">/</span><span data-i18n="prodMonitor.ta6ly7v">上传记录</span></div>
+            <button class="btn-back-sm" onclick="showView('view-stage-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">组装调试 - 上传记录 <span style="color:var(--primary-cyan);">(6)</span></span></div>
+                <div style="padding:16px;">
+                    <div onclick="showView('view-upload-media')" style="cursor:pointer;display:flex;gap:12px;padding:12px;border:1px solid var(--border-color);border-radius:8px;margin-bottom:8px;">
+                        <div style="width:60px;height:60px;background:rgba(78,205,196,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;">&#128247;</div>
+                        <div style="flex:1;"><div style="font-weight:600;font-size:13px;">第25-30台组装照片</div><div style="font-size:12px;color:var(--text-muted);">6张照片 | 上传于 --</div><div style="font-size:12px;color:var(--text-muted);">上传者：-- (--)</div></div>
+                    </div>
+                    <div onclick="showView('view-upload-media')" style="cursor:pointer;display:flex;gap:12px;padding:12px;border:1px solid var(--border-color);border-radius:8px;margin-bottom:8px;">
+                        <div style="width:60px;height:60px;background:rgba(255,107,107,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;">&#127909;</div>
+                        <div style="flex:1;"><div style="font-weight:600;font-size:13px;">调试过程视频</div><div style="font-size:12px;color:var(--text-muted);">1个视频 (2分30秒) | 上传于 --</div><div style="font-size:12px;color:var(--text-muted);">上传者：李技术员</div></div>
+                    </div>
+                    <div onclick="showView('view-upload-media')" style="cursor:pointer;display:flex;gap:12px;padding:12px;border:1px solid var(--border-color);border-radius:8px;">
+                        <div style="width:60px;height:60px;background:rgba(78,205,196,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;">&#128247;</div>
+                        <div style="flex:1;"><div style="font-weight:600;font-size:13px;">第1-20台组装照片</div><div style="font-size:12px;color:var(--text-muted);">12张照片 | 上传于 --</div><div style="font-size:12px;color:var(--text-muted);">上传者：--</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L5: 媒体详情 ==================== -->
+    <div class="page-view" id="view-upload-media">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-order-monitor')">订单监控</a><span class="sep">/</span><a onclick="showView('view-stage-detail')">阶段详情</a><span class="sep">/</span><a onclick="showView('view-stage-uploads')">上传记录</a><span class="sep">/</span><span data-i18n="prodMonitor.tbrjfj4">媒体详情</span></div>
+            <button class="btn-back-sm" onclick="showView('view-stage-uploads')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">第25-30台组装照片</span><span style="font-size:12px;color:var(--text-muted);">--</span></div>
+                <div style="padding:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+                    <div style="aspect-ratio:4/3;background:linear-gradient(135deg,rgba(78,205,196,.2),rgba(69,183,209,.2));border-radius:8px;display:flex;align-items:center;justify-content:center;"><span style="font-size:12px;color:var(--text-muted);">设备#25正面</span></div>
+                    <div style="aspect-ratio:4/3;background:linear-gradient(135deg,rgba(78,205,196,.2),rgba(69,183,209,.2));border-radius:8px;display:flex;align-items:center;justify-content:center;"><span style="font-size:12px;color:var(--text-muted);">设备#26侧面</span></div>
+                    <div style="aspect-ratio:4/3;background:linear-gradient(135deg,rgba(78,205,196,.2),rgba(69,183,209,.2));border-radius:8px;display:flex;align-items:center;justify-content:center;"><span style="font-size:12px;color:var(--text-muted);">设备#27接线</span></div>
+                    <div style="aspect-ratio:4/3;background:linear-gradient(135deg,rgba(78,205,196,.2),rgba(69,183,209,.2));border-radius:8px;display:flex;align-items:center;justify-content:center;"><span style="font-size:12px;color:var(--text-muted);">设备#28调试</span></div>
+                    <div style="aspect-ratio:4/3;background:linear-gradient(135deg,rgba(78,205,196,.2),rgba(69,183,209,.2));border-radius:8px;display:flex;align-items:center;justify-content:center;"><span style="font-size:12px;color:var(--text-muted);">设备#29测试</span></div>
+                    <div style="aspect-ratio:4/3;background:linear-gradient(135deg,rgba(78,205,196,.2),rgba(69,183,209,.2));border-radius:8px;display:flex;align-items:center;justify-content:center;"><span style="font-size:12px;color:var(--text-muted);">设备#30完成</span></div>
+                </div>
+                <div style="padding:0 16px 16px;"><p style="font-size:12px;color:var(--text-muted);">上传者：-- | 备注：第25-30台设备已完成主板安装和基本调试，等待最终功能测试。</p></div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:16px;">
+                <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);">下载全部</button>
+                <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);">添加评论</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 问题记录 ==================== -->
+    <div class="page-view" id="view-stage-issues">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-order-monitor')">订单监控</a><span class="sep">/</span><a onclick="showView('view-stage-detail')">阶段详情</a><span class="sep">/</span><span data-i18n="prodMonitor.tjjsr67">问题记录</span></div>
+            <button class="btn-back-sm" onclick="showView('view-stage-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">问题记录 <span style="color:#ef4444;">(1)</span></span></div>
+                <div class="msg-card" onclick="showView('view-issue-resolve')" style="cursor:pointer;">
+                    <div class="msg-avatar" style="background:rgba(239,68,68,.15);color:#ef4444;">&#9888;</div>
+                    <div class="msg-card-body">
+                        <div class="msg-card-top"><div class="msg-card-title"><span class="status-badge status-open" style="font-size:10px;padding:2px 6px;margin-right:6px;background:rgba(255,217,61,.15);color:#ffd93d;">处理中</span>第28台设备WiFi模组连接不稳定</div><span class="msg-card-time">--</span></div>
+                        <div class="msg-card-preview">组装过程中发现第28台设备WiFi模组信号不稳定，疑似模组焊接不良。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L5: 处理问题 ==================== -->
+    <div class="page-view" id="view-issue-resolve">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-order-monitor')">订单监控</a><span class="sep">/</span><a onclick="showView('view-stage-detail')">阶段详情</a><span class="sep">/</span><a onclick="showView('view-stage-issues')">问题记录</a><span class="sep">/</span><span data-i18n="prodMonitor.tbpwtpo">处理问题</span></div>
+            <button class="btn-back-sm" onclick="showView('view-stage-issues')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">第28台设备WiFi模组连接不稳定</span><span class="status-badge" style="background:rgba(255,217,61,.15);color:#ffd93d;">处理中</span></div>
+                <div class="detail-grid">
+                    <div class="detail-row"><span class="detail-label">问题等级</span><span class="detail-val" style="color:#ffd93d;">中等</span></div>
+                    <div class="detail-row"><span class="detail-label">发现时间</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label">影响范围</span><span class="detail-val">1台设备</span></div>
+                    <div class="detail-row"><span class="detail-label">负责人</span><span class="detail-val">--</span></div>
+                </div>
+                <div style="padding:16px;border-top:1px solid var(--border-color);"><p style="font-size:13px;color:var(--text-secondary);"><strong data-i18n="prodMonitor.txdtpip">问题描述：</strong>组装过程中发现第28台设备WiFi模组信号不稳定，重启后短暂恢复但5分钟后再次断连。初步判断为模组焊接不良或天线接触问题。</p></div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">处理方案</span></div>
+                <div class="publish-form" style="padding:16px;">
+                    <div class="form-group"><label data-i18n="prodMonitor.tbpnzv9">处理措施</label><select><option value="">请选择</option><option value="repair">返修重焊</option><option value="replace">更换模组</option><option value="rework">重新组装</option></select></div>
+                    <div class="form-group"><label data-i18n="prodMonitor.tbpuun0">处理说明</label><textarea placeholder="请描述具体处理方案..."></textarea></div>
+                    <div class="form-group"><label data-i18n="prodMonitor.tdpn7rf">预计解决时间</label><input type="datetime-local"></div>
+                    <div class="form-actions"><button class="btn-secondary" onclick="showView('view-stage-issues')">取消</button><button class="btn-primary-lg">提交处理方案</button></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 质检报告 ==================== -->
+    <div class="page-view" id="view-quality-reports">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-order-monitor')">订单监控</a><span class="sep">/</span><span data-i18n="prodMonitor.ti8rb31">质检报告</span></div>
+            <button class="btn-back-sm" onclick="showView('view-order-monitor')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">质检报告列表</span></div>
+                <div class="msg-card" onclick="showView('view-report-detail')" style="cursor:pointer;">
+                    <div class="msg-avatar" style="background:rgba(40,167,69,.15);color:#28a745;">&#128203;</div>
+                    <div class="msg-card-body">
+                        <div class="msg-card-top"><div class="msg-card-title"><span class="status-badge status-completed" style="font-size:10px;padding:2px 6px;margin-right:6px;">通过</span>零部件加工阶段质检</div><span class="msg-card-time">--</span></div>
+                        <div class="msg-card-preview">抽检20件/200件 | 合格率0% | 尺寸精度达标 | 表面处理合格</div>
+                    </div>
+                </div>
+                <div class="msg-card" onclick="showView('view-report-detail')" style="cursor:pointer;">
+                    <div class="msg-avatar" style="background:rgba(40,167,69,.15);color:#28a745;">&#128203;</div>
+                    <div class="msg-card-body">
+                        <div class="msg-card-top"><div class="msg-card-title"><span class="status-badge status-completed" style="font-size:10px;padding:2px 6px;margin-right:6px;">通过</span>原材料入库质检</div><span class="msg-card-time">--</span></div>
+                        <div class="msg-card-preview">全批次检验 | 合格率0% | 材质证书齐全 | 2件轻微瑕疵已处理</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 报告详情 ==================== -->
+    <div class="page-view" id="view-report-detail">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-order-monitor')">订单监控</a><span class="sep">/</span><a onclick="showView('view-quality-reports')">质检报告</a><span class="sep">/</span><span data-i18n="prodMonitor.tcsxfvo">报告详情</span></div>
+            <button class="btn-back-sm" onclick="showView('view-quality-reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">零部件加工阶段质检报告</span><span class="status-badge status-completed">通过</span></div>
+                <div class="detail-grid">
+                    <div class="detail-row"><span class="detail-label">检验日期</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label">检验员</span><span class="detail-val">王质检员</span></div>
+                    <div class="detail-row"><span class="detail-label">抽检数量</span><span class="detail-val">20 / 200件</span></div>
+                    <div class="detail-row"><span class="detail-label">合格率</span><span class="detail-val" style="color:#28a745;font-weight:700;">0%</span></div>
+                </div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">检验项目</span></div>
+                <div style="overflow-x:auto;padding:16px;">
+                    <table style="width:0%;border-collapse:collapse;font-size:13px;">
+                        <thead><tr style="border-bottom:1px solid var(--border-color);"><th style="padding:8px;text-align:left;color:var(--text-muted);">检验项</th><th style="padding:8px;text-align:center;">标准值</th><th style="padding:8px;text-align:center;">实测值</th><th style="padding:8px;text-align:center;">结果</th></tr></thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:8px;">尺寸精度</td><td style="padding:8px;text-align:center;">±0.02mm</td><td style="padding:8px;text-align:center;">±0.015mm</td><td style="padding:8px;text-align:center;color:#28a745;">&#9989; 合格</td></tr>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:8px;">表面粗糙度</td><td style="padding:8px;text-align:center;">Ra0.8</td><td style="padding:8px;text-align:center;">Ra0.6</td><td style="padding:8px;text-align:center;color:#28a745;">&#9989; 合格</td></tr>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:8px;">硬度测试</td><td style="padding:8px;text-align:center;">HRC58-62</td><td style="padding:8px;text-align:center;">HRC60</td><td style="padding:8px;text-align:center;color:#28a745;">&#9989; 合格</td></tr>
+                            <tr><td style="padding:8px;">外观检查</td><td style="padding:8px;text-align:center;">无划痕/毛刺</td><td style="padding:8px;text-align:center;">完好</td><td style="padding:8px;text-align:center;color:#28a745;">&#9989; 合格</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:16px;">
+                <button class="btn-primary-sm" onclick="showView('view-quality-confirm')">确认质检结果</button>
+                <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);">下载报告PDF</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L5: 质检确认 ==================== -->
+    <div class="page-view" id="view-quality-confirm">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-order-monitor')">订单监控</a><span class="sep">/</span><a onclick="showView('view-quality-reports')">质检报告</a><span class="sep">/</span><a onclick="showView('view-report-detail')">报告详情</a><span class="sep">/</span><span data-i18n="prodMonitor.ti8vbf2">质检确认</span></div>
+            <button class="btn-back-sm" onclick="showView('view-report-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">确认质检结果</span></div>
+                <div class="publish-form" style="padding:16px;">
+                    <div style="padding:16px;background:rgba(40,167,69,.08);border-radius:8px;margin-bottom:16px;">
+                        <h4 style="color:#28a745;margin-bottom:8px;">&#9989; 质检通过</h4>
+                        <p style="font-size:13px;color:var(--text-secondary);">零部件加工阶段质检报告显示所有指标合格，抽检合格率0%。</p>
+                    </div>
+                    <div class="form-group"><label data-i18n="prodMonitor.tfrraq0">确认意见</label><select><option value="accept">确认通过，进入下一阶段</option><option value="reject">不通过，要求返工</option><option value="conditional">有条件通过</option></select></div>
+                    <div class="form-group"><label data-i18n="prodMonitor.tfqo1">备注</label><textarea placeholder="如有补充说明请填写..."></textarea></div>
+                    <div class="form-actions"><button class="btn-secondary" onclick="showView('view-report-detail')">取消</button><button class="btn-primary-lg">确认提交</button></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 生产排期 ==================== -->
+    <div class="page-view" id="view-schedule-timeline">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-order-monitor')">订单监控</a><span class="sep">/</span><span data-i18n="prodMonitor.tf3t451">生产排期</span></div>
+            <button class="btn-back-sm" onclick="showView('view-order-monitor')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title"># 生产排期</span></div>
+                <div style="padding:16px;">
+                    <div style="display:flex;gap:4px;align-items:center;margin-bottom:20px;font-size:12px;color:var(--text-muted);"><span style="width:12px;height:12px;background:#28a745;border-radius:2px;display:inline-block;"></span> 已完成 <span style="width:12px;height:12px;background:var(--primary-cyan);border-radius:2px;display:inline-block;margin-left:12px;"></span> 进行中 <span style="width:12px;height:12px;background:var(--border-color);border-radius:2px;display:inline-block;margin-left:12px;"></span> 待开始</div>
+                    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;"><span data-i18n="prodMonitor.teqqqc7">原材料准备</span><span style="color:var(--text-muted);">02-08 ~ 02-09</span></div><div style="height:24px;background:#28a745;border-radius:4px;width:0%;"></div></div>
+                    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;"><span data-i18n="prodMonitor.tuexvsn">零部件加工</span><span style="color:var(--text-muted);">02-09 ~ 02-11</span></div><div style="height:24px;background:#28a745;border-radius:4px;width:0%;"></div></div>
+                    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;"><span data-i18n="prodMonitor.tgkb5v7">组装调试</span><span style="color:var(--text-muted);">02-11 ~ 02-13 (预计)</span></div><div style="height:24px;background:var(--bg-main);border-radius:4px;"><div style="height:0%;background:var(--primary-cyan);border-radius:4px;width:0%;"></div></div></div>
+                    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;"><span data-i18n="prodMonitor.tieszg2">质量检测</span><span style="color:var(--text-muted);">02-13 ~ 02-14 (预计)</span></div><div style="height:24px;background:var(--border-color);border-radius:4px;width:0%;opacity:.3;"></div></div>
+                    <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px;"><span data-i18n="prodMonitor.tb1erx2">包装发货</span><span style="color:var(--text-muted);">02-14 ~ 02-15 (预计)</span></div><div style="height:24px;background:var(--border-color);border-radius:4px;width:0%;opacity:.3;"></div></div>
+                </div>
+            </div>
+            <div style="margin-top:16px;"><button class="btn-primary-sm" onclick="showView('view-schedule-adjust')" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);">申请调整排期</button></div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 调整排期 ==================== -->
+    <div class="page-view" id="view-schedule-adjust">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-order-monitor')">订单监控</a><span class="sep">/</span><a onclick="showView('view-schedule-timeline')">生产排期</a><span class="sep">/</span><span data-i18n="prodMonitor.ti333ha">调整排期</span></div>
+            <button class="btn-back-sm" onclick="showView('view-schedule-timeline')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">申请调整排期</span></div>
+                <div class="publish-form" style="padding:16px;">
+                    <div class="form-group"><label data-i18n="prodMonitor.ti30alu">调整原因</label><select><option value="">请选择</option><option value="delay">原材料延迟</option><option value="quality">质量问题返工</option><option value="capacity">产能不足</option><option value="client">客户要求变更</option></select></div>
+                    <div class="form-group"><label data-i18n="prodMonitor.tgm0j01">新的预计完成日期</label><input type="date" value="--"></div>
+                    <div class="form-group"><label data-i18n="prodMonitor.ti6gyey">详细说明</label><textarea placeholder="请说明调整原因和影响范围..."></textarea></div>
+                    <div style="padding:12px;background:rgba(255,217,61,.08);border-radius:8px;margin-top:12px;"><p style="font-size:12px;color:#ffd93d;">&#9888; 排期调整需供应商确认，调整后将通知相关人员。</p></div>
+                    <div class="form-actions"><button class="btn-secondary" onclick="showView('view-schedule-timeline')">取消</button><button class="btn-primary-lg">提交调整申请</button></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L2: 预警中心 ==================== -->
+    <div class="page-view" id="view-alert-center">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><span data-i18n="prodMonitor.tjtbf2w">预警中心</span></div>
+            <button class="btn-back-sm" onclick="showView('view-overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">预警中心</span><span style="font-size:12px;padding:4px 10px;background:rgba(239,68,68,.12);color:#ef4444;border-radius:4px;">3 条预警</span></div>
+                <div class="msg-card unread" onclick="showView('view-delay-alerts')" style="cursor:pointer;">
+                    <div class="msg-avatar" style="background:rgba(239,68,68,.15);color:#ef4444;">&#9200;</div>
+                    <div class="msg-card-body">
+                        <div class="msg-card-top"><div class="msg-card-title"><span style="padding:2px 6px;background:rgba(239,68,68,.12);border-radius:3px;font-size:10px;color:#ef4444;margin-right:6px;">延期</span>机械配件订单原材料交付延迟</div><span class="msg-card-time">2小时前</span></div>
+                        <div class="msg-card-preview"># 原材料供应商通知延迟2天交付，可能影响整体排期。</div>
+                    </div>
+                </div>
+                <div class="msg-card" onclick="showView('view-quality-alerts')" style="cursor:pointer;">
+                    <div class="msg-avatar" style="background:rgba(255,217,61,.15);color:#ffd93d;">&#9888;</div>
+                    <div class="msg-card-body">
+                        <div class="msg-card-top"><div class="msg-card-title"><span style="padding:2px 6px;background:rgba(255,217,61,.12);border-radius:3px;font-size:10px;color:#ffd93d;margin-right:6px;">质量</span>智能设备WiFi模组异常</div><span class="msg-card-time">5小时前</span></div>
+                        <div class="msg-card-preview"># 组装阶段发现1台设备WiFi模组不稳定。</div>
+                    </div>
+                </div>
+                <div class="msg-card" onclick="showView('view-delay-alerts')" style="cursor:pointer;">
+                    <div class="msg-avatar" style="background:rgba(255,217,61,.15);color:#ffd93d;">&#9200;</div>
+                    <div class="msg-card-body">
+                        <div class="msg-card-top"><div class="msg-card-title"><span style="padding:2px 6px;background:rgba(255,217,61,.12);border-radius:3px;font-size:10px;color:#ffd93d;margin-right:6px;">提醒</span>精密仪器订单即将到达交付日期</div><span class="msg-card-time">1天前</span></div>
+                        <div class="msg-card-preview"># 预计--交付，剩余1天，当前进度0%。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 延期预警 ==================== -->
+    <div class="page-view" id="view-delay-alerts">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-alert-center')">预警中心</a><span class="sep">/</span><span data-i18n="prodMonitor.tcf0zrf">延期预警</span></div>
+            <button class="btn-back-sm" onclick="showView('view-alert-center')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">延期预警详情</span><span class="status-badge" style="background:rgba(239,68,68,.15);color:#ef4444;">高风险</span></div>
+                <div class="detail-grid">
+                    <div class="detail-row"><span class="detail-label">订单编号</span><span class="detail-val">#</span></div>
+                    <div class="detail-row"><span class="detail-label">供应商</span><span class="detail-val">--有限公司</span></div>
+                    <div class="detail-row"><span class="detail-label">原计划日期</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label">预计延迟</span><span class="detail-val" style="color:#ef4444;font-weight:700;">2天</span></div>
+                    <div class="detail-row"><span class="detail-label">影响阶段</span><span class="detail-val">原材料准备</span></div>
+                    <div class="detail-row"><span class="detail-label">原因</span><span class="detail-val">原材料供应商交付延迟</span></div>
+                </div>
+            </div>
+            <div style="margin-top:16px;"><button class="btn-primary-sm" onclick="showView('view-delay-handle')">处理延期</button></div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 处理延期 ==================== -->
+    <div class="page-view" id="view-delay-handle">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-alert-center')">预警中心</a><span class="sep">/</span><a onclick="showView('view-delay-alerts')">延期预警</a><span class="sep">/</span><span data-i18n="prodMonitor.tbpn7cb">处理延期</span></div>
+            <button class="btn-back-sm" onclick="showView('view-delay-alerts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">处理延期方案</span></div>
+                <div class="publish-form" style="padding:16px;">
+                    <div class="form-group"><label data-i18n="prodMonitor.tbpob5k">处理方式</label><select><option value="">请选择</option><option value="accept">接受延期，调整排期</option><option value="urge">催促供应商加速</option><option value="alternative">更换备选原材料</option><option value="penalty">启动违约条款</option></select></div>
+                    <div class="form-group"><label data-i18n="prodMonitor.tbpuun0">处理说明</label><textarea placeholder="请描述具体处理措施..."></textarea></div>
+                    <div class="form-group"><label data-i18n="prodMonitor.tirh6rb">是否通知客户</label><select><option value="no">暂不通知（可自行消化延期）</option><option value="yes">通知客户并说明情况</option></select></div>
+                    <div class="form-actions"><button class="btn-secondary" onclick="showView('view-delay-alerts')">取消</button><button class="btn-primary-lg">提交处理方案</button></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 质量预警 ==================== -->
+    <div class="page-view" id="view-quality-alerts">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-alert-center')">预警中心</a><span class="sep">/</span><span data-i18n="prodMonitor.tif19vt">质量预警</span></div>
+            <button class="btn-back-sm" onclick="showView('view-alert-center')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">质量预警详情</span><span class="status-badge" style="background:rgba(255,217,61,.15);color:#ffd93d;">中等风险</span></div>
+                <div class="detail-grid">
+                    <div class="detail-row"><span class="detail-label">订单</span><span class="detail-val">#</span></div>
+                    <div class="detail-row"><span class="detail-label">阶段</span><span class="detail-val">组装调试</span></div>
+                    <div class="detail-row"><span class="detail-label">问题</span><span class="detail-val">WiFi模组连接不稳定</span></div>
+                    <div class="detail-row"><span class="detail-label">影响</span><span class="detail-val">1台/50台 (0%)</span></div>
+                </div>
+            </div>
+            <div style="margin-top:16px;"><button class="btn-primary-sm" onclick="showView('view-quality-intervention')">发起质量干预</button></div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 质量干预 ==================== -->
+    <div class="page-view" id="view-quality-intervention">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-alert-center')">预警中心</a><span class="sep">/</span><a onclick="showView('view-quality-alerts')">质量预警</a><span class="sep">/</span><span data-i18n="prodMonitor.tiergvt">质量干预</span></div>
+            <button class="btn-back-sm" onclick="showView('view-quality-alerts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">发起质量干预</span></div>
+                <div class="publish-form" style="padding:16px;">
+                    <div class="form-group"><label data-i18n="prodMonitor.tcjs402">干预类型</label><select><option value="">请选择</option><option value="stop">暂停生产并排查</option><option value="isolate">隔离问题产品，继续生产</option><option value="inspect">增加全检频次</option><option value="onsite">要求驻厂检验</option></select></div>
+                    <div class="form-group"><label data-i18n="prodMonitor.tcjufub">干预要求</label><textarea placeholder="请详细描述质量干预要求...">要求对WiFi模组进行全批次抽检，检查焊接质量和信号强度。问题设备需返工修复后重新测试。</textarea></div>
+                    <div class="form-group"><label data-i18n="prodMonitor.tbyjwnp">完成期限</label><input type="date" value="--"></div>
+                    <div class="form-actions"><button class="btn-secondary" onclick="showView('view-quality-alerts')">取消</button><button class="btn-primary-lg">提交干预要求</button></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L2: 供应商监控评分 ==================== -->
+    <div class="page-view" id="view-supplier-monitoring">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><span data-i18n="prodMonitor.tvlr81d">供应商评分</span></div>
+            <button class="btn-back-sm" onclick="showView('view-overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">供应商监控评分排名</span></div>
+                <div style="padding:16px;">
+                    <div onclick="showView('view-supplier-score')" style="cursor:pointer;display:flex;align-items:center;gap:16px;padding:14px;background:var(--bg-main);border-radius:8px;margin-bottom:8px;">
+                        <span style="width:28px;height:28px;background:#ffd93d;border-radius:0%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000;">1</span>
+                        <div style="flex:1;"><div style="font-weight:600;">--</div><div style="font-size:12px;color:var(--text-muted);">上传及时率 0% | 质量达标率 0%</div></div>
+                        <span style="font-size:18px;font-weight:700;color:var(--primary-cyan);">4.9</span>
+                    </div>
+                    <div onclick="showView('view-supplier-score')" style="cursor:pointer;display:flex;align-items:center;gap:16px;padding:14px;background:var(--bg-main);border-radius:8px;margin-bottom:8px;">
+                        <span style="width:28px;height:28px;background:#c0c0c0;border-radius:0%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000;">2</span>
+                        <div style="flex:1;"><div style="font-weight:600;">--公司</div><div style="font-size:12px;color:var(--text-muted);">上传及时率 0% | 质量达标率 0%</div></div>
+                        <span style="font-size:18px;font-weight:700;color:var(--primary-cyan);">4.7</span>
+                    </div>
+                    <div onclick="showView('view-supplier-score')" style="cursor:pointer;display:flex;align-items:center;gap:16px;padding:14px;background:var(--bg-main);border-radius:8px;">
+                        <span style="width:28px;height:28px;background:#cd7f32;border-radius:0%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000;">3</span>
+                        <div style="flex:1;"><div style="font-weight:600;">--有限公司</div><div style="font-size:12px;color:var(--text-muted);">上传及时率 0% | 质量达标率 0%</div></div>
+                        <span style="font-size:18px;font-weight:700;color:var(--primary-cyan);">4.3</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 评分详情 ==================== -->
+    <div class="page-view" id="view-supplier-score">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-supplier-monitoring')">供应商评分</a><span class="sep">/</span><span data-i18n="prodMonitor.thzb8pt">评分详情</span></div>
+            <button class="btn-back-sm" onclick="showView('view-supplier-monitoring')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">-- - 监控评分</span><span style="font-size:24px;font-weight:700;color:var(--primary-cyan);">4.9</span></div>
+                <div style="padding:16px;">
+                    <div style="margin-bottom:16px;"><div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;"><span data-i18n="prodMonitor.tvcb98l">上传及时率</span><span style="color:var(--primary-cyan);font-weight:600;">0%</span></div><div style="height:8px;background:var(--bg-main);border-radius:4px;"><div style="width:0%;height:0%;background:var(--primary-cyan);border-radius:4px;"></div></div></div>
+                    <div style="margin-bottom:16px;"><div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;"><span data-i18n="prodMonitor.t2nrfdj">质量达标率</span><span style="color:#28a745;font-weight:600;">0%</span></div><div style="height:8px;background:var(--bg-main);border-radius:4px;"><div style="width:0%;height:0%;background:#28a745;border-radius:4px;"></div></div></div>
+                    <div style="margin-bottom:16px;"><div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;"><span data-i18n="prodMonitor.tybgnk4">交期准时率</span><span style="color:var(--primary-cyan);font-weight:600;">0%</span></div><div style="height:8px;background:var(--bg-main);border-radius:4px;"><div style="width:0%;height:0%;background:var(--primary-cyan);border-radius:4px;"></div></div></div>
+                    <div><div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;"><span data-i18n="prodMonitor.tsg80ag">问题响应速度</span><span style="color:var(--primary-cyan);font-weight:600;">0%</span></div><div style="height:8px;background:var(--bg-main);border-radius:4px;"><div style="width:0%;height:0%;background:var(--primary-cyan);border-radius:4px;"></div></div></div>
+                </div>
+            </div>
+            <div style="margin-top:16px;"><button class="btn-primary-sm" onclick="showView('view-score-history')" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);">查看历史评分</button></div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 历史评分 ==================== -->
+    <div class="page-view" id="view-score-history">
+        <section class="production-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')">生产监控</a><span class="sep">/</span><a onclick="showView('view-supplier-monitoring')">供应商评分</a><span class="sep">/</span><a onclick="showView('view-supplier-score')">评分详情</a><span class="sep">/</span><span data-i18n="prodMonitor.taw7soe">历史评分</span></div>
+            <button class="btn-back-sm" onclick="showView('view-supplier-score')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="prodMonitor.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">-- - 历史评分趋势</span></div>
+                <div style="overflow-x:auto;padding:16px;">
+                    <table style="width:0%;border-collapse:collapse;font-size:13px;">
+                        <thead><tr style="border-bottom:1px solid var(--border-color);"><th style="padding:8px;text-align:left;color:var(--text-muted);">月份</th><th style="padding:8px;text-align:center;">综合评分</th><th style="padding:8px;text-align:center;">上传及时率</th><th style="padding:8px;text-align:center;">质量达标率</th><th style="padding:8px;text-align:center;">交期准时率</th></tr></thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:8px;font-weight:600;">2026-02</td><td style="padding:8px;text-align:center;color:var(--primary-cyan);font-weight:700;">4.9</td><td style="padding:8px;text-align:center;">0%</td><td style="padding:8px;text-align:center;">0%</td><td style="padding:8px;text-align:center;">0%</td></tr>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:8px;font-weight:600;">2026-01</td><td style="padding:8px;text-align:center;">4.8</td><td style="padding:8px;text-align:center;">0%</td><td style="padding:8px;text-align:center;">0%</td><td style="padding:8px;text-align:center;">0%</td></tr>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:8px;font-weight:600;">2025-12</td><td style="padding:8px;text-align:center;">4.7</td><td style="padding:8px;text-align:center;">0%</td><td style="padding:8px;text-align:center;">0%</td><td style="padding:8px;text-align:center;">0%</td></tr>
+                            <tr><td style="padding:8px;font-weight:600;">2025-11</td><td style="padding:8px;text-align:center;">4.6</td><td style="padding:8px;text-align:center;">0%</td><td style="padding:8px;text-align:center;">0%</td><td style="padding:8px;text-align:center;">0%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="padding:0 16px 16px;"><p style="font-size:13px;color:var(--primary-cyan);">&#128200; 评分趋势：连续4个月持续上升，该供应商监控配合度持续改善。</p></div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-copyright"><p data-i18n="footer.copyright">&copy; 2026 全球供应链智能匹配平台 | 版权所有</p></div>
+        <nav class="footer-nav"><a href="#">帮助中心</a><a href="#">客服中心</a><a href="#">关于我们</a><a href="#">隐私政策</a><a href="#">服务条款</a></nav>
+        <div style="text-align:center;padding:8px 0;font-size:12px;"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow noopener" style="color:#888;text-decoration:none;">粤ICP备2026015135号-2</a></div>
+    </footer>
+<script src="auth-check.js"></script>
+    <script src="api.js"></script>
+    <script src="platform-scripts.js"></script>
+    <script>
+        function showView(viewId) {
+            document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            window.scrollTo(0, 0);
+
+            // 更新tab激活状态
+            document.querySelectorAll('.msg-tab-btn').forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+            var tabMap = {
+                'view-overview': 0,
+                'view-alert-center': 1,
+                'view-supplier-monitoring': 2
+            };
+            if (tabMap[viewId] !== undefined) {
+                var tabs = document.querySelectorAll('.msg-tab-btn');
+                if (tabs[tabMap[viewId]]) tabs[tabMap[viewId]].classList.add('active');
+            }
+        }
+
+        // Hero统计数字动画
+        (function() {
+            var nums = document.querySelectorAll('.monitor-hero-stat-num[data-target]');
+            nums.forEach(function(el) {
+                var target = parseInt(el.getAttribute('data-target'));
+                var duration = 1500;
+                var step = target / (duration / 16);
+                var current = 0;
+                function tick() {
+                    current += step;
+                    if (current < target) {
+                        el.textContent = Math.floor(current);
+                        requestAnimationFrame(tick);
+                    } else {
+                        el.textContent = target;
+                    }
+                }
+                requestAnimationFrame(tick);
+            });
+        })();
+
+        // 模拟实时动态追加
+        (function() {
+            var feedList = document.getElementById('monitorFeedList');
+            if (!feedList) return;
+            var newFeedData = [
+                { dot: 'green', text: '<strong>#</strong> 第33台设备组装完成', time: '刚刚' },
+                { dot: 'blue', text: '<strong>#</strong> 物流状态更新：已到达目的港', time: '刚刚' },
+                { dot: 'cyan', text: '<strong>#</strong> 客户确认收货，订单完成', time: '刚刚' },
+                { dot: 'yellow', text: '<strong>#</strong> 校准测试进度更新至 0%', time: '刚刚' }
+            ];
+            var feedIdx = 0;
+            setInterval(function() {
+                if (feedIdx >= newFeedData.length) feedIdx = 0;
+                var d = newFeedData[feedIdx++];
+                var div = document.createElement('div');
+                div.className = 'feed-item';
+                div.style.animation = 'slide-in 0.5s ease-out';
+                div.innerHTML = '<div class="feed-dot feed-dot-' + d.dot + '"></div><div class="feed-content"><span class="feed-text">' + d.text + '</span><span class="feed-time">' + d.time + '</span></div>';
+                feedList.insertBefore(div, feedList.firstChild);
+                while (feedList.children.length > 12) {
+                    feedList.removeChild(feedList.lastChild);
+                }
+            }, 10000);
+        })();
+
+        // ========== 从API加载真实数据 ==========
+        (async function loadProductionDashboard() {
+            function getBuyerId() {
+                try {
+                    var u = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                    return u.id || u.userId || 1;
+                } catch (e) { return 1; }
+            }
+            function setEl(id, text) {
+                var el = document.getElementById(id);
+                if (el) el.textContent = text;
+            }
+            function pct(n, total) {
+                return total > 0 ? Math.round(n / total * 100) : 0;
+            }
+
+            var buyerId = getBuyerId();
+
+            // 加载订单数据 → 填充KPI和图表
+            try {
+                var result = await YicaiAPI.get('/orders/buyer/' + buyerId + '?page=0&size=1000');
+                if (result && result.code === 200 && result.data) {
+                    var all = result.data.content || result.data.list || result.data || [];
+                    if (!Array.isArray(all)) all = [];
+                    var total = all.length;
+                    var pending = all.filter(function(o) { return o.status === 'PENDING' || o.status === 'CONFIRMED'; }).length;
+                    var producing = all.filter(function(o) { return o.status === 'PAID'; }).length;
+                    var shipping = all.filter(function(o) { return o.status === 'SHIPPED'; }).length;
+                    var completed = all.filter(function(o) { return o.status === 'COMPLETED'; }).length;
+                    var received = all.filter(function(o) { return o.status === 'RECEIVED'; }).length;
+                    var inProgress = producing + shipping + received;
+
+                    // KPI卡片
+                    setEl('kpi-total-orders', total);
+                    setEl('kpi-total-trend', total > 0 ? total + ' 个订单' : '暂无订单');
+                    setEl('kpi-producing', producing);
+                    setEl('kpi-producing-trend', producing > 0 ? producing + ' 单生产中' : '-');
+                    setEl('kpi-completed', completed);
+                    setEl('kpi-completed-trend', total > 0 ? '完成率 ' + pct(completed, total) + '%' : '-');
+                    setEl('kpi-shipping', shipping);
+                    setEl('kpi-shipping-trend', shipping > 0 ? shipping + ' 单运输中' : '-');
+                    setEl('kpi-alerts', 0);
+                    setEl('kpi-alerts-trend', '暂无预警');
+                    setEl('kpi-suppliers', new Set(all.map(function(o) { return o.supplierId; }).filter(Boolean)).size);
+                    setEl('kpi-suppliers-trend', '-');
+
+                    // Hero统计动画
+                    var heroOrders = document.getElementById('hero-monitor-orders');
+                    var heroRate = document.getElementById('hero-ontime-rate');
+                    var heroAlerts = document.getElementById('hero-active-alerts');
+                    if (heroOrders) { heroOrders.setAttribute('data-target', inProgress); }
+                    if (heroRate) { heroRate.setAttribute('data-target', completed > 0 ? pct(completed, total) : 0); }
+                    if (heroAlerts) { heroAlerts.setAttribute('data-target', 0); }
+                    // 重新触发数字动画
+                    document.querySelectorAll('.monitor-hero-stat-num[data-target]').forEach(function(el) {
+                        var target = parseInt(el.getAttribute('data-target'));
+                        var duration = 1200;
+                        var step = target / (duration / 16);
+                        var current = 0;
+                        function tick() {
+                            current += step;
+                            if (current < target) {
+                                el.textContent = Math.floor(current);
+                                requestAnimationFrame(tick);
+                            } else {
+                                el.textContent = target;
+                            }
+                        }
+                        el.textContent = '0';
+                        if (target > 0) requestAnimationFrame(tick);
+                    });
+
+                    // 环形图图例
+                    setEl('donut-total', total);
+                    setEl('legend-producing', producing + ' (' + pct(producing, total) + '%)');
+                    setEl('legend-shipping', shipping + ' (' + pct(shipping, total) + '%)');
+                    setEl('legend-completed', completed + ' (' + pct(completed, total) + '%)');
+                    setEl('legend-pending', pending + ' (' + pct(pending, total) + '%)');
+                }
+            } catch (e) {
+                
+            }
+        })();
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+</body>
+</html>

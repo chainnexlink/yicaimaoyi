@@ -1,0 +1,816 @@
+/* AI智能体增强版样式 */
+
+/* ==================== 悬浮按钮 ==================== */
+.ai-agent-fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    z-index: 9999;
+    transition: all 0.3s ease;
+    border: none;
+    color: white;
+}
+
+.ai-agent-fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+}
+
+.ai-agent-fab.ai-agent-fab-active {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    transform: scale(1.1);
+}
+
+.ai-agent-fab svg {
+    width: 28px;
+    height: 28px;
+    fill: white;
+}
+
+.ai-fab-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: inherit;
+    animation: ai-fab-pulse 2s infinite;
+    opacity: 0.6;
+}
+
+@keyframes ai-fab-pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    70% {
+        transform: scale(1.3);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1.3);
+        opacity: 0;
+    }
+}
+
+.ai-agent-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #f59e0b;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    border: 2px solid white;
+}
+
+/* ==================== 聊天窗口 ==================== */
+.ai-agent-window {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 420px;
+    height: 600px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    z-index: 9998;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.ai-agent-window.ai-agent-window-open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* 头部 */
+.ai-agent-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.ai-agent-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ai-agent-avatar {
+    width: 36px;
+    height: 36px;
+    background: white;
+    color: #667eea;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.ai-agent-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.ai-agent-name {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.ai-agent-status {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.ai-agent-status.ai-agent-status-online {
+    color: #4ade80;
+}
+
+.ai-agent-status.ai-agent-status-offline {
+    color: #f87171;
+}
+
+.ai-agent-close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.ai-agent-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* 主体 */
+.ai-agent-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f9fafb;
+}
+
+/* 消息区域 */
+.ai-agent-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ai-agent-welcome {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+}
+
+.ai-agent-welcome-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.ai-agent-welcome-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 16px;
+}
+
+.ai-agent-welcome-text {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.ai-agent-welcome-text ul {
+    margin: 12px 0;
+    padding-left: 20px;
+}
+
+.ai-agent-welcome-text li {
+    margin-bottom: 6px;
+}
+
+.ai-agent-current-page {
+    margin-top: 16px;
+    padding: 12px;
+    background: #f3f4f6;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* 消息气泡 */
+.ai-agent-msg {
+    display: flex;
+    gap: 12px;
+    max-width: 85%;
+}
+
+.ai-agent-msg.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.ai-agent-msg.agent {
+    align-self: flex-start;
+}
+
+.ai-agent-msg.error {
+    align-self: center;
+    max-width: 100%;
+}
+
+.ai-agent-msg-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.ai-agent-msg.user .ai-agent-msg-avatar {
+    background: #667eea;
+    color: white;
+}
+
+.ai-agent-msg.agent .ai-agent-msg-avatar {
+    background: #10b981;
+    color: white;
+}
+
+.ai-agent-msg.error .ai-agent-msg-avatar {
+    background: #f59e0b;
+    color: white;
+}
+
+.ai-agent-msg-bubble {
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.ai-agent-msg.user .ai-agent-msg-bubble {
+    background: #667eea;
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.ai-agent-msg.agent .ai-agent-msg-bubble {
+    background: white;
+    color: #1f2937;
+    border: 1px solid #e5e7eb;
+    border-bottom-left-radius: 4px;
+}
+
+.ai-agent-msg.error .ai-agent-msg-bubble {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fbbf24;
+}
+
+.ai-agent-file-bubble {
+    background: #f3f4f6 !important;
+    border: 1px dashed #d1d5db !important;
+    color: #4b5563 !important;
+}
+
+.ai-agent-file-name {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.ai-agent-file-info {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.ai-agent-timeout-bubble {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ai-agent-retry-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    align-self: flex-start;
+    transition: background 0.2s;
+}
+
+.ai-agent-retry-btn:hover {
+    background: #5a67d8;
+}
+
+/* 工具面板 */
+.ai-agent-tools-panel {
+    border-top: 1px solid #e5e7eb;
+    background: white;
+    max-height: 200px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.ai-agent-tools-panel.collapsed {
+    max-height: 40px;
+}
+
+.ai-agent-tools-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 500;
+    color: #4b5563;
+}
+
+.ai-agent-tools-toggle {
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.ai-agent-tools-toggle:hover {
+    background: #f3f4f6;
+}
+
+.ai-agent-tools-grid {
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-height: 140px;
+    overflow-y: auto;
+}
+
+.ai-agent-tool-btn {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+}
+
+.ai-agent-tool-btn:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+.ai-agent-tool-icon {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.ai-agent-tool-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.ai-agent-tool-desc {
+    font-size: 10px;
+    color: #6b7280;
+    line-height: 1.3;
+}
+
+/* 输入区域 */
+.ai-agent-input-area {
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+}
+
+.ai-agent-input-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.ai-agent-input {
+    width: 100%;
+    padding: 12px 16px;
+    padding-right: 40px;
+    border: 1px solid #e5e7eb;
+    border-radius: 24px;
+    font-size: 14px;
+    resize: none;
+    max-height: 120px;
+    min-height: 48px;
+    line-height: 1.5;
+    font-family: inherit;
+}
+
+.ai-agent-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.ai-agent-input-actions {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 4px;
+}
+
+.ai-agent-action-btn {
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    font-size: 18px;
+}
+
+.ai-agent-action-btn:hover {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.ai-agent-send-btn {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.ai-agent-send-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.ai-agent-send-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: white;
+}
+
+/* 打字指示器 */
+.ai-agent-typing {
+    padding: 12px 20px;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ai-agent-typing-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.ai-agent-typing-dot {
+    width: 8px;
+    height: 8px;
+    background: #9ca3af;
+    border-radius: 50%;
+    animation: ai-typing-dot 1.4s infinite ease-in-out both;
+}
+
+.ai-agent-typing-dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.ai-agent-typing-dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes ai-typing-dot {
+    0%, 80%, 100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1);
+    }
+}
+
+.ai-agent-typing-text {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* 工具结果展示 */
+.ai-agent-tool-result {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    margin: 8px 0;
+    overflow: hidden;
+}
+
+.ai-agent-tool-result-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.ai-agent-tool-result-icon {
+    font-size: 20px;
+}
+
+.ai-agent-tool-result-title {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.ai-agent-tool-result-content {
+    padding: 16px;
+}
+
+.ai-agent-no-results {
+    text-align: center;
+    color: #6b7280;
+    padding: 20px;
+    font-style: italic;
+}
+
+/* 产品列表 */
+.ai-agent-product-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ai-agent-product-item {
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+}
+
+.ai-agent-product-item:hover {
+    border-color: #667eea;
+}
+
+.ai-agent-product-name {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+.ai-agent-product-details {
+    display: flex;
+    gap: 12px;
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.ai-agent-product-category,
+.ai-agent-product-moq,
+.ai-agent-product-price {
+    padding: 2px 8px;
+    background: #f3f4f6;
+    border-radius: 4px;
+}
+
+.ai-agent-product-supplier {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #4b5563;
+    margin-bottom: 12px;
+}
+
+.ai-agent-product-rating {
+    color: #f59e0b;
+    font-weight: 500;
+}
+
+.ai-agent-product-action {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.ai-agent-product-action:hover {
+    background: #5a67d8;
+}
+
+/* 额外信息 */
+.ai-agent-tool-result-extra {
+    border-top: 1px solid #e5e7eb;
+    padding: 16px;
+    background: #f9fafb;
+}
+
+.ai-agent-tool-result-extra-title {
+    font-weight: 500;
+    color: #4b5563;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.ai-agent-tool-result-extra-content {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 12px;
+    color: #6b7280;
+    max-height: 200px;
+    overflow: auto;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+/* 滚动条样式 */
+.ai-agent-messages::-webkit-scrollbar,
+.ai-agent-tools-grid::-webkit-scrollbar,
+.ai-agent-tool-result-extra-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.ai-agent-messages::-webkit-scrollbar-track,
+.ai-agent-tools-grid::-webkit-scrollbar-track,
+.ai-agent-tool-result-extra-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.ai-agent-messages::-webkit-scrollbar-thumb,
+.ai-agent-tools-grid::-webkit-scrollbar-thumb,
+.ai-agent-tool-result-extra-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.ai-agent-messages::-webkit-scrollbar-thumb:hover,
+.ai-agent-tools-grid::-webkit-scrollbar-thumb:hover,
+.ai-agent-tool-result-extra-content::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+    .ai-agent-window {
+        width: calc(100vw - 40px);
+        right: 20px;
+        bottom: 80px;
+        height: 70vh;
+    }
+    
+    .ai-agent-fab {
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .ai-agent-tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 暗色模式支持 */
+@media (prefers-color-scheme: dark) {
+    .ai-agent-window {
+        background: #1f2937;
+        border-color: #374151;
+    }
+    
+    .ai-agent-body {
+        background: #111827;
+    }
+    
+    .ai-agent-welcome,
+    .ai-agent-msg.agent .ai-agent-msg-bubble,
+    .ai-agent-tool-result,
+    .ai-agent-product-item,
+    .ai-agent-tool-result-extra-content {
+        background: #374151;
+        border-color: #4b5563;
+        color: #e5e7eb;
+    }
+    
+    .ai-agent-welcome-title,
+    .ai-agent-tool-result-title,
+    .ai-agent-product-name {
+        color: #f9fafb;
+    }
+    
+    .ai-agent-welcome-subtitle,
+    .ai-agent-welcome-text,
+    .ai-agent-current-page,
+    .ai-agent-tool-desc,
+    .ai-agent-product-details,
+    .ai-agent-product-supplier,
+    .ai-agent-tool-result-extra-title,
+    .ai-agent-tool-result-extra-content {
+        color: #d1d5db;
+    }
+    
+    .ai-agent-input,
+    .ai-agent-tool-btn {
+        background: #374151;
+        border-color: #4b5563;
+        color: #e5e7eb;
+    }
+    
+    .ai-agent-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    }
+    
+    .ai-agent-tools-panel,
+    .ai-agent-tools-header,
+    .ai-agent-tool-result-header,
+    .ai-agent-tool-result-extra {
+        background: #1f2937;
+        border-color: #374151;
+    }
+    
+    .ai-agent-typing {
+        background: #1f2937;
+        border-color: #374151;
+    }
+    
+    .ai-agent-typing-text {
+        color: #9ca3af;
+    }
+    
+    .ai-agent-product-category,
+    .ai-agent-product-moq,
+    .ai-agent-product-price {
+        background: #4b5563;
+        color: #e5e7eb;
+    }
+}

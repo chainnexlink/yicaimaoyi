@@ -1,0 +1,979 @@
+/**
+ * mobile-responsive.css - 全平台移动端适配
+ * 补充 platform-styles.css 和 pages-styles.css 中缺失的移动断点
+ * 加载顺序: 在 platform-styles.css / pages-styles.css 之后
+ */
+
+/* ========================================
+   1. 汉堡菜单按钮（手机端导航切换）
+   ======================================== */
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--text-primary);
+    flex-shrink: 0;
+}
+
+.mobile-menu-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* 移动端导航遮罩 */
+.mobile-nav-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 998;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-nav-overlay.active {
+    opacity: 1;
+}
+
+/* ========================================
+   2. 768px 平板竖屏断点增强
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* --- 汉堡菜单显示 --- */
+    .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .header-container {
+        flex-wrap: nowrap;
+        gap: 12px;
+        padding: 0 16px;
+    }
+
+    /* 导航栏变为侧边抽屉 */
+    .main-nav {
+        position: fixed;
+        top: 0;
+        right: -280px;
+        width: 280px;
+        height: 100vh;
+        background: var(--bg-darker);
+        border-left: 1px solid var(--border-color);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 60px 0 24px;
+        z-index: 999;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+        gap: 0;
+    }
+
+    .main-nav.mobile-open {
+        right: 0;
+    }
+
+    .main-nav .nav-link {
+        padding: 14px 24px;
+        font-size: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 0;
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    .main-nav .nav-link:hover,
+    .main-nav .nav-link.active {
+        background: rgba(0, 229, 204, 0.08);
+    }
+
+    /* 侧边栏关闭按钮 */
+    .mobile-nav-close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 8px;
+        z-index: 1001;
+    }
+
+    .mobile-nav-close svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    /* 语言选择器在手机端缩小 */
+    .language-selector {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+
+    .language-selector .lang-text {
+        display: none;
+    }
+
+    /* 搜索框适配 */
+    .search-box {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .search-results-dropdown {
+        min-width: auto;
+        width: calc(100vw - 32px);
+        left: 50%;
+        transform: translateX(-50%);
+        right: auto;
+    }
+
+    /* 用户下拉菜单适配 */
+    .user-dropdown {
+        right: -16px;
+        width: min(240px, calc(100vw - 32px));
+    }
+
+    /* 表格水平滚动 */
+    .data-table-wrapper,
+    .table-wrapper,
+    .orders-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table,
+    .orders-table {
+        min-width: 600px;
+    }
+
+    /* 按钮组自动换行 */
+    .btn-group,
+    .action-buttons,
+    .form-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    /* 页面标题栏 */
+    .page-banner {
+        padding: 24px 16px;
+    }
+
+    .page-banner h1 {
+        font-size: 24px;
+    }
+
+    .page-banner p {
+        font-size: 14px;
+    }
+
+    /* 世界地图区块 */
+    .world-map {
+        height: 250px;
+    }
+
+    .map-title {
+        font-size: 18px;
+    }
+
+    /* 页脚 */
+    .footer {
+        padding: 32px 16px;
+    }
+
+    .footer-nav {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
+/* ========================================
+   3. 640px 大手机断点
+   ======================================== */
+
+@media (max-width: 640px) {
+    /* 搜索框 */
+    .search-box {
+        min-width: 120px;
+    }
+
+    .search-box input {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    /* 卡片间距缩小 */
+    .stats-container,
+    .supplier-container,
+    .features-grid,
+    .quick-grid,
+    .news-grid,
+    .auction-grid {
+        gap: 12px;
+    }
+
+    .stat-card,
+    .supplier-card,
+    .feature-card,
+    .quick-card {
+        padding: 16px;
+    }
+
+    /* 标签页水平滚动 */
+    .orders-tabs,
+    .cert-tabs,
+    .filter-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        scrollbar-width: none;
+    }
+
+    .orders-tabs::-webkit-scrollbar,
+    .cert-tabs::-webkit-scrollbar,
+    .filter-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* 消息页 */
+    .messages-sidebar {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    /* 智能匹配页 */
+    .match-guide-panel {
+        display: none;
+    }
+
+    .match-main-content {
+        width: 100%;
+    }
+
+    /* 竞价页 */
+    .auction-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bid-section {
+        flex-direction: column;
+    }
+
+    /* Section内边距缩小 */
+    section {
+        padding: 32px 12px;
+    }
+
+    .section-title {
+        font-size: 20px;
+        margin-bottom: 24px;
+    }
+}
+
+/* ========================================
+   4. 480px 标准手机断点增强
+   ======================================== */
+
+@media (max-width: 480px) {
+    /* Header进一步紧凑 */
+    .header {
+        padding: 8px 0;
+    }
+
+    .header-container {
+        padding: 0 12px;
+        gap: 8px;
+    }
+
+    .header-left {
+        flex-direction: row;
+        width: auto;
+        gap: 8px;
+    }
+
+    /* 语言选择器只显示图标 */
+    .language-selector {
+        padding: 6px 8px;
+    }
+
+    .language-selector .dropdown-arrow {
+        display: none;
+    }
+
+    /* 搜索框缩小 */
+    .search-box {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .search-box input {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    /* Logo缩小 */
+    .logo-text {
+        font-size: 14px;
+    }
+
+    .logo-link {
+        gap: 6px;
+    }
+
+    /* Hero区块 */
+    .hero-title {
+        font-size: 20px;
+    }
+
+    .hero-subtitle {
+        font-size: 13px;
+    }
+
+    .hero-content .btn-primary {
+        padding: 10px 24px;
+        font-size: 13px;
+    }
+
+    /* 卡片进一步压缩 */
+    .stat-card,
+    .supplier-card,
+    .feature-card,
+    .quick-card,
+    .news-card {
+        border-radius: 8px;
+    }
+
+    .stat-number {
+        font-size: 24px;
+    }
+
+    .stat-label {
+        font-size: 12px;
+    }
+
+    .supplier-name,
+    .feature-title {
+        font-size: 14px;
+    }
+
+    /* 新闻图片高度减小 */
+    .news-image {
+        height: 140px;
+    }
+
+    .news-content {
+        padding: 14px;
+    }
+
+    .news-title {
+        font-size: 14px;
+    }
+
+    /* 弹窗/模态框 */
+    .modal-content,
+    .dialog-content {
+        width: calc(100vw - 24px);
+        max-height: 90vh;
+        margin: 5vh auto;
+    }
+
+    /* Section标题 */
+    .section-title {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    section {
+        padding: 24px 12px;
+    }
+
+    /* 用户菜单 */
+    .user-dropdown {
+        width: calc(100vw - 24px);
+        right: -12px;
+    }
+
+    .user-name {
+        display: none;
+    }
+
+    .user-level {
+        display: none;
+    }
+
+    /* 按钮 */
+    .btn-primary,
+    .btn-secondary,
+    .btn-outline {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+
+    /* 世界地图 */
+    .world-map {
+        height: 180px;
+    }
+
+    .map-title {
+        font-size: 16px;
+    }
+
+    .map-subtitle {
+        font-size: 12px;
+    }
+}
+
+/* ========================================
+   5. 登录页移动端适配
+   ======================================== */
+
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .login-left {
+        display: none;
+    }
+
+    .login-right {
+        width: 100%;
+        min-height: 100vh;
+        padding: 24px;
+    }
+
+    .login-form-container {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .login-title {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-right {
+        padding: 16px;
+    }
+
+    .login-form-container {
+        max-width: 100%;
+    }
+
+    .login-title {
+        font-size: 20px;
+    }
+
+    .form-input,
+    .form-select {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+}
+
+/* ========================================
+   6. 智能匹配页移动端适配
+   ======================================== */
+
+@media (max-width: 768px) {
+    .match-container {
+        flex-direction: column;
+    }
+
+    .match-filters {
+        width: 100%;
+        position: static;
+    }
+
+    .filter-card {
+        position: static;
+    }
+
+    .match-results {
+        width: 100%;
+    }
+
+    .match-card {
+        flex-direction: column;
+    }
+
+    .match-score {
+        width: 100%;
+        flex-direction: row;
+        padding: 12px 16px;
+    }
+
+    .step-indicators {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .step-indicator {
+        flex-direction: row;
+        gap: 8px;
+    }
+}
+
+/* ========================================
+   7. 订单/合同页移动端适配
+   ======================================== */
+
+@media (max-width: 768px) {
+    .order-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .order-items-table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .order-items-table table {
+        min-width: 500px;
+    }
+
+    /* 合同创建表单 */
+    .contract-form .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .contract-preview {
+        padding: 16px;
+    }
+}
+
+/* ========================================
+   8. 用户中心页移动端适配
+   ======================================== */
+
+@media (max-width: 768px) {
+    .user-center-layout {
+        flex-direction: column;
+    }
+
+    .user-sidebar {
+        width: 100%;
+        position: static;
+    }
+
+    .user-sidebar-nav {
+        display: flex;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+        scrollbar-width: none;
+    }
+
+    .user-sidebar-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .user-sidebar-nav a {
+        flex-shrink: 0;
+    }
+
+    .user-main-content {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   9. 竞价页面移动端适配
+   ======================================== */
+
+@media (max-width: 768px) {
+    .auction-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .auction-timer {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .auction-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bid-history-table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .bid-history-table table {
+        min-width: 400px;
+    }
+}
+
+@media (max-width: 480px) {
+    .auction-card {
+        border-radius: 8px;
+    }
+
+    .auction-card-header {
+        padding: 12px;
+    }
+
+    .auction-card-body {
+        padding: 12px;
+    }
+
+    .auction-price {
+        font-size: 18px;
+    }
+}
+
+/* ========================================
+   10. 供应商中心/商户中心移动端适配
+   ======================================== */
+
+@media (max-width: 768px) {
+    .supplier-header-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .supplier-avatar {
+        margin: 0 auto 16px;
+    }
+
+    .supplier-stats-row {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .merchant-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   11. 资质认证页面移动端适配
+   ======================================== */
+
+@media (max-width: 640px) {
+    .cert-upload-area {
+        padding: 24px 16px;
+    }
+
+    .cert-upload-area .upload-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .cert-status-badge {
+        font-size: 12px;
+        padding: 4px 10px;
+    }
+}
+
+/* ========================================
+   12. 消息中心移动端适配
+   ======================================== */
+
+@media (max-width: 768px) {
+    .messages-container {
+        flex-direction: column;
+    }
+
+    .messages-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        max-height: 260px;
+        overflow-y: auto;
+    }
+
+    .messages-main {
+        width: 100%;
+    }
+
+    .chat-input-area {
+        padding: 8px 12px;
+    }
+}
+
+/* ========================================
+   13. 仪表盘/数据面板移动端适配
+   ======================================== */
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-card {
+        grid-column: span 1 !important;
+    }
+
+    .chart-container {
+        height: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-stat-value {
+        font-size: 24px;
+    }
+
+    .dashboard-stat-label {
+        font-size: 12px;
+    }
+}
+
+/* ========================================
+   14. 表单通用移动端适配
+   ======================================== */
+
+@media (max-width: 640px) {
+    .form-group label {
+        font-size: 13px;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select,
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="tel"],
+    textarea,
+    select {
+        font-size: 16px !important; /* 防止iOS自动缩放 */
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   15. AI聊天窗口移动端适配
+   ======================================== */
+
+@media (max-width: 768px) {
+    .ai-chat-window {
+        width: calc(100vw - 16px);
+        height: calc(100vh - 80px);
+        bottom: 70px;
+        right: 8px;
+        min-width: auto;
+        border-radius: 12px;
+    }
+
+    .ai-chat-btn {
+        bottom: 16px;
+        right: 16px;
+        width: 48px;
+        height: 48px;
+    }
+}
+
+/* ========================================
+   16. 通用触摸优化
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* 增大触摸目标 */
+    .nav-link,
+    .dropdown-item,
+    .tab-item,
+    .filter-tag {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    /* 禁止长按弹出菜单（可选） */
+    img {
+        -webkit-touch-callout: none;
+    }
+
+    /* 消除300ms点击延迟已经由viewport处理 */
+
+    /* 避免双击缩放 */
+    * {
+        touch-action: manipulation;
+    }
+
+    /* 内联返回按钮 */
+    .inline-back {
+        width: 32px;
+        height: 32px;
+    }
+
+    .inline-back svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* ========================================
+   17. 底部导航栏（手机端固定底部）
+   ======================================== */
+
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-darker);
+    border-top: 1px solid var(--border-color);
+    z-index: 997;
+    padding: 4px 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.mobile-bottom-nav .nav-items {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.mobile-bottom-nav .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 0;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 10px;
+    flex: 1;
+    transition: color 0.2s;
+}
+
+.mobile-bottom-nav .nav-item svg {
+    width: 22px;
+    height: 22px;
+}
+
+.mobile-bottom-nav .nav-item.active,
+.mobile-bottom-nav .nav-item:hover {
+    color: var(--primary-cyan);
+}
+
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        display: block;
+    }
+
+    /* 页面底部留出底部导航的空间 */
+    body {
+        padding-bottom: 64px;
+    }
+
+    .footer {
+        margin-bottom: 0;
+        padding-bottom: 80px;
+    }
+}
+
+/* ========================================
+   18. 发布需求页移动端适配
+   ======================================== */
+
+@media (max-width: 768px) {
+    .publish-form-container {
+        padding: 16px;
+    }
+
+    .publish-steps {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .publish-step {
+        flex-direction: row;
+        gap: 12px;
+    }
+
+    .image-upload-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .image-upload-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========================================
+   19. 生产监控页移动端适配
+   ======================================== */
+
+@media (max-width: 768px) {
+    .production-overview-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .production-timeline {
+        padding-left: 20px;
+    }
+
+    .timeline-item::before {
+        left: -20px;
+    }
+}
+
+/* ========================================
+   20. 帮助中心 & 关于页面移动端适配
+   ======================================== */
+
+@media (max-width: 640px) {
+    .help-search {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .help-search input {
+        width: 100%;
+    }
+
+    .help-search button {
+        width: 100%;
+    }
+
+    .faq-question {
+        font-size: 14px;
+        padding: 14px 16px;
+    }
+
+    .faq-answer {
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+}
+
+/* ========================================
+   21. 打印样式优化
+   ======================================== */
+
+@media print {
+    .mobile-menu-btn,
+    .mobile-bottom-nav,
+    .mobile-nav-overlay,
+    .ai-chat-btn,
+    .ai-chat-window {
+        display: none !important;
+    }
+}

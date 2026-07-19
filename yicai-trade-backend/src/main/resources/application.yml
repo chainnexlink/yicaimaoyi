@@ -1,0 +1,129 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: yicai-trade-platform
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:prod}
+  
+  # File Upload
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
+
+# App config
+app:
+  upload:
+    dir: ${UPLOAD_DIR:./uploads}
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:}
+  access-token-expiration: 900000
+  refresh-token-expiration: 604800000
+
+# AI Models Configuration
+ai:
+  models:
+    # 豆包视觉模型 - 图片识别
+    doubao-vision:
+      model-id: ${DOUBAO_VISION_MODEL:idep-20260215104814-x5t6l}
+      api-key: ${DOUBAO_VISION_KEY:}
+      endpoint: https://ark.cn-beijing.volces.com/api/v3
+      enabled: true
+    
+    # 豆包文本模型 - 品类匹配与参数生成
+    doubao-text:
+      model-id: ${DOUBAO_TEXT_MODEL:ep-20260217114227-lm9vr}
+      api-key: ${DOUBAO_TEXT_KEY:}
+      endpoint: https://ark.cn-beijing.volces.com/api/v3
+      enabled: true
+    
+    # 智谱4.7模型 - 成本计算与供应商生成
+    zhipu:
+      model-id: ${ZHIPU_MODEL:ep-20260217114008-h7cxp}
+      api-key: ${ZHIPU_KEY:}
+      endpoint: https://ark.cn-beijing.volces.com/api/v3
+      enabled: true
+    
+    # DeepSeek模型 - AI智能助手对话
+    deepseek:
+      model-id: ${DEEPSEEK_MODEL:ep-20260308122419-6cf68}
+      api-key: ${DEEPSEEK_KEY:}
+      endpoint: https://ark.cn-beijing.volces.com/api/v3
+      enabled: true
+  
+  # 通用配置
+  timeout: 30000
+  max-retries: 3
+
+# 物流查询配置 (阿里云API市场 - 全球快递物流查询)
+logistics:
+  tracking:
+    api-url: https://wuliu.market.alicloudapi.com/kdi
+    app-code: ${LOGISTICS_APP_CODE:}
+    timeout: 10000
+    enabled: true
+
+# 短信验证码配置 (望为科技 - 阿里云API市场)
+sms:
+  api-url: ${SMS_API_URL:https://wwsms.market.alicloudapi.com/send_sms}
+  app-code: ${SMS_APP_CODE:}
+  template-id: ${SMS_TEMPLATE_ID:wangweisms996}
+  enabled: ${SMS_ENABLED:true}
+
+# 邮件服务配置
+email:
+  enabled: ${EMAIL_ENABLED:false}
+  from-name: ${EMAIL_FROM_NAME:易采贸易平台}
+
+# 微信开放平台OAuth配置
+wechat:
+  oauth:
+    app-id: ${WECHAT_APP_ID:}
+    app-secret: ${WECHAT_APP_SECRET:}
+    enabled: ${WECHAT_ENABLED:false}
+
+# PayPal 支付配置
+paypal:
+  client-id: ${PAYPAL_CLIENT_ID:}
+  client-secret: ${PAYPAL_CLIENT_SECRET:}
+  mode: ${PAYPAL_MODE:sandbox}
+
+# Stripe Checkout（银行卡及按地区动态展示的国际支付方式）
+stripe:
+  secret-key: ${STRIPE_SECRET_KEY:}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+  success-url: ${STRIPE_SUCCESS_URL:}
+  cancel-url: ${STRIPE_CANCEL_URL:}
+  webhook-tolerance-seconds: ${STRIPE_WEBHOOK_TOLERANCE_SECONDS:300}
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+# Logging
+logging:
+  level:
+    com.yicai.trade: INFO
+    org.springframework.security: INFO
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Springdoc OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha

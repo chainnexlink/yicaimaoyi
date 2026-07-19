@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="supplierMap.tamo0vf">供应商分布 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="javascript:history.back()" class="inline-back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    返回
+                </a>
+                <a href="index.html" class="logo-link"><span class="logo-text">全球供应链智能匹配平台</span></a>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+                <a href="certification.html" class="nav-link" data-i18n="nav.certification">资质认证</a>
+                <a href="messages.html" class="nav-link" data-i18n="nav.messages">消息中心</a>
+                <a href="user-center.html" class="nav-link">个人中心</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-banner">
+        <h1 data-i18n="supplierMap.tvm0z92">供应商分布</h1>
+        <p data-i18n="supplierMap.t7kqpkz">探索全球供应商网络</p>
+    </div>
+
+    <!-- ==================== L1: 供应商分布主页 ==================== -->
+    <div class="page-view active" id="view-map">
+    <main class="page-content">
+        <div class="content-container">
+            <div class="msg-tabs-bar" style="margin-bottom:24px;">
+                <button class="msg-tab-btn active" onclick="showView('view-map')">全球分布</button>
+                <button class="msg-tab-btn" onclick="showView('view-china-map')">中国分布</button>
+                <button class="msg-tab-btn" onclick="showView('view-industry-analysis')">行业分析</button>
+                <button class="msg-tab-btn" onclick="showView('view-region-compare')">区域对比</button>
+            </div>
+            <div class="region-stats">
+                <div class="region-stat-card" style="cursor:pointer;" onclick="showView('view-region-detail')"><h3 data-i18n="supplierMap.taadu56">亚太地区</h3><span class="region-count">6,528</span><span class="region-label">供应商</span><div class="region-bar"><div class="region-fill" style="width:65%;"></div></div></div>
+                <div class="region-stat-card" style="cursor:pointer;" onclick="showView('view-region-detail')"><h3 data-i18n="supplierMap.tdyyfqt">欧洲地区</h3><span class="region-count">3,245</span><span class="region-label">供应商</span><div class="region-bar"><div class="region-fill" style="width:32%;"></div></div></div>
+                <div class="region-stat-card" style="cursor:pointer;" onclick="showView('view-region-detail')"><h3 data-i18n="supplierMap.tb0dxnl">北美地区</h3><span class="region-count">1,856</span><span class="region-label">供应商</span><div class="region-bar"><div class="region-fill" style="width:18%;"></div></div></div>
+                <div class="region-stat-card" style="cursor:pointer;" onclick="showView('view-region-detail')"><h3 data-i18n="supplierMap.talurze">其他地区</h3><span class="region-count">1,227</span><span class="region-label">供应商</span><div class="region-bar"><div class="region-fill" style="width:12%;"></div></div></div>
+            </div>
+            <div class="world-map-container">
+                <h2 data-i18n="supplierMap.tsr9skx">全球供应商分布图</h2>
+                <div class="interactive-map">
+                    <svg class="map-svg-large" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
+                        <path class="continent" d="M150,150 Q200,100 280,120 Q320,80 380,100 Q420,90 450,110 Q480,100 520,130 Q540,120 560,140 L560,200 Q540,220 500,210 Q460,230 420,220 Q380,240 340,220 Q300,240 260,220 Q220,240 180,220 Q160,230 150,200 Z" />
+                        <path class="continent" d="M100,220 Q140,200 180,210 Q200,180 240,190 Q260,170 290,180 L290,280 Q260,300 220,290 Q180,310 140,290 Q120,300 100,280 Z" />
+                        <path class="continent" d="M560,100 Q620,80 680,100 Q720,90 760,110 Q800,100 840,120 Q870,110 900,130 L900,200 Q870,220 830,210 Q790,230 750,210 Q710,230 670,210 Q630,230 590,210 Q570,220 560,190 Z" />
+                        <path class="continent" d="M700,220 Q740,200 780,210 Q820,190 860,200 L860,350 Q820,370 780,350 Q740,370 700,350 Z" />
+                        <path class="continent" d="M350,300 Q390,280 430,290 Q470,270 510,280 Q530,260 550,270 L550,380 Q510,400 470,380 Q430,400 390,380 Q360,400 350,370 Z" />
+                        <circle class="map-dot large" cx="780" cy="160" r="12" onclick="showView('view-region-detail')" style="cursor:pointer;"/>
+                        <circle class="map-dot medium" cx="800" cy="220" r="8" onclick="showView('view-region-detail')" style="cursor:pointer;"/>
+                        <circle class="map-dot medium" cx="850" cy="150" r="8" onclick="showView('view-region-detail')" style="cursor:pointer;"/>
+                        <circle class="map-dot large" cx="480" cy="130" r="10" onclick="showView('view-region-detail')" style="cursor:pointer;"/>
+                        <circle class="map-dot medium" cx="540" cy="120" r="7" onclick="showView('view-region-detail')" style="cursor:pointer;"/>
+                        <circle class="map-dot medium" cx="200" cy="150" r="9" onclick="showView('view-region-detail')" style="cursor:pointer;"/>
+                        <circle class="map-dot small" cx="260" cy="320" r="6" onclick="showView('view-region-detail')" style="cursor:pointer;"/>
+                        <circle class="map-dot medium" cx="720" cy="200" r="7" onclick="showView('view-region-detail')" style="cursor:pointer;"/>
+                        <circle class="map-dot small" cx="620" cy="180" r="5" onclick="showView('view-region-detail')" style="cursor:pointer;"/>
+                        <circle class="map-dot small" cx="520" cy="280" r="5" onclick="showView('view-region-detail')" style="cursor:pointer;"/>
+                        <circle class="map-dot small" cx="880" cy="340" r="5" onclick="showView('view-region-detail')" style="cursor:pointer;"/>
+                    </svg>
+                    <div class="map-legend"><div class="legend-item"><span class="legend-dot large"></span><span data-i18n="supplierMap.t7s0kgp">1000+ 供应商</span></div><div class="legend-item"><span class="legend-dot medium"></span><span data-i18n="supplierMap.tyj4318">500-1000 供应商</span></div><div class="legend-item"><span class="legend-dot small"></span><span>< 500 供应商</span></div></div>
+                </div>
+            </div>
+            <div class="hot-regions">
+                <h2 data-i18n="supplierMap.twdu7ew">热门地区供应商</h2>
+                <div class="region-tabs"><button class="region-tab active">中国</button><button class="region-tab">欧洲</button><button class="region-tab">北美</button><button class="region-tab">东南亚</button></div>
+                <div class="region-suppliers" id="china">
+                    <div class="supplier-region-card"><div class="city-name">深圳</div><div class="city-count">1,256 家供应商</div><div class="city-categories">电子元器件、智能设备、通讯产品</div><button class="btn-primary-sm" onclick="showView('view-city-suppliers')">查看供应商</button></div>
+                    <div class="supplier-region-card"><div class="city-name">广州</div><div class="city-count">986 家供应商</div><div class="city-categories">纺织服装、五金工具、化工原料</div><button class="btn-primary-sm" onclick="showView('view-city-suppliers')">查看供应商</button></div>
+                    <div class="supplier-region-card"><div class="city-name">上海</div><div class="city-count">756 家供应商</div><div class="city-categories">机械设备、汽车配件、精密仪器</div><button class="btn-primary-sm" onclick="showView('view-city-suppliers')">查看供应商</button></div>
+                    <div class="supplier-region-card"><div class="city-name">杭州</div><div class="city-count">528 家供应商</div><div class="city-categories">电商服务、数字营销、软件开发</div><button class="btn-primary-sm" onclick="showView('view-city-suppliers')">查看供应商</button></div>
+                    <div class="supplier-region-card"><div class="city-name">苏州</div><div class="city-count">468 家供应商</div><div class="city-categories">精密制造、光电产品、新材料</div><button class="btn-primary-sm" onclick="showView('view-city-suppliers')">查看供应商</button></div>
+                    <div class="supplier-region-card"><div class="city-name">成都</div><div class="city-count">352 家供应商</div><div class="city-categories">航空航天、电子信息、生物医药</div><button class="btn-primary-sm" onclick="showView('view-city-suppliers')">查看供应商</button></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    </div>
+
+    <!-- ==================== L2: 区域详情 ==================== -->
+    <div class="page-view" id="view-region-detail">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-map')">供应商分布</a><span class="sep">/</span><span data-i18n="supplierMap.tavg2mc">区域详情</span></div>
+        <button class="btn-back-sm" onclick="showView('view-map')">返回分布图</button>
+        <h2 style="margin:16px 0;">亚太地区 - 供应商分布</h2>
+        <div class="dashboard-grid">
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tvlyise">供应商总数</h4><span style="font-size:32px;font-weight:700;color:var(--primary-cyan);">6,528</span><p style="font-size:13px;color:var(--text-muted);">占全球 51%</p></div>
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tj4bkmd">活跃供应商</h4><span style="font-size:32px;font-weight:700;color:var(--accent-green);">5,842</span><p style="font-size:13px;color:var(--text-muted);">活跃率 89%</p></div>
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tag0eb8">主要行业</h4><span style="font-size:32px;font-weight:700;color:#45B7D1;">8</span><p style="font-size:13px;color:var(--text-muted);">个行业</p></div>
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tcakv0y">年增长率</h4><span style="font-size:32px;font-weight:700;color:#FFD93D;">+12%</span><p style="font-size:13px;color:var(--text-muted);">较去年</p></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="supplierMap.tko3131">国家/地区分布</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="supplierMap.t3gad1c">国家/地区</th><th data-i18n="supplierMap.tafq9dv">供应商数</th><th data-i18n="supplierMap.teruc">占比</th><th data-i18n="supplierMap.tag0eb8">主要行业</th><th data-i18n="supplierMap.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="supplierMap.tdrw0">中国</td><td>4,526</td><td>69.3%</td><td data-i18n="supplierMap.tpi2xva">电子元器件、机械设备</td><td><button class="btn-action" onclick="showView('view-china-map')">查看详情</button></td></tr>
+                    <tr><td data-i18n="supplierMap.tbuh4v">东南亚</td><td>1,256</td><td>19.2%</td><td data-i18n="supplierMap.teuvt22">纺织服装、农产品</td><td><button class="btn-action" onclick="showView('view-country-detail')">查看详情</button></td></tr>
+                    <tr><td data-i18n="supplierMap.teqv25g">日本/韩国</td><td>746</td><td>11.4%</td><td data-i18n="supplierMap.tpuokol">汽车配件、精密仪器</td><td><button class="btn-action" onclick="showView('view-country-detail')">查看详情</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="supplierMap.thipoy3">行业分布</h4>
+            <div style="padding:16px 0;">
+                <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">电子元器件</span><span style="font-size:13px;color:var(--primary-cyan);">2,156家 (33%)</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:33%;height:100%;background:var(--primary-cyan);border-radius:3px;"></div></div></div>
+                <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">机械设备</span><span style="font-size:13px;color:#45B7D1;">1,568家 (24%)</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:24%;height:100%;background:#45B7D1;border-radius:3px;"></div></div></div>
+                <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">纺织服装</span><span style="font-size:13px;color:#FFD93D;">1,124家 (17%)</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:17%;height:100%;background:#FFD93D;border-radius:3px;"></div></div></div>
+                <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">其他</span><span style="font-size:13px;color:#FF6B6B;">1,680家 (26%)</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:26%;height:100%;background:#FF6B6B;border-radius:3px;"></div></div></div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 国家详情 ==================== -->
+    <div class="page-view" id="view-country-detail">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-map')">供应商分布</a><span class="sep">/</span><a onclick="showView('view-region-detail')">亚太地区</a><span class="sep">/</span><span data-i18n="supplierMap.tbuh4v">东南亚</span></div>
+        <button class="btn-back-sm" onclick="showView('view-region-detail')">返回区域</button>
+        <h2 style="margin:16px 0;">东南亚 - 供应商分布</h2>
+        <div class="dashboard-grid">
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tvlyise">供应商总数</h4><span style="font-size:28px;font-weight:700;color:var(--primary-cyan);">1,256</span></div>
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tafs327">主要国家</h4><span style="font-size:28px;font-weight:700;color:#45B7D1;">6</span></div>
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tcakv0y">年增长率</h4><span style="font-size:28px;font-weight:700;color:var(--accent-green);">+18%</span></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="supplierMap.tbctcye">国家分布</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="supplierMap.tfas9">国家</th><th data-i18n="supplierMap.tafq9dv">供应商数</th><th data-i18n="supplierMap.tag0eb8">主要行业</th><th data-i18n="supplierMap.tcabbhy">平均评分</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="supplierMap.toj65">越南</td><td>425</td><td data-i18n="supplierMap.tw2ou2w">纺织服装、电子组装</td><td>4.5</td></tr>
+                    <tr><td data-i18n="supplierMap.tj099">泰国</td><td>312</td><td data-i18n="supplierMap.tn0s537">农产品、汽车配件</td><td>4.6</td></tr>
+                    <tr><td data-i18n="supplierMap.tjwz60k">马来西亚</td><td>256</td><td data-i18n="supplierMap.tgyqb8m">电子产品、棕榈油</td><td>4.7</td></tr>
+                    <tr><td data-i18n="supplierMap.tgl19dr">印度尼西亚</td><td>156</td><td data-i18n="supplierMap.tgu2qgd">矿产资源、橡胶制品</td><td>4.4</td></tr>
+                    <tr><td data-i18n="supplierMap.tjshz9">菲律宾</td><td>68</td><td data-i18n="supplierMap.t7s15n4">电子组装、BPO服务</td><td>4.5</td></tr>
+                    <tr><td data-i18n="supplierMap.tfaq9d">新加坡</td><td>39</td><td data-i18n="supplierMap.tovxn3d">贸易中转、金融服务</td><td>4.9</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L2: 中国分布 ==================== -->
+    <div class="page-view" id="view-china-map">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-map')">供应商分布</a><span class="sep">/</span><span data-i18n="supplierMap.ta83y25">中国分布</span></div>
+        <button class="btn-back-sm" onclick="showView('view-map')">返回全球</button>
+        <h2 style="margin:16px 0;">中国供应商分布</h2>
+        <div class="dashboard-grid">
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-province-detail')"><h4 data-i18n="supplierMap.tauvwr7">华南地区</h4><span style="font-size:28px;font-weight:700;color:var(--primary-cyan);">1,856</span><p style="font-size:13px;color:var(--text-muted);">深圳、广州、东莞</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-province-detail')"><h4 data-i18n="supplierMap.tau4bvc">华东地区</h4><span style="font-size:28px;font-weight:700;color:#45B7D1;">1,524</span><p style="font-size:13px;color:var(--text-muted);">上海、杭州、苏州</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-province-detail')"><h4 data-i18n="supplierMap.tauular">华北地区</h4><span style="font-size:28px;font-weight:700;color:#FFD93D;">658</span><p style="font-size:13px;color:var(--text-muted);">北京、天津、青岛</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-province-detail')"><h4 data-i18n="supplierMap.thxysr7">西部地区</h4><span style="font-size:28px;font-weight:700;color:var(--accent-green);">488</span><p style="font-size:13px;color:var(--text-muted);">成都、重庆、西安</p></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="supplierMap.tbgy50u">城市排行</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="supplierMap.thebf">排名</th><th data-i18n="supplierMap.tfg8k">城市</th><th data-i18n="supplierMap.tafq9dv">供应商数</th><th data-i18n="supplierMap.tag0eb8">主要行业</th><th data-i18n="supplierMap.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td data-i18n="supplierMap.tj6g2">深圳</td><td>1,256</td><td data-i18n="supplierMap.tphxeeh">电子元器件、智能设备</td><td><button class="btn-action" onclick="showView('view-city-suppliers')">查看</button></td></tr>
+                    <tr><td>2</td><td data-i18n="supplierMap.tgl6n">广州</td><td>986</td><td data-i18n="supplierMap.tyaucq3">纺织服装、五金工具</td><td><button class="btn-action" onclick="showView('view-city-suppliers')">查看</button></td></tr>
+                    <tr><td>3</td><td data-i18n="supplierMap.tdvhp">上海</td><td>756</td><td data-i18n="supplierMap.t5kcai0">机械设备、精密仪器</td><td><button class="btn-action" onclick="showView('view-city-suppliers')">查看</button></td></tr>
+                    <tr><td>4</td><td data-i18n="supplierMap.ti3v5">杭州</td><td>528</td><td data-i18n="supplierMap.tprv2wk">电商服务、软件开发</td><td><button class="btn-action" onclick="showView('view-city-suppliers')">查看</button></td></tr>
+                    <tr><td>5</td><td data-i18n="supplierMap.tmrjj">苏州</td><td>468</td><td data-i18n="supplierMap.tf7qq8l">精密制造、光电产品</td><td><button class="btn-action" onclick="showView('view-city-suppliers')">查看</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 省份详情 ==================== -->
+    <div class="page-view" id="view-province-detail">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-map')">供应商分布</a><span class="sep">/</span><a onclick="showView('view-china-map')">中国分布</a><span class="sep">/</span><span data-i18n="supplierMap.tauvwr7">华南地区</span></div>
+        <button class="btn-back-sm" onclick="showView('view-china-map')">返回中国</button>
+        <h2 style="margin:16px 0;">华南地区供应商分布</h2>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tvlyise">供应商总数</h4><span style="font-size:28px;font-weight:700;color:var(--primary-cyan);">1,856</span></div>
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tafs8ii">主要城市</h4><span style="font-size:28px;font-weight:700;color:#45B7D1;">5</span></div>
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.thui4im">覆盖行业</h4><span style="font-size:28px;font-weight:700;color:#FFD93D;">12</span></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="supplierMap.tbgux81">城市分布</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="supplierMap.tfg8k">城市</th><th data-i18n="supplierMap.tafq9dv">供应商数</th><th data-i18n="supplierMap.teruc">占比</th><th data-i18n="supplierMap.tezjep3">特色行业</th><th data-i18n="supplierMap.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="supplierMap.tj6g2">深圳</td><td>1,256</td><td>67.7%</td><td data-i18n="supplierMap.tibx0tj">电子元器件、智能设备、通讯产品</td><td><button class="btn-action" onclick="showView('view-city-suppliers')">查看</button></td></tr>
+                    <tr><td data-i18n="supplierMap.tgl6n">广州</td><td>328</td><td>17.7%</td><td data-i18n="supplierMap.tyqkctd">纺织服装、五金工具、化工原料</td><td><button class="btn-action" onclick="showView('view-city-suppliers')">查看</button></td></tr>
+                    <tr><td data-i18n="supplierMap.te0aq">东莞</td><td>156</td><td>8.4%</td><td data-i18n="supplierMap.tlql51">电子组装、玩具制造、家具</td><td><button class="btn-action" onclick="showView('view-city-suppliers')">查看</button></td></tr>
+                    <tr><td data-i18n="supplierMap.te06u">佛山</td><td>72</td><td>3.9%</td><td data-i18n="supplierMap.tdhp4j">陶瓷建材、家电制造</td><td><button class="btn-action" onclick="showView('view-city-suppliers')">查看</button></td></tr>
+                    <tr><td data-i18n="supplierMap.tkb6f">珠海</td><td>44</td><td>2.4%</td><td data-i18n="supplierMap.tginkxz">打印设备、生物医药</td><td><button class="btn-action" onclick="showView('view-city-suppliers')">查看</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 城市供应商 ==================== -->
+    <div class="page-view" id="view-city-suppliers">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-map')">供应商分布</a><span class="sep">/</span><a onclick="showView('view-china-map')">中国分布</a><span class="sep">/</span><span data-i18n="supplierMap.tf0n7u3">深圳供应商</span></div>
+        <button class="btn-back-sm" onclick="showView('view-china-map')">返回中国</button>
+        <h2 style="margin:16px 0;">深圳 - 供应商列表</h2>
+        <div class="dashboard-grid">
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tvlyise">供应商总数</h4><span style="font-size:28px;font-weight:700;color:var(--primary-cyan);">1,256</span></div>
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.t4aif8w">认证供应商</h4><span style="font-size:28px;font-weight:700;color:var(--accent-green);">986</span></div>
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tcabbhy">平均评分</h4><span style="font-size:28px;font-weight:700;color:#FFD93D;">4.7</span></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="supplierMap.tvm0qgy">供应商列表</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="supplierMap.tc4b9p">供应商</th><th data-i18n="supplierMap.tnm1a">行业</th><th data-i18n="supplierMap.to81u">评分</th><th data-i18n="supplierMap.tkv0f1">订单数</th><th data-i18n="supplierMap.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td>--</td><td data-i18n="supplierMap.tr2vu6i">电子元器件</td><td><span style="color:#FFD93D;">&#9733;</span> 4.9</td><td>1,286</td><td><button class="btn-action" onclick="showView('view-supplier-detail')">详情</button> <button class="btn-primary-sm" style="padding:4px 12px;font-size:12px;">询价</button></td></tr>
+                    <tr><td data-i18n="supplierMap.tvb8k6m">深圳创新电子</td><td data-i18n="supplierMap.tdgvgng">智能设备</td><td><span style="color:#FFD93D;">&#9733;</span> 4.8</td><td>856</td><td><button class="btn-action" onclick="showView('view-supplier-detail')">详情</button> <button class="btn-primary-sm" style="padding:4px 12px;font-size:12px;">询价</button></td></tr>
+                    <tr><td data-i18n="supplierMap.tpz9vrs">深圳精密仪器</td><td data-i18n="supplierMap.tg48ghy">精密仪器</td><td><span style="color:#FFD93D;">&#9733;</span> 4.7</td><td>652</td><td><button class="btn-action" onclick="showView('view-supplier-detail')">详情</button> <button class="btn-primary-sm" style="padding:4px 12px;font-size:12px;">询价</button></td></tr>
+                    <tr><td data-i18n="supplierMap.tnc5d16">深圳通讯科技</td><td data-i18n="supplierMap.tir5k7j">通讯产品</td><td><span style="color:#FFD93D;">&#9733;</span> 4.6</td><td>528</td><td><button class="btn-action" onclick="showView('view-supplier-detail')">详情</button> <button class="btn-primary-sm" style="padding:4px 12px;font-size:12px;">询价</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L4: 供应商详情 ==================== -->
+    <div class="page-view" id="view-supplier-detail">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-map')">供应商分布</a><span class="sep">/</span><a onclick="showView('view-city-suppliers')">深圳供应商</a><span class="sep">/</span><span data-i18n="supplierMap.tvlr4b8">供应商详情</span></div>
+        <button class="btn-back-sm" onclick="showView('view-city-suppliers')">返回列表</button>
+        <h2 style="margin:16px 0;">--</h2>
+        <div class="detail-card">
+            <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">公司名称</span><span class="detail-value">--</span></div>
+                <div class="detail-item"><span class="detail-label">所在城市</span><span class="detail-value">深圳市南山区</span></div>
+                <div class="detail-item"><span class="detail-label">主营行业</span><span class="detail-value">电子元器件、智能设备</span></div>
+                <div class="detail-item"><span class="detail-label">综合评分</span><span class="detail-value"><span style="color:#FFD93D;">&#9733;&#9733;&#9733;&#9733;&#9733;</span> 4.9</span></div>
+                <div class="detail-item"><span class="detail-label">成交订单</span><span class="detail-value">1,286单</span></div>
+                <div class="detail-item"><span class="detail-label">员工规模</span><span class="detail-value">500+</span></div>
+            </div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:12px;">
+            <button class="btn-primary-sm">发起询价</button>
+            <button class="btn-action">收藏供应商</button>
+            <button class="btn-action">查看完整资料</button>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L2: 行业分析 ==================== -->
+    <div class="page-view" id="view-industry-analysis">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-map')">供应商分布</a><span class="sep">/</span><span data-i18n="supplierMap.thipqu0">行业分析</span></div>
+        <button class="btn-back-sm" onclick="showView('view-map')">返回分布图</button>
+        <h2 style="margin:16px 0;">行业分布分析</h2>
+        <div class="dashboard-grid" style="grid-template-columns:repeat(3,1fr);">
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-industry-detail')"><h4 data-i18n="supplierMap.tr2vu6i">电子元器件</h4><span style="font-size:28px;font-weight:700;color:var(--primary-cyan);">3,256</span><p style="font-size:13px;color:var(--text-muted);">占比 25.3%</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-industry-detail')"><h4 data-i18n="supplierMap.tdgpx6n">机械设备</h4><span style="font-size:28px;font-weight:700;color:#45B7D1;">2,489</span><p style="font-size:13px;color:var(--text-muted);">占比 19.4%</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-industry-detail')"><h4 data-i18n="supplierMap.tgihs9x">纺织服装</h4><span style="font-size:28px;font-weight:700;color:#FFD93D;">1,856</span><p style="font-size:13px;color:var(--text-muted);">占比 14.4%</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-industry-detail')"><h4 data-i18n="supplierMap.tavfauh">化工原料</h4><span style="font-size:28px;font-weight:700;color:var(--accent-green);">1,523</span><p style="font-size:13px;color:var(--text-muted);">占比 11.8%</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-industry-detail')"><h4 data-i18n="supplierMap.tailv3j">五金工具</h4><span style="font-size:28px;font-weight:700;color:#FF6B6B;">1,368</span><p style="font-size:13px;color:var(--text-muted);">占比 10.6%</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-industry-detail')"><h4 data-i18n="supplierMap.teab0ya">汽车配件</h4><span style="font-size:28px;font-weight:700;color:#9B59B6;">1,186</span><p style="font-size:13px;color:var(--text-muted);">占比 9.2%</p></div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 行业详情 ==================== -->
+    <div class="page-view" id="view-industry-detail">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-map')">供应商分布</a><span class="sep">/</span><a onclick="showView('view-industry-analysis')">行业分析</a><span class="sep">/</span><span data-i18n="supplierMap.tr2vu6i">电子元器件</span></div>
+        <button class="btn-back-sm" onclick="showView('view-industry-analysis')">返回行业分析</button>
+        <h2 style="margin:16px 0;">电子元器件 - 供应商分布</h2>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tvlyise">供应商总数</h4><span style="font-size:28px;font-weight:700;color:var(--primary-cyan);">3,256</span></div>
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tafr943">主要分布</h4><span style="font-size:28px;font-weight:700;color:#45B7D1;">华南地区</span></div>
+            <div class="dashboard-card"><h4 data-i18n="supplierMap.tcabbhy">平均评分</h4><span style="font-size:28px;font-weight:700;color:#FFD93D;">4.6</span></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="supplierMap.tbch6pz">地区分布</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="supplierMap.tfabu">地区</th><th data-i18n="supplierMap.tafq9dv">供应商数</th><th data-i18n="supplierMap.teruc">占比</th><th data-i18n="supplierMap.tafs8ii">主要城市</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="supplierMap.tauvwr7">华南地区</td><td>1,856</td><td>57%</td><td data-i18n="supplierMap.t70rbgh">深圳、东莞、广州</td></tr>
+                    <tr><td data-i18n="supplierMap.tau4bvc">华东地区</td><td>856</td><td>26%</td><td data-i18n="supplierMap.tuksvy9">上海、苏州、无锡</td></tr>
+                    <tr><td data-i18n="supplierMap.tauular">华北地区</td><td>358</td><td>11%</td><td data-i18n="supplierMap.tk57smw">北京、天津</td></tr>
+                    <tr><td data-i18n="supplierMap.talurze">其他地区</td><td>186</td><td>6%</td><td data-i18n="supplierMap.to9l4fd">成都、武汉</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L2: 区域对比 ==================== -->
+    <div class="page-view" id="view-region-compare">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-map')">供应商分布</a><span class="sep">/</span><span data-i18n="supplierMap.tav7zc0">区域对比</span></div>
+        <button class="btn-back-sm" onclick="showView('view-map')">返回分布图</button>
+        <h2 style="margin:16px 0;">区域对比分析</h2>
+        <div class="dashboard-card">
+            <h4 data-i18n="supplierMap.tfen29y">主要区域对比</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="supplierMap.tc20qy5">对比维度</th><th data-i18n="supplierMap.taadu56">亚太地区</th><th data-i18n="supplierMap.tdyyfqt">欧洲地区</th><th data-i18n="supplierMap.tb0dxnl">北美地区</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="supplierMap.tvlxe50">供应商数量</td><td style="color:var(--accent-green);font-weight:600;">6,528 &#9733;</td><td>3,245</td><td>1,856</td></tr>
+                    <tr><td data-i18n="supplierMap.tcabbhy">平均评分</td><td>4.6</td><td style="color:var(--accent-green);font-weight:600;">4.8 &#9733;</td><td>4.7</td></tr>
+                    <tr><td data-i18n="supplierMap.t8n68rc">平均价格水平</td><td style="color:var(--accent-green);font-weight:600;">低 &#9733;</td><td data-i18n="supplierMap.tul4">高</td><td data-i18n="supplierMap.tul4">高</td></tr>
+                    <tr><td data-i18n="supplierMap.ta94eyu">交付时效</td><td data-i18n="supplierMap.ttzd2l">5-15天</td><td data-i18n="supplierMap.to16vr7">15-30天</td><td data-i18n="supplierMap.to16vr7">15-30天</td></tr>
+                    <tr><td data-i18n="supplierMap.tafqoy5">主要优势</td><td data-i18n="supplierMap.ttjlaxx">成本、产能</td><td data-i18n="supplierMap.t29pld5">质量、技术</td><td data-i18n="supplierMap.tl3ahex">创新、品牌</td></tr>
+                    <tr><td data-i18n="supplierMap.tcakv0y">年增长率</td><td style="color:var(--accent-green);">+12%</td><td>+5%</td><td>+3%</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="supplierMap.tiz2fne">采购建议</h4>
+            <div style="padding:16px 0;">
+                <div class="msg-card" style="padding:12px 16px;margin-bottom:8px;border-left:3px solid var(--primary-cyan);"><strong data-i18n="supplierMap.taadu56">亚太地区</strong>：适合大批量、成本敏感型采购，电子元器件、纺织服装等品类优势明显</div>
+                <div class="msg-card" style="padding:12px 16px;margin-bottom:8px;border-left:3px solid #45B7D1;"><strong data-i18n="supplierMap.tdyyfqt">欧洲地区</strong>：适合高端制造、精密设备采购，质量标准高，适合品牌型产品</div>
+                <div class="msg-card" style="padding:12px 16px;border-left:3px solid #FFD93D;"><strong data-i18n="supplierMap.tb0dxnl">北美地区</strong>：适合创新型产品、软件服务采购，技术领先，适合高附加值产品</div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-copyright"><p data-i18n="footer.copyright">&copy; 2026 全球供应链智能匹配平台 | 版权所有</p></div>
+        <nav class="footer-nav"><a href="#">帮助中心</a><a href="#">客服中心</a><a href="#">关于我们</a><a href="#">隐私政策</a><a href="#">服务条款</a></nav>
+        <div style="text-align:center;padding:8px 0;font-size:12px;"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow noopener" style="color:#888;text-decoration:none;">粤ICP备2026015135号-2</a></div>
+    </footer>
+    <script src="platform-scripts.js"></script>
+    <script>
+    function showView(viewId) {
+        document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+        const target = document.getElementById(viewId);
+        if (target) { target.classList.add('active'); window.scrollTo(0, 0); }
+    }
+    document.querySelectorAll('.region-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.region-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+</body>
+</html>

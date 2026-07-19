@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="dashboard.tkcq5r7">数据看板 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="javascript:history.back()" class="inline-back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    返回
+                </a>
+                <a href="index.html" class="logo-link"><span class="logo-text">全球供应链智能匹配平台</span></a>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+                <a href="certification.html" class="nav-link" data-i18n="nav.certification">资质认证</a>
+                <a href="messages.html" class="nav-link" data-i18n="nav.messages">消息中心</a>
+                <a href="help.html" class="nav-link" data-i18n="nav.customerService">客服中心</a>
+            </nav>
+            <div class="header-right">
+                <a href="user-center.html" class="user-link"><span class="user-avatar-sm">A</span><span>admin</span></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="page-banner">
+        <h1 data-i18n="dashboard.td7qb82">数据看板</h1>
+        <p data-i18n="dashboard.tb5t6ws">全方位数据分析，助力业务决策</p>
+    </div>
+
+    <!-- ==================== L1: 数据总览 ==================== -->
+    <div class="page-view active" id="view-overview">
+    <section class="dashboard-section">
+        <div class="msg-tabs-bar" style="margin-bottom:24px;">
+            <button class="msg-tab-btn active" onclick="showView('view-overview')">数据总览</button>
+            <button class="msg-tab-btn" onclick="showView('view-order-analysis')">订单分析</button>
+            <button class="msg-tab-btn" onclick="showView('view-supplier-analysis')">供应商分析</button>
+            <button class="msg-tab-btn" onclick="showView('view-cost-analysis')">成本分析</button>
+            <button class="msg-tab-btn" onclick="showView('view-reports')">报表中心</button>
+        </div>
+        <!-- 顶部统计卡片 -->
+        <div class="dashboard-grid">
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-order-analysis')">
+                <h4 data-i18n="dashboard.t97llhb">本月订单数</h4>
+                <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px;">
+                    <span id="stat-order-count" style="font-size:36px;font-weight:700;color:var(--primary-cyan);">--</span>
+                    <span id="stat-order-trend" style="font-size:14px;color:var(--text-muted);"></span>
+                </div>
+                <p id="stat-order-sub" style="font-size:13px;color:var(--text-muted);">加载中...</p>
+            </div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-cost-analysis')">
+                <h4 data-i18n="dashboard.t96f2rp">本月采购额</h4>
+                <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px;">
+                    <span id="stat-purchase-amount" style="font-size:36px;font-weight:700;color:var(--primary-cyan);">--</span>
+                    <span id="stat-purchase-trend" style="font-size:14px;color:var(--text-muted);"></span>
+                </div>
+                <p style="font-size:13px;color:var(--text-muted);">较上月增长</p>
+            </div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-supplier-analysis')">
+                <h4 data-i18n="dashboard.tg8xknb">合作供应商</h4>
+                <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px;">
+                    <span id="stat-supplier-count" style="font-size:36px;font-weight:700;color:var(--primary-cyan);">--</span>
+                    <span id="stat-supplier-trend" style="font-size:14px;color:var(--text-muted);"></span>
+                </div>
+                <p style="font-size:13px;color:var(--text-muted);">本月新增</p>
+            </div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-order-analysis')">
+                <h4 data-i18n="dashboard.tafbogc">平均履约周期</h4>
+                <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px;">
+                    <span id="stat-avg-cycle" style="font-size:36px;font-weight:700;color:var(--primary-cyan);">--</span>
+                    <span id="stat-cycle-trend" style="font-size:14px;color:var(--text-muted);"></span>
+                </div>
+                <p style="font-size:13px;color:var(--text-muted);">效率优化</p>
+            </div>
+        </div>
+        <!-- 图表区域 -->
+        <div class="dashboard-grid" style="grid-template-columns:repeat(3,1fr);">
+            <div class="dashboard-card span-2">
+                <h4 data-i18n="dashboard.thywmvb">订单趋势</h4>
+                <div class="chart-placeholder" style="height:280px;"><div style="display:flex;align-items:center;justify-content:center;height:200px;color:var(--text-muted);font-size:14px;">暂无订单数据</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <h4 data-i18n="dashboard.tm671cz">采购品类分布</h4>
+                <div style="padding:20px 0;">
+                    <div style="margin-bottom:16px;"><div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:14px;">电子设备</span><span style="font-size:14px;color:var(--primary-cyan);">45%</span></div><div style="height:8px;background:var(--bg-darker);border-radius:4px;overflow:hidden;"><div style="width:45%;height:100%;background:var(--primary-cyan);border-radius:4px;"></div></div></div>
+                    <div style="margin-bottom:16px;"><div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:14px;">物流服务</span><span style="font-size:14px;color:#45B7D1;">15%</span></div><div style="height:8px;background:var(--bg-darker);border-radius:4px;overflow:hidden;"><div style="width:15%;height:100%;background:#45B7D1;border-radius:4px;"></div></div></div>
+                    <div style="margin-bottom:16px;"><div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:14px;">机械配件</span><span style="font-size:14px;color:#FFD93D;">25%</span></div><div style="height:8px;background:var(--bg-darker);border-radius:4px;overflow:hidden;"><div style="width:25%;height:100%;background:#FFD93D;border-radius:4px;"></div></div></div>
+                    <div style="margin-bottom:16px;"><div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:14px;">其他</span><span style="font-size:14px;color:#FF6B6B;">15%</span></div><div style="height:8px;background:var(--bg-darker);border-radius:4px;overflow:hidden;"><div style="width:15%;height:100%;background:#FF6B6B;border-radius:4px;"></div></div></div>
+                </div>
+            </div>
+        </div>
+        <!-- 供应商排行 & 最近交易 -->
+        <div class="dashboard-grid" style="grid-template-columns:repeat(2,1fr);">
+            <div class="dashboard-card">
+                <h4 data-i18n="dashboard.tludp6e">供应商交易排行</h4>
+                <div style="margin-top:16px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color);"><span style="font-size:13px;"><span style="color:var(--primary-cyan);font-weight:700;margin-right:8px;">1</span>深圳华创智能</span><span style="font-size:13px;color:var(--primary-cyan);">¥424,800</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color);"><span style="font-size:13px;"><span style="color:#45B7D1;font-weight:700;margin-right:8px;">2</span>成都精工机械</span><span style="font-size:13px;color:var(--primary-cyan);">¥157,000</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color);"><span style="font-size:13px;"><span style="color:#FFD93D;font-weight:700;margin-right:8px;">3</span>北京创新科技</span><span style="font-size:13px;color:var(--primary-cyan);">¥128,000</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;"><span style="font-size:13px;"><span style="color:var(--text-muted);font-weight:700;margin-right:8px;">4</span>广州顺达物流</span><span style="font-size:13px;color:var(--primary-cyan);">¥108,300</span></div>
+                </div>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <h4 data-i18n="dashboard.tcggycb">最近交易记录</h4>
+                <div style="margin-top:16px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color);"><span style="font-size:13px;">智能设备 Pro x50</span><span style="font-size:13px;color:var(--primary-cyan);">¥156,000</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color);"><span style="font-size:13px;">工业传感器 A200</span><span style="font-size:13px;color:var(--primary-cyan);">¥144,000</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color);"><span style="font-size:13px;">企业管理系统定制</span><span style="font-size:13px;color:var(--primary-cyan);">¥128,000</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;"><span style="font-size:13px;">智能控制板 B500</span><span style="font-size:13px;color:var(--primary-cyan);">¥124,800</span></div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L2: 订单分析 ==================== -->
+    <div class="page-view" id="view-order-analysis">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><span data-i18n="dashboard.thymmil">订单分析</span></div>
+        <button class="btn-back-sm" onclick="showView('view-overview')">返回总览</button>
+        <h2 style="margin:16px 0;">订单分析</h2>
+        <div class="dashboard-grid">
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tcptb1d">总订单量</h4><span style="font-size:32px;font-weight:700;color:var(--primary-cyan);">186</span><p style="font-size:13px;color:var(--text-muted);margin-top:4px;">近6个月累计</p></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.te7hbq">已完成</h4><span style="font-size:32px;font-weight:700;color:var(--accent-green);">175</span><p style="font-size:13px;color:var(--text-muted);margin-top:4px;">完成率 94.1%</p></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tlq5q4">进行中</h4><span style="font-size:32px;font-weight:700;color:#45B7D1;">8</span><p style="font-size:13px;color:var(--text-muted);margin-top:4px;">含加急订单 2</p></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.te68dg">已取消</h4><span style="font-size:32px;font-weight:700;color:#FF6B6B;">3</span><p style="font-size:13px;color:var(--text-muted);margin-top:4px;">取消率 1.6%</p></div>
+        </div>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr;">
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-order-trend')">
+                <h4 data-i18n="dashboard.twd4fk0">订单趋势详情 &rarr;</h4>
+                <div style="display:flex;align-items:flex-end;gap:16px;height:160px;padding:16px 0;">
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:32px;height:60px;background:rgba(0,229,204,0.3);border-radius:4px;"></div><span style="font-size:11px;">9月</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:32px;height:75px;background:rgba(0,229,204,0.4);border-radius:4px;"></div><span style="font-size:11px;">10月</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:32px;height:90px;background:rgba(0,229,204,0.5);border-radius:4px;"></div><span style="font-size:11px;">11月</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:32px;height:80px;background:rgba(0,229,204,0.4);border-radius:4px;"></div><span style="font-size:11px;">12月</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:32px;height:110px;background:rgba(0,229,204,0.6);border-radius:4px;"></div><span style="font-size:11px;">1月</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:32px;height:130px;background:var(--primary-cyan);border-radius:4px;"></div><span style="font-size:11px;">2月</span></div>
+                </div>
+            </div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-order-category')">
+                <h4 data-i18n="dashboard.t41h5i4">品类订单分布 &rarr;</h4>
+                <div style="padding:16px 0;">
+                    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">电子设备</span><span style="font-size:13px;color:var(--primary-cyan);">68单</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:37%;height:100%;background:var(--primary-cyan);border-radius:3px;"></div></div></div>
+                    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">物流服务</span><span style="font-size:13px;color:#45B7D1;">46单</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:0%;height:100%;background:#45B7D1;border-radius:3px;"></div></div></div>
+                    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">机械配件</span><span style="font-size:13px;color:#FFD93D;">42单</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:23%;height:100%;background:#FFD93D;border-radius:3px;"></div></div></div>
+                    <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">其他</span><span style="font-size:13px;color:#FF6B6B;">30单</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:16%;height:100%;background:#FF6B6B;border-radius:3px;"></div></div></div>
+                </div>
+            </div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.t4ujfij">最近订单列表</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="dashboard.tkuwys">订单号</th><th data-i18n="dashboard.tf3kq">品类</th><th data-i18n="dashboard.tpn1o">金额</th><th data-i18n="dashboard.tk1e3">状态</th><th data-i18n="dashboard.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td>ORD-2026-0315</td><td data-i18n="dashboard.tf68oas">电子设备</td><td style="color:var(--primary-cyan);">¥156,000</td><td><span class="status-badge" style="background:rgba(0,229,204,0.15);color:var(--primary-cyan);">处理中</span></td><td><button class="btn-action" onclick="showView('view-order-detail')">详情</button></td></tr>
+                    <tr><td>ORD-2026-0312</td><td data-i18n="dashboard.tevztik">物流服务</td><td style="color:var(--primary-cyan);">¥48,500</td><td><span class="status-badge" style="background:rgba(255,165,0,0.15);color:#FFA500;">生产中</span></td><td><button class="btn-action" onclick="showView('view-order-detail')">详情</button></td></tr>
+                    <tr><td>ORD-2026-0308</td><td data-i18n="dashboard.tdgqt8f">机械配件</td><td style="color:var(--primary-cyan);">¥89,500</td><td><span class="status-badge" style="background:rgba(255,255,255,0.1);color:var(--text-muted);">待付款</span></td><td><button class="btn-action" onclick="showView('view-order-detail')">详情</button></td></tr>
+                    <tr><td>ORD-2026-0228</td><td data-i18n="dashboard.tifcbmj">软件服务</td><td style="color:var(--primary-cyan);">¥128,000</td><td><span class="status-badge" style="background:rgba(0,229,204,0.15);color:var(--primary-cyan);">处理中</span></td><td><button class="btn-action" onclick="showView('view-order-detail')">详情</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 订单趋势详情 ==================== -->
+    <div class="page-view" id="view-order-trend">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-order-analysis')">订单分析</a><span class="sep">/</span><span data-i18n="dashboard.ti7hkxf">趋势详情</span></div>
+        <button class="btn-back-sm" onclick="showView('view-order-analysis')">返回订单分析</button>
+        <h2 style="margin:16px 0;">订单趋势详情</h2>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tdda54i">月均订单</h4><span style="font-size:28px;font-weight:700;color:var(--primary-cyan);">0</span></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tby315l">月均增长率</h4><span style="font-size:28px;font-weight:700;color:var(--accent-green);">--</span></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tc28t35">峰值月份</h4><span style="font-size:28px;font-weight:700;color:#45B7D1;">--</span></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.tjseg27">月度订单数据</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="dashboard.thyid">月份</th><th data-i18n="dashboard.tkv0f1">订单数</th><th data-i18n="dashboard.tpn1o">金额</th><th data-i18n="dashboard.tk9ol">环比</th><th data-i18n="dashboard.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="dashboard.tnjxpcp">2026年3月</td><td>42</td><td>¥874,100</td><td style="color:var(--accent-green);">+11%</td><td><button class="btn-action" onclick="showView('view-period-compare')">对比</button></td></tr>
+                    <tr><td data-i18n="dashboard.tnjxpdk">2026年2月</td><td>38</td><td>¥784,000</td><td style="color:var(--accent-green);">+9%</td><td><button class="btn-action" onclick="showView('view-period-compare')">对比</button></td></tr>
+                    <tr><td data-i18n="dashboard.tnjxpef">2026年1月</td><td>35</td><td>¥698,000</td><td style="color:var(--accent-green);">+17%</td><td><button class="btn-action" onclick="showView('view-period-compare')">对比</button></td></tr>
+                    <tr><td data-i18n="dashboard.tjvx1m4">2025年12月</td><td>30</td><td>¥612,000</td><td style="color:var(--accent-green);">+15%</td><td><button class="btn-action" onclick="showView('view-period-compare')">对比</button></td></tr>
+                    <tr><td data-i18n="dashboard.tjvx1mz">2025年11月</td><td>26</td><td>¥520,000</td><td style="color:var(--accent-green);">+18%</td><td><button class="btn-action" onclick="showView('view-period-compare')">对比</button></td></tr>
+                    <tr><td data-i18n="dashboard.tjvx1nu">2025年10月</td><td>22</td><td>¥445,000</td><td style="color:var(--accent-green);">--</td><td><button class="btn-action" onclick="showView('view-period-compare')">对比</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L4: 周期对比 ==================== -->
+    <div class="page-view" id="view-period-compare">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-order-analysis')">订单分析</a><span class="sep">/</span><a onclick="showView('view-order-trend')">趋势详情</a><span class="sep">/</span><span data-i18n="dashboard.tb2t88i">周期对比</span></div>
+        <button class="btn-back-sm" onclick="showView('view-order-trend')">返回趋势详情</button>
+        <h2 style="margin:16px 0;">周期对比分析</h2>
+        <div class="detail-card" style="margin-bottom:20px;">
+            <div class="detail-grid" style="grid-template-columns:1fr 1fr;">
+                <div class="detail-item"><span class="detail-label">对比周期</span><span class="detail-value">2026年2月 vs 2026年1月</span></div>
+                <div class="detail-item"><span class="detail-label">分析维度</span><span class="detail-value">订单量 / 金额 / 品类</span></div>
+            </div>
+        </div>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="dashboard-card" style="text-align:center;"><h4 data-i18n="dashboard.tb65lza">订单量变化</h4><span style="font-size:28px;font-weight:700;color:var(--text-muted);">--</span><p style="font-size:13px;color:var(--text-muted);margin-top:4px;">0 vs 0</p></div>
+            <div class="dashboard-card" style="text-align:center;"><h4 data-i18n="dashboard.tj0uxbe">金额变化</h4><span style="font-size:28px;font-weight:700;color:var(--text-muted);">--</span><p style="font-size:13px;color:var(--text-muted);margin-top:4px;">¥0 vs ¥0</p></div>
+            <div class="dashboard-card" style="text-align:center;"><h4 data-i18n="dashboard.tdyy7xe">客单价变化</h4><span style="font-size:28px;font-weight:700;color:var(--text-muted);">--</span><p style="font-size:13px;color:var(--text-muted);margin-top:4px;">¥0 vs ¥0</p></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.tklzdkp">品类维度对比</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="dashboard.tf3kq">品类</th><th data-i18n="dashboard.tdg8o86">本期订单</th><th data-i18n="dashboard.taa4emg">上期订单</th><th data-i18n="dashboard.teptq">变化</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="dashboard.tf68oas">电子设备</td><td>19</td><td>17</td><td style="color:var(--accent-green);">+12%</td></tr>
+                    <tr><td data-i18n="dashboard.tevztik">物流服务</td><td>8</td><td>7</td><td style="color:var(--accent-green);">+14%</td></tr>
+                    <tr><td data-i18n="dashboard.tdgqt8f">机械配件</td><td>9</td><td>10</td><td style="color:#FF6B6B;">-10%</td></tr>
+                    <tr><td data-i18n="dashboard.teae8">其他</td><td>6</td><td>4</td><td style="color:var(--accent-green);">+50%</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.tas2qpq">分析建议</h4>
+            <div style="padding:16px 0;">
+                <div class="msg-card" style="margin-bottom:12px;padding:12px 16px;"><strong data-i18n="dashboard.tu6rkub">电子设备需求上升</strong><p style="font-size:13px;color:var(--text-secondary);margin-top:4px;">建议增加电子设备品类供应商储备，优化采购竞价能力</p></div>
+                <div class="msg-card" style="margin-bottom:12px;padding:12px 16px;"><strong data-i18n="dashboard.tsfz5p9">机械配件需求下降</strong><p style="font-size:13px;color:var(--text-secondary);margin-top:4px;">需关注是否为季节性波动，建议与主要供应商保持沟通</p></div>
+                <div class="msg-card" style="padding:12px 16px;"><strong data-i18n="dashboard.tdz4ang">客单价略降</strong><p style="font-size:13px;color:var(--text-secondary);margin-top:4px;">虽然总订单金额增长，但客单价略有下降，可评估是否需调整采购策略</p></div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 品类订单分布 ==================== -->
+    <div class="page-view" id="view-order-category">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-order-analysis')">订单分析</a><span class="sep">/</span><span data-i18n="dashboard.tb7gx07">品类分布</span></div>
+        <button class="btn-back-sm" onclick="showView('view-order-analysis')">返回订单分析</button>
+        <h2 style="margin:16px 0;">品类订单分布</h2>
+        <div class="dashboard-grid">
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-sku-analysis')"><h4 data-i18n="dashboard.tf68oas">电子设备</h4><span style="font-size:28px;font-weight:700;color:var(--primary-cyan);">0单</span><p style="font-size:13px;color:var(--text-muted);">占比 0% | 金额 ¥0</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-sku-analysis')"><h4 data-i18n="dashboard.tevztik">物流服务</h4><span style="font-size:28px;font-weight:700;color:#45B7D1;">0单</span><p style="font-size:13px;color:var(--text-muted);">占比 0% | 金额 ¥0</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-sku-analysis')"><h4 data-i18n="dashboard.tdgqt8f">机械配件</h4><span style="font-size:28px;font-weight:700;color:#FFD93D;">0单</span><p style="font-size:13px;color:var(--text-muted);">占比 0% | 金额 ¥0</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-sku-analysis')"><h4 data-i18n="dashboard.teae8">其他</h4><span style="font-size:28px;font-weight:700;color:#FF6B6B;">0单</span><p style="font-size:13px;color:var(--text-muted);">占比 0% | 金额 ¥0</p></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.tb7qz8u">品类趋势</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="dashboard.tf3kq">品类</th><th data-i18n="dashboard.t5gzo7m">近3月均量</th><th data-i18n="dashboard.tb1uynd">同比增长</th><th data-i18n="dashboard.tvlfm1l">主要供应商</th><th data-i18n="dashboard.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="dashboard.tf68oas">电子设备</td><td data-i18n="dashboard.t1417la">11单/月</td><td style="color:var(--accent-green);">+18%</td><td data-i18n="dashboard.tv8q366">深圳华创智能</td><td><button class="btn-action" onclick="showView('view-sku-analysis')">详情</button></td></tr>
+                    <tr><td data-i18n="dashboard.tevztik">物流服务</td><td data-i18n="dashboard.td7rfa">8单/月</td><td style="color:var(--accent-green);">+5%</td><td data-i18n="dashboard.tli7kqt">广州顺达物流</td><td><button class="btn-action" onclick="showView('view-sku-analysis')">详情</button></td></tr>
+                    <tr><td data-i18n="dashboard.tdgqt8f">机械配件</td><td data-i18n="dashboard.td74fr">7单/月</td><td style="color:#FF6B6B;">-3%</td><td data-i18n="dashboard.twblxva">成都精工机械</td><td><button class="btn-action" onclick="showView('view-sku-analysis')">详情</button></td></tr>
+                    <tr><td data-i18n="dashboard.teae8">其他</td><td data-i18n="dashboard.td5ugp">5单/月</td><td style="color:var(--accent-green);">+12%</td><td data-i18n="dashboard.t54ue29">多家供应商</td><td><button class="btn-action" onclick="showView('view-sku-analysis')">详情</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L4: SKU分析 ==================== -->
+    <div class="page-view" id="view-sku-analysis">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-order-analysis')">订单分析</a><span class="sep">/</span><a onclick="showView('view-order-category')">品类分布</a><span class="sep">/</span><span data-i18n="dashboard.t1bf30n">SKU分析</span></div>
+        <button class="btn-back-sm" onclick="showView('view-order-category')">返回品类分布</button>
+        <h2 style="margin:16px 0;">电子设备 - SKU分析</h2>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="dashboard-card"><h4 data-i18n="dashboard.t1bhhle">SKU总数</h4><span style="font-size:28px;font-weight:700;color:var(--primary-cyan);">0</span></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.ty59kru">热销SKU</h4><span style="font-size:28px;font-weight:700;color:var(--accent-green);">0</span></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tca1pbq">平均单价</h4><span style="font-size:28px;font-weight:700;color:#45B7D1;">¥0</span></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.t1bim9h">SKU明细</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="dashboard.t1bfj28">SKU名称</th><th data-i18n="dashboard.tkv0f1">订单数</th><th data-i18n="dashboard.tpn1o">金额</th><th data-i18n="dashboard.tc4b9p">供应商</th><th data-i18n="dashboard.toj2s">趋势</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="dashboard.t1fv9mv">智能设备 Pro</td><td>18</td><td>¥156,000</td><td data-i18n="dashboard.tv8q366">深圳华创智能</td><td style="color:var(--accent-green);">&#9650; +22%</td></tr>
+                    <tr><td data-i18n="dashboard.tmr00df">工业传感器 A200</td><td>15</td><td>¥144,000</td><td data-i18n="dashboard.tv8q366">深圳华创智能</td><td style="color:var(--accent-green);">&#9650; +15%</td></tr>
+                    <tr><td data-i18n="dashboard.terx4ey">智能控制板 B500</td><td>12</td><td>¥124,800</td><td data-i18n="dashboard.tv8q366">深圳华创智能</td><td style="color:var(--accent-green);">&#9650; +8%</td></tr>
+                    <tr><td data-i18n="dashboard.ttk7k4f">数据采集器 C120</td><td>8</td><td>¥56,000</td><td data-i18n="dashboard.ttvwywj">上海精密仪器</td><td style="color:#FF6B6B;">&#9660; -5%</td></tr>
+                    <tr><td data-i18n="dashboard.tskxu3s">工业网关 D300</td><td>6</td><td>¥42,000</td><td data-i18n="dashboard.tj51wmx">北京创新科技</td><td style="color:var(--accent-green);">&#9650; +30%</td></tr>
+                    <tr><td data-i18n="dashboard.tv7g2ak">其他电子配件</td><td>9</td><td>¥38,500</td><td data-i18n="dashboard.tfnq4">多家</td><td>-</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 订单详情 ==================== -->
+    <div class="page-view" id="view-order-detail">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-order-analysis')">订单分析</a><span class="sep">/</span><span data-i18n="dashboard.thywfki">订单详情</span></div>
+        <button class="btn-back-sm" onclick="showView('view-order-analysis')">返回订单分析</button>
+        <h2 style="margin:16px 0;">订单详情 - </h2>
+        <div class="detail-card">
+            <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">订单号</span><span class="detail-value"></span></div>
+                <div class="detail-item"><span class="detail-label">品类</span><span class="detail-value">电子设备</span></div>
+                <div class="detail-item"><span class="detail-label">金额</span><span class="detail-value" style="color:var(--primary-cyan);font-weight:600;">--</span></div>
+                <div class="detail-item"><span class="detail-label">状态</span><span class="status-badge" style="background:rgba(0,229,204,0.15);color:var(--primary-cyan);">进行中</span></div>
+                <div class="detail-item"><span class="detail-label">供应商</span><span class="detail-value">--</span></div>
+                <div class="detail-item"><span class="detail-label">创建时间</span><span class="detail-value">--</span></div>
+                <div class="detail-item"><span class="detail-label">预计交付</span><span class="detail-value">--</span></div>
+                <div class="detail-item"><span class="detail-label">付款状态</span><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已支付</span></div>
+            </div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.thyn2pa">订单商品</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="dashboard.tb40v0e">商品名称</th><th data-i18n="dashboard.to06w">规格</th><th data-i18n="dashboard.ti1y7">数量</th><th data-i18n="dashboard.telvm">单价</th><th data-i18n="dashboard.tgfaq">小计</th></tr></thead>
+                <tbody>
+                    <tr><td>--</td><td>--</td><td>--</td><td>--</td><td>--</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.tew73yd">物流追踪</h4>
+            <div style="padding:16px 0;">
+                <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--primary-cyan);"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">--</div><div class="timeline-text">订单已创建，等待发货</div></div></div>
+                <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--accent-green);"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">2026-02-15 14:00</div><div class="timeline-text">供应商已确认订单</div></div></div>
+                <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--accent-green);"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">2026-02-16 09:00</div><div class="timeline-text">生产中，预计3-5个工作日完成</div></div></div>
+            </div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:12px;">
+            <button class="btn-primary-sm" onclick="showView('view-order-invoice')">查看发票</button>
+            <button class="btn-action">联系供应商</button>
+            <button class="btn-action">申请售后</button>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L4: 订单发票 ==================== -->
+    <div class="page-view" id="view-order-invoice">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-order-analysis')">订单分析</a><span class="sep">/</span><a onclick="showView('view-order-detail')">订单详情</a><span class="sep">/</span><span data-i18n="dashboard.tb31biu">发票详情</span></div>
+        <button class="btn-back-sm" onclick="showView('view-order-detail')">返回订单详情</button>
+        <h2 style="margin:16px 0;">发票详情</h2>
+        <div class="detail-card">
+            <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">发票号</span><span class="detail-value">INV-2026-0215-001</span></div>
+                <div class="detail-item"><span class="detail-label">发票类型</span><span class="detail-value">增值税专用发票</span></div>
+                <div class="detail-item"><span class="detail-label">开票日期</span><span class="detail-value">--</span></div>
+                <div class="detail-item"><span class="detail-label">税率</span><span class="detail-value">13%</span></div>
+                <div class="detail-item"><span class="detail-label">不含税金额</span><span class="detail-value">¥0.10</span></div>
+                <div class="detail-item"><span class="detail-label">税额</span><span class="detail-value">¥0.90</span></div>
+                <div class="detail-item"><span class="detail-label">含税金额</span><span class="detail-value" style="color:var(--primary-cyan);font-weight:600;">--.00</span></div>
+                <div class="detail-item"><span class="detail-label">状态</span><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已开具</span></div>
+                <div class="detail-item"><span class="detail-label">购方名称</span><span class="detail-value">易采贸易有限公司</span></div>
+                <div class="detail-item"><span class="detail-label">销方名称</span><span class="detail-value">--</span></div>
+            </div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:12px;">
+            <button class="btn-primary-sm">下载发票</button>
+            <button class="btn-action">打印发票</button>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 交易详情 ==================== -->
+    <div class="page-view" id="view-transaction-detail">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><span data-i18n="dashboard.tacpc5q">交易详情</span></div>
+        <button class="btn-back-sm" onclick="showView('view-overview')">返回总览</button>
+        <h2 style="margin:16px 0;">交易详情</h2>
+        <div class="detail-card">
+            <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">交易编号</span><span class="detail-value">-001</span></div>
+                <div class="detail-item"><span class="detail-label">交易类型</span><span class="detail-value">采购付款</span></div>
+                <div class="detail-item"><span class="detail-label">交易金额</span><span class="detail-value" style="color:var(--primary-cyan);font-weight:600;">--.00</span></div>
+                <div class="detail-item"><span class="detail-label">交易状态</span><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已完成</span></div>
+                <div class="detail-item"><span class="detail-label">供应商</span><span class="detail-value">--</span></div>
+                <div class="detail-item"><span class="detail-label">关联订单</span><span class="detail-value"></span></div>
+                <div class="detail-item"><span class="detail-label">支付方式</span><span class="detail-value">银行转账</span></div>
+                <div class="detail-item"><span class="detail-label">交易时间</span><span class="detail-value">2026-02-16 14:30</span></div>
+            </div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.tack6rm">交易流水</h4>
+            <div style="padding:16px 0;">
+                <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--accent-green);"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">2026-02-16 14:30</div><div class="timeline-text">付款发起</div></div></div>
+                <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--accent-green);"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">2026-02-16 14:32</div><div class="timeline-text">银行处理中</div></div></div>
+                <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--accent-green);"></div></div><div class="timeline-content"><div class="timeline-time">2026-02-16 15:00</div><div class="timeline-text">交易完成，供应商已收款</div></div></div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L2: 供应商分析 ==================== -->
+    <div class="page-view" id="view-supplier-analysis">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><span data-i18n="dashboard.tvm0xd5">供应商分析</span></div>
+        <button class="btn-back-sm" onclick="showView('view-overview')">返回总览</button>
+        <h2 style="margin:16px 0;">供应商分析</h2>
+        <div class="dashboard-grid">
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tg8xknb">合作供应商</h4><span style="font-size:32px;font-weight:700;color:var(--primary-cyan);">0</span><p style="font-size:13px;color:var(--text-muted);">活跃供应商</p></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tdg1ruy">本月新增</h4><span style="font-size:32px;font-weight:700;color:var(--accent-green);">0</span><p style="font-size:13px;color:var(--text-muted);">新签约供应商</p></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tcabbhy">平均评分</h4><span style="font-size:32px;font-weight:700;color:#FFD93D;">--</span><p style="font-size:13px;color:var(--text-muted);">满分5.0</p></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tm8br19">准时交付率</h4><span style="font-size:32px;font-weight:700;color:var(--accent-green);">--</span><p style="font-size:13px;color:var(--text-muted);">近6个月</p></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.tvlxrg9">供应商排行</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="dashboard.thebf">排名</th><th data-i18n="dashboard.tc4b9p">供应商</th><th data-i18n="dashboard.tc0vbi">交易额</th><th data-i18n="dashboard.tkv0f1">订单数</th><th data-i18n="dashboard.to81u">评分</th><th data-i18n="dashboard.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>--</td><td>--</td><td>0</td><td><span style="color:#FFD93D;">&#9733;</span> --</td><td><button class="btn-action" onclick="showView('view-supplier-profile')">详情</button></td></tr>
+                    <tr><td>2</td><td>--</td><td>--</td><td>0</td><td><span style="color:#FFD93D;">&#9733;</span> --</td><td><button class="btn-action" onclick="showView('view-supplier-profile')">详情</button></td></tr>
+                    <tr><td>3</td><td>--</td><td>--</td><td>0</td><td><span style="color:#FFD93D;">&#9733;</span> --</td><td><button class="btn-action" onclick="showView('view-supplier-profile')">详情</button></td></tr>
+                    <tr><td>4</td><td>--</td><td>--</td><td>18</td><td><span style="color:#FFD93D;">&#9733;</span> --</td><td><button class="btn-action" onclick="showView('view-supplier-profile')">详情</button></td></tr>
+                    <tr><td>5</td><td>--</td><td>--</td><td>8</td><td><span style="color:#FFD93D;">&#9733;</span> --</td><td><button class="btn-action" onclick="showView('view-supplier-profile')">详情</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr;margin-top:20px;">
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-supplier-category')">
+                <h4 data-i18n="dashboard.tjk4y8f">供应商品类覆盖 &rarr;</h4>
+                <div style="padding:16px 0;">
+                    <div style="margin-bottom:10px;"><span style="font-size:13px;">电子设备:</span><span style="font-size:13px;color:var(--primary-cyan);margin-left:8px;">0家</span></div>
+                    <div style="margin-bottom:10px;"><span style="font-size:13px;">物流服务:</span><span style="font-size:13px;color:#45B7D1;margin-left:8px;">0家</span></div>
+                    <div style="margin-bottom:10px;"><span style="font-size:13px;">机械配件:</span><span style="font-size:13px;color:#FFD93D;margin-left:8px;">0家</span></div>
+                    <div><span style="font-size:13px;">其他:</span><span style="font-size:13px;color:#FF6B6B;margin-left:8px;">0家</span></div>
+                </div>
+            </div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-supplier-rating')">
+                <h4 data-i18n="dashboard.t7ltb6u">供应商评分分布 &rarr;</h4>
+                <div style="padding:16px 0;">
+                    <div style="margin-bottom:10px;display:flex;justify-content:space-between;"><span style="font-size:13px;">4.5+分</span><span style="font-size:13px;color:var(--accent-green);">0家</span></div>
+                    <div style="margin-bottom:10px;display:flex;justify-content:space-between;"><span style="font-size:13px;">4.0-4.5分</span><span style="font-size:13px;color:#45B7D1;">0家</span></div>
+                    <div style="margin-bottom:10px;display:flex;justify-content:space-between;"><span style="font-size:13px;">3.5-4.0分</span><span style="font-size:13px;color:#FFD93D;">0家</span></div>
+                    <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;">3.5分以下</span><span style="font-size:13px;color:#FF6B6B;">0家</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 供应商画像 ==================== -->
+    <div class="page-view" id="view-supplier-profile">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-supplier-analysis')">供应商分析</a><span class="sep">/</span><span data-i18n="dashboard.tvlv29r">供应商画像</span></div>
+        <button class="btn-back-sm" onclick="showView('view-supplier-analysis')">返回供应商分析</button>
+        <h2 style="margin:16px 0;">-- - 供应商画像</h2>
+        <div class="detail-card">
+            <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">供应商名称</span><span class="detail-value">--有限公司</span></div>
+                <div class="detail-item"><span class="detail-label">综合评分</span><span class="detail-value"><span style="color:#FFD93D;">&#9733;&#9733;&#9733;&#9733;&#9733;</span> --</span></div>
+                <div class="detail-item"><span class="detail-label">合作时间</span><span class="detail-value">--</span></div>
+                <div class="detail-item"><span class="detail-label">主营品类</span><span class="detail-value">--</span></div>
+                <div class="detail-item"><span class="detail-label">累计交易额</span><span class="detail-value" style="color:var(--primary-cyan);font-weight:600;">--</span></div>
+                <div class="detail-item"><span class="detail-label">累计订单数</span><span class="detail-value">0单</span></div>
+                <div class="detail-item"><span class="detail-label">准时交付率</span><span class="detail-value" style="color:var(--accent-green);">--</span></div>
+                <div class="detail-item"><span class="detail-label">质量合格率</span><span class="detail-value" style="color:var(--accent-green);">--</span></div>
+            </div>
+        </div>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr;margin-top:20px;">
+            <div class="dashboard-card">
+                <h4 data-i18n="dashboard.thz9110">评分维度</h4>
+                <div style="padding:16px 0;">
+                    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">产品质量</span><span style="font-size:13px;color:var(--primary-cyan);">4.9</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:0%;height:100%;background:var(--primary-cyan);border-radius:3px;"></div></div></div>
+                    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">交付时效</span><span style="font-size:13px;color:var(--accent-green);">4.8</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:0%;height:100%;background:var(--accent-green);border-radius:3px;"></div></div></div>
+                    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">服务响应</span><span style="font-size:13px;color:#45B7D1;">4.7</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:0%;height:100%;background:#45B7D1;border-radius:3px;"></div></div></div>
+                    <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">价格竞争力</span><span style="font-size:13px;color:#FFD93D;">4.5</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:0%;height:100%;background:#FFD93D;border-radius:3px;"></div></div></div>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <h4 data-i18n="dashboard.tiki8yl">近期交易</h4>
+                <div style="padding:12px 0;">
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);"><span style="font-size:13px;">--</span><span style="font-size:13px;color:var(--primary-cyan);">--</span></div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);"><span style="font-size:13px;">--</span><span style="font-size:13px;color:var(--primary-cyan);">¥0</span></div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);"><span style="font-size:13px;">--</span><span style="font-size:13px;color:var(--primary-cyan);">¥0</span></div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;"><span style="font-size:13px;">--</span><span style="font-size:13px;color:var(--primary-cyan);">¥0</span></div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:12px;">
+            <button class="btn-primary-sm" onclick="showView('view-supplier-trade-history')">完整交易记录</button>
+            <button class="btn-action">联系供应商</button>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L4: 供应商完整交易记录 ==================== -->
+    <div class="page-view" id="view-supplier-trade-history">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-supplier-analysis')">供应商分析</a><span class="sep">/</span><a onclick="showView('view-supplier-profile')">供应商画像</a><span class="sep">/</span><span data-i18n="dashboard.tacpal0">交易记录</span></div>
+        <button class="btn-back-sm" onclick="showView('view-supplier-profile')">返回供应商画像</button>
+        <h2 style="margin:16px 0;">-- - 完整交易记录</h2>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="dashboard-card"><h4 data-i18n="dashboard.taci7sh">交易总额</h4><span style="font-size:24px;font-weight:700;color:var(--primary-cyan);">--</span></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tachxok">交易总数</h4><span style="font-size:24px;font-weight:700;color:#45B7D1;">0笔</span></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tphckbe">平均交易额</h4><span style="font-size:24px;font-weight:700;color:#FFD93D;">¥0</span></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.tacj2cn">交易明细</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="dashboard.tacn368">交易编号</th><th data-i18n="dashboard.tb16k54">商品/服务</th><th data-i18n="dashboard.tpn1o">金额</th><th data-i18n="dashboard.thwbe">日期</th><th data-i18n="dashboard.tk1e3">状态</th></tr></thead>
+                <tbody>
+                    <tr><td>--</td><td>--</td><td>--</td><td>--</td><td><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已完成</span></td></tr>
+                    <tr><td>--</td><td>--</td><td>¥0</td><td>--</td><td><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已完成</span></td></tr>
+                    <tr><td>--</td><td>--</td><td>¥0</td><td>--</td><td><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已完成</span></td></tr>
+                    <tr><td>--</td><td>--</td><td>¥0</td><td>--</td><td><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已完成</span></td></tr>
+                    <tr><td>--</td><td>--</td><td>--</td><td>--</td><td><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已完成</span></td></tr>
+                    <tr><td>--</td><td>--</td><td>--</td><td>--</td><td><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已完成</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 供应商品类覆盖 ==================== -->
+    <div class="page-view" id="view-supplier-category">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-supplier-analysis')">供应商分析</a><span class="sep">/</span><span data-i18n="dashboard.tb7qhre">品类覆盖</span></div>
+        <button class="btn-back-sm" onclick="showView('view-supplier-analysis')">返回供应商分析</button>
+        <h2 style="margin:16px 0;">供应商品类覆盖分析</h2>
+        <div class="dashboard-card">
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="dashboard.tf3kq">品类</th><th data-i18n="dashboard.tafq9dv">供应商数</th><th data-i18n="dashboard.tvlfm1l">主要供应商</th><th data-i18n="dashboard.tbpqu88">月均采购额</th><th data-i18n="dashboard.tkpw2e">覆盖度</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="dashboard.tf68oas">电子设备</td><td data-i18n="dashboard.tj9i">0家</td><td>--</td><td>¥0</td><td><span style="color:var(--accent-green);">充足</span></td></tr>
+                    <tr><td data-i18n="dashboard.tevztik">物流服务</td><td data-i18n="dashboard.tj9i">0家</td><td>--</td><td>¥0</td><td><span style="color:#FFD93D;">一般</span></td></tr>
+                    <tr><td data-i18n="dashboard.tdgqt8f">机械配件</td><td data-i18n="dashboard.tj9i">0家</td><td data-i18n="dashboard.t1c0ef">--有限</td><td>¥0</td><td><span style="color:var(--accent-green);">充足</span></td></tr>
+                    <tr><td data-i18n="dashboard.teae8">其他</td><td data-i18n="dashboard.tj9i">0家</td><td>--</td><td>¥0</td><td><span style="color:var(--accent-green);">充足</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.tvpuzcr">覆盖缺口提醒</h4>
+            <div class="msg-card" style="padding:12px 16px;margin-top:12px;border-left:3px solid #FFD93D;"><strong data-i18n="dashboard.t8y132l">物流服务品类供应商不足</strong><p style="font-size:13px;color:var(--text-secondary);margin-top:4px;">当前仅有2家供应商覆盖物流服务，建议增加1-2家备选供应商以降低供应风险</p></div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 供应商评分分布 ==================== -->
+    <div class="page-view" id="view-supplier-rating">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-supplier-analysis')">供应商分析</a><span class="sep">/</span><span data-i18n="dashboard.thz1drz">评分分布</span></div>
+        <button class="btn-back-sm" onclick="showView('view-supplier-analysis')">返回供应商分析</button>
+        <h2 style="margin:16px 0;">供应商评分分布</h2>
+        <div class="dashboard-card">
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="dashboard.thz1w70">评分区间</th><th data-i18n="dashboard.tc4b9p">供应商</th><th data-i18n="dashboard.to81u">评分</th><th data-i18n="dashboard.tc0vbi">交易额</th></tr></thead>
+                <tbody>
+                    <tr style="background:rgba(76,175,80,0.05);"><td rowspan="3" style="vertical-align:middle;">4.5分以上</td><td>--</td><td><span style="color:#FFD93D;">&#9733;</span> --</td><td>--</td></tr>
+                    <tr style="background:rgba(76,175,80,0.05);"><td>--</td><td><span style="color:#FFD93D;">&#9733;</span> --</td><td>--</td></tr>
+                    <tr style="background:rgba(76,175,80,0.05);"><td>--</td><td><span style="color:#FFD93D;">&#9733;</span> --</td><td>--</td></tr>
+                    <tr><td rowspan="2" style="vertical-align:middle;">4.0-4.5分</td><td data-i18n="dashboard.t1c0ef">--有限</td><td><span style="color:#FFD93D;">&#9733;</span> --</td><td>--</td></tr>
+                    <tr><td>--</td><td><span style="color:#FFD93D;">&#9733;</span> --</td><td>--</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L2: 成本分析 ==================== -->
+    <div class="page-view" id="view-cost-analysis">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><span data-i18n="dashboard.tcss292">成本分析</span></div>
+        <button class="btn-back-sm" onclick="showView('view-overview')">返回总览</button>
+        <h2 style="margin:16px 0;">成本分析</h2>
+        <div class="dashboard-grid">
+            <div class="dashboard-card"><h4 data-i18n="dashboard.t9dnm6z">本月总采购</h4><span style="font-size:32px;font-weight:700;color:var(--primary-cyan);">¥0</span><p style="font-size:13px;color:var(--text-muted);">环比 +8%</p></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tqxsfm9">预算执行率</h4><span style="font-size:32px;font-weight:700;color:var(--accent-green);">--</span><p style="font-size:13px;color:var(--text-muted);">预算 ¥0</p></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tgyq8yz">节省金额</h4><span style="font-size:32px;font-weight:700;color:var(--accent-green);">¥0</span><p style="font-size:13px;color:var(--text-muted);">竞价节省</p></div>
+            <div class="dashboard-card"><h4 data-i18n="dashboard.tcsrpuj">成本偏差</h4><span style="font-size:32px;font-weight:700;color:#FFD93D;">--</span><p style="font-size:13px;color:var(--text-muted);">较预期略高</p></div>
+        </div>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr;margin-top:20px;">
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-cost-breakdown')">
+                <h4 data-i18n="dashboard.txiernq">成本构成明细 &rarr;</h4>
+                <div style="padding:16px 0;">
+                    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">采购成本</span><span style="font-size:13px;color:var(--primary-cyan);">¥0 (0%)</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:0%;height:100%;background:var(--primary-cyan);border-radius:3px;"></div></div></div>
+                    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">物流费用</span><span style="font-size:13px;color:#45B7D1;">¥0 (0%)</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:9%;height:100%;background:#45B7D1;border-radius:3px;"></div></div></div>
+                    <div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">仓储费用</span><span style="font-size:13px;color:#FFD93D;">¥0 (0%)</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:4%;height:100%;background:#FFD93D;border-radius:3px;"></div></div></div>
+                    <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:13px;">其他费用</span><span style="font-size:13px;color:#FF6B6B;">¥0 (0%)</span></div><div style="height:6px;background:var(--bg-darker);border-radius:3px;overflow:hidden;"><div style="width:2%;height:100%;background:#FF6B6B;border-radius:3px;"></div></div></div>
+                </div>
+            </div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-budget-detail')">
+                <h4 data-i18n="dashboard.tlck1e7">预算执行详情 &rarr;</h4>
+                <div style="padding:16px 0;">
+                    <div style="margin-bottom:16px;"><p style="font-size:13px;color:var(--text-secondary);margin-bottom:6px;">总预算 --</p><div style="height:20px;background:var(--bg-darker);border-radius:10px;overflow:hidden;position:relative;"><div style="width:0%;height:100%;background:linear-gradient(90deg,var(--primary-cyan),var(--accent-green));border-radius:10px;"></div><span style="position:absolute;right:8px;top:2px;font-size:11px;color:var(--text-primary);">0%</span></div></div>
+                    <div style="margin-bottom:12px;display:flex;justify-content:space-between;"><span style="font-size:13px;">已使用</span><span style="font-size:13px;color:var(--primary-cyan);">¥0</span></div>
+                    <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;">剩余预算</span><span style="font-size:13px;color:var(--accent-green);">¥0</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 成本构成明细 ==================== -->
+    <div class="page-view" id="view-cost-breakdown">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-cost-analysis')">成本分析</a><span class="sep">/</span><span data-i18n="dashboard.tcsvors">成本构成</span></div>
+        <button class="btn-back-sm" onclick="showView('view-cost-analysis')">返回成本分析</button>
+        <h2 style="margin:16px 0;">成本构成明细</h2>
+        <div class="dashboard-card">
+            <h4 data-i18n="dashboard.tkkoece">采购成本细分</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="dashboard.tevgt9">成本项</th><th data-i18n="dashboard.tpn1o">金额</th><th data-i18n="dashboard.teruc">占比</th><th data-i18n="dashboard.tk9ol">环比</th><th data-i18n="dashboard.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="dashboard.tka6zbe">电子设备采购</td><td>¥0</td><td>0%</td><td style="color:var(--accent-green);">--</td><td><button class="btn-action" onclick="showView('view-cost-optimize')">优化建议</button></td></tr>
+                    <tr><td data-i18n="dashboard.tuw9fua">物流服务采购</td><td>¥0</td><td>0%</td><td style="color:var(--accent-green);">+5%</td><td><button class="btn-action" onclick="showView('view-cost-optimize')">优化建议</button></td></tr>
+                    <tr><td data-i18n="dashboard.tcdxypx">机械配件采购</td><td>¥0</td><td>0%</td><td style="color:#FF6B6B;">-3%</td><td><button class="btn-action" onclick="showView('view-cost-optimize')">优化建议</button></td></tr>
+                    <tr><td data-i18n="dashboard.tyk1m05">物流配送费用</td><td>¥0</td><td>0%</td><td style="color:var(--accent-green);">--</td><td><button class="btn-action" onclick="showView('view-cost-optimize')">优化建议</button></td></tr>
+                    <tr><td data-i18n="dashboard.tcdozrd">仓储管理费用</td><td>¥0</td><td>0%</td><td style="color:#FF6B6B;">--</td><td><button class="btn-action" onclick="showView('view-cost-optimize')">优化建议</button></td></tr>
+                    <tr><td data-i18n="dashboard.talxtuf">其他杂费</td><td>¥0</td><td>0%</td><td>0%</td><td><button class="btn-action" onclick="showView('view-cost-optimize')">优化建议</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L4: 成本优化建议 ==================== -->
+    <div class="page-view" id="view-cost-optimize">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-cost-analysis')">成本分析</a><span class="sep">/</span><a onclick="showView('view-cost-breakdown')">成本构成</a><span class="sep">/</span><span data-i18n="dashboard.tabrvjm">优化建议</span></div>
+        <button class="btn-back-sm" onclick="showView('view-cost-breakdown')">返回成本构成</button>
+        <h2 style="margin:16px 0;">成本优化建议 - 电子设备采购</h2>
+        <div class="detail-card" style="margin-bottom:20px;">
+            <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">当前月均采购额</span><span class="detail-value" style="color:var(--primary-cyan);">¥0</span></div>
+                <div class="detail-item"><span class="detail-label">优化潜力</span><span class="detail-value" style="color:var(--accent-green);">--</span></div>
+                <div class="detail-item"><span class="detail-label">主要供应商</span><span class="detail-value">--</span></div>
+                <div class="detail-item"><span class="detail-label">备选供应商</span><span class="detail-value">--</span></div>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <h4 data-i18n="dashboard.tabstv1">优化方案</h4>
+            <div style="padding:16px 0;">
+                <div class="msg-card" style="padding:16px;margin-bottom:12px;border-left:3px solid var(--primary-cyan);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;"><strong data-i18n="dashboard.toimrua">方案一：批量采购竞价</strong><span class="status-badge" style="background:rgba(0,229,204,0.15);color:var(--primary-cyan);">推荐</span></div>
+                    <p style="font-size:13px;color:var(--text-secondary);margin-top:8px;">将月度分散采购整合为季度集中采购，预计可获得8-10%的价格优惠</p>
+                    <p style="font-size:13px;color:var(--accent-green);margin-top:4px;">预估节省：¥0/月</p>
+                </div>
+                <div class="msg-card" style="padding:16px;margin-bottom:12px;border-left:3px solid #45B7D1;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;"><strong data-i18n="dashboard.tiuxofr">方案二：多供应商竞价</strong><span class="status-badge" style="background:rgba(69,183,209,0.15);color:#45B7D1;">可选</span></div>
+                    <p style="font-size:13px;color:var(--text-secondary);margin-top:8px;">引入2-3家备选供应商参与报价竞争，通过市场化竞争降低单价</p>
+                    <p style="font-size:13px;color:var(--accent-green);margin-top:4px;">预估节省：--</p>
+                </div>
+                <div class="msg-card" style="padding:16px;border-left:3px solid #FFD93D;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;"><strong data-i18n="dashboard.t69pzgt">方案三：长期合作协议</strong><span class="status-badge" style="background:rgba(255,217,61,0.15);color:#FFD93D;">长期</span></div>
+                    <p style="font-size:13px;color:var(--text-secondary);margin-top:8px;">与核心供应商签订年度框架协议，锁定优惠价格并保障供货稳定性</p>
+                    <p style="font-size:13px;color:var(--accent-green);margin-top:4px;">预估节省：--</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 预算执行详情 ==================== -->
+    <div class="page-view" id="view-budget-detail">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-cost-analysis')">成本分析</a><span class="sep">/</span><span data-i18n="dashboard.tjr3q1k">预算执行</span></div>
+        <button class="btn-back-sm" onclick="showView('view-cost-analysis')">返回成本分析</button>
+        <h2 style="margin:16px 0;">预算执行详情</h2>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="dashboard-card" style="text-align:center;"><h4 data-i18n="dashboard.tcbh805">年度预算</h4><span style="font-size:28px;font-weight:700;color:var(--primary-cyan);">¥0万</span></div>
+            <div class="dashboard-card" style="text-align:center;"><h4 data-i18n="dashboard.te8uuv">已执行</h4><span style="font-size:28px;font-weight:700;color:var(--accent-green);">¥0</span></div>
+            <div class="dashboard-card" style="text-align:center;"><h4 data-i18n="dashboard.tczgr00">执行进度</h4><span style="font-size:28px;font-weight:700;color:#45B7D1;">13.8%</span></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.t93otbq">各品类预算执行</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="dashboard.tf3kq">品类</th><th data-i18n="dashboard.tcbh805">年度预算</th><th data-i18n="dashboard.te5jaz">已使用</th><th data-i18n="dashboard.tdfy5lx">本月使用</th><th data-i18n="dashboard.tf2ov6">执行率</th><th data-i18n="dashboard.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="dashboard.tf68oas">电子设备</td><td data-i18n="dashboard.t3uws">¥0万</td><td>¥0</td><td>¥0</td><td>16.0%</td><td><button class="btn-action" onclick="showView('view-budget-adjust')">调整</button></td></tr>
+                    <tr><td data-i18n="dashboard.tevztik">物流服务</td><td>¥0</td><td>¥0</td><td>¥0</td><td>14.4%</td><td><button class="btn-action" onclick="showView('view-budget-adjust')">调整</button></td></tr>
+                    <tr><td data-i18n="dashboard.tdgqt8f">机械配件</td><td>¥0</td><td>¥0</td><td>¥0</td><td>0%</td><td><button class="btn-action" onclick="showView('view-budget-adjust')">调整</button></td></tr>
+                    <tr><td data-i18n="dashboard.teae8">其他</td><td>¥0</td><td>¥0</td><td>¥0</td><td>10.4%</td><td><button class="btn-action" onclick="showView('view-budget-adjust')">调整</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L4: 预算调整 ==================== -->
+    <div class="page-view" id="view-budget-adjust">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-cost-analysis')">成本分析</a><span class="sep">/</span><a onclick="showView('view-budget-detail')">预算执行</a><span class="sep">/</span><span data-i18n="dashboard.tjralyc">预算调整</span></div>
+        <button class="btn-back-sm" onclick="showView('view-budget-detail')">返回预算执行</button>
+        <h2 style="margin:16px 0;">预算调整申请</h2>
+        <div class="detail-card" style="margin-bottom:20px;">
+            <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">品类</span><span class="detail-value">电子设备</span></div>
+                <div class="detail-item"><span class="detail-label">当前年度预算</span><span class="detail-value">¥0万</span></div>
+                <div class="detail-item"><span class="detail-label">已使用</span><span class="detail-value">¥0 (16.0%)</span></div>
+                <div class="detail-item"><span class="detail-label">剩余预算</span><span class="detail-value" style="color:var(--accent-green);">¥0.6万</span></div>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <h4 data-i18n="dashboard.tmdt1u9">预算调整表单</h4>
+            <div style="padding:16px 0;">
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">调整类型</label><select style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;"><option data-i18n="dashboard.tjrb6l2">预算追加</option><option data-i18n="dashboard.tjr8bdl">预算缩减</option><option data-i18n="dashboard.tjrbaw2">预算转移</option></select></div>
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">调整金额 (万元)</label><input type="number" placeholder="请输入调整金额" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;box-sizing:border-box;"></div>
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">调整原因</label><textarea rows="3" placeholder="请说明预算调整原因" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;resize:vertical;box-sizing:border-box;"></textarea></div>
+                <div style="display:flex;gap:12px;"><button class="btn-primary-sm">提交申请</button><button class="btn-action" onclick="showView('view-budget-detail')">取消</button></div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L2: 报表中心 ==================== -->
+    <div class="page-view" id="view-reports">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><span data-i18n="dashboard.td09qzd">报表中心</span></div>
+        <button class="btn-back-sm" onclick="showView('view-overview')">返回总览</button>
+        <h2 style="margin:16px 0;">报表中心</h2>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr 1fr;">
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-report-preview')">
+                <div style="font-size:32px;margin-bottom:8px;">&#128202;</div>
+                <h4 data-i18n="dashboard.tksrand">月度采购报告</h4>
+                <p style="font-size:13px;color:var(--text-muted);margin-top:4px;">最新：2026年2月</p>
+                <span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);margin-top:8px;display:inline-block;">已生成</span>
+            </div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-report-preview')">
+                <div style="font-size:32px;margin-bottom:8px;">&#128200;</div>
+                <h4 data-i18n="dashboard.trxfbm9">供应商绩效报告</h4>
+                <p style="font-size:13px;color:var(--text-muted);margin-top:4px;">最新：2026年Q1</p>
+                <span class="status-badge" style="background:rgba(0,229,204,0.15);color:var(--primary-cyan);margin-top:8px;display:inline-block;">生成中</span>
+            </div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-report-preview')">
+                <div style="font-size:32px;margin-bottom:8px;">&#128176;</div>
+                <h4 data-i18n="dashboard.tbx3up7">成本分析报告</h4>
+                <p style="font-size:13px;color:var(--text-muted);margin-top:4px;">最新：2026年1月</p>
+                <span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);margin-top:8px;display:inline-block;">已生成</span>
+            </div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="dashboard.taw13m7">历史报表</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="dashboard.td0aw4m">报表名称</th><th data-i18n="dashboard.tlnjk">类型</th><th data-i18n="dashboard.tex87">周期</th><th data-i18n="dashboard.tf6o4lr">生成时间</th><th data-i18n="dashboard.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="dashboard.tksrand">月度采购报告</td><td data-i18n="dashboard.tpkjq">采购</td><td data-i18n="dashboard.tnjxpdk">2026年2月</td><td>--</td><td><button class="btn-action" onclick="showView('view-report-preview')">查看</button> <button class="btn-action">下载</button></td></tr>
+                    <tr><td data-i18n="dashboard.tksrand">月度采购报告</td><td data-i18n="dashboard.tpkjq">采购</td><td data-i18n="dashboard.tnjxpef">2026年1月</td><td>--</td><td><button class="btn-action" onclick="showView('view-report-preview')">查看</button> <button class="btn-action">下载</button></td></tr>
+                    <tr><td data-i18n="dashboard.tbx3up7">成本分析报告</td><td data-i18n="dashboard.th8v0">成本</td><td data-i18n="dashboard.tnjxpef">2026年1月</td><td>--</td><td><button class="btn-action" onclick="showView('view-report-preview')">查看</button> <button class="btn-action">下载</button></td></tr>
+                    <tr><td data-i18n="dashboard.trxfbm9">供应商绩效报告</td><td data-i18n="dashboard.tc4b9p">供应商</td><td data-i18n="dashboard.tnjyvxm">2025年Q4</td><td>--</td><td><button class="btn-action" onclick="showView('view-report-preview')">查看</button> <button class="btn-action">下载</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top:20px;">
+            <button class="btn-primary-sm" onclick="showView('view-custom-report')">自定义报表</button>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 报表预览 ==================== -->
+    <div class="page-view" id="view-report-preview">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-reports')">报表中心</a><span class="sep">/</span><span data-i18n="dashboard.td0mmhz">报表预览</span></div>
+        <button class="btn-back-sm" onclick="showView('view-reports')">返回报表中心</button>
+        <h2 style="margin:16px 0;">月度采购报告 - 2026年2月</h2>
+        <div class="detail-card" style="margin-bottom:20px;">
+            <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">报表类型</span><span class="detail-value">月度采购报告</span></div>
+                <div class="detail-item"><span class="detail-label">统计周期</span><span class="detail-value">2026年2月1日 - 2月16日</span></div>
+                <div class="detail-item"><span class="detail-label">生成时间</span><span class="detail-value">2026-02-16 08:00</span></div>
+                <div class="detail-item"><span class="detail-label">状态</span><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已生成</span></div>
+            </div>
+        </div>
+        <div class="dashboard-card" style="margin-bottom:20px;">
+            <h4 data-i18n="dashboard.td0dqz0">报表摘要</h4>
+            <div style="padding:16px 0;">
+                <div class="msg-card" style="padding:12px 16px;margin-bottom:8px;"><strong data-i18n="dashboard.tjyfulu">采购总额:</strong> ¥0，环比增长8%</div>
+                <div class="msg-card" style="padding:12px 16px;margin-bottom:8px;"><strong data-i18n="dashboard.tbdchvy">订单总数:</strong> 36笔，环比增长12%</div>
+                <div class="msg-card" style="padding:12px 16px;margin-bottom:8px;"><strong data-i18n="dashboard.toh2bhx">活跃供应商:</strong> 12家，新增3家</div>
+                <div class="msg-card" style="padding:12px 16px;"><strong data-i18n="dashboard.tvyi7rm">平均履约周期:</strong> 5.2天，优化0.5天</div>
+            </div>
+        </div>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr;">
+            <div class="dashboard-card">
+                <h4 data-i18n="dashboard.ti1qrab">品类采购分布</h4>
+                <div style="padding:12px 0;">
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);"><span data-i18n="dashboard.tf68oas">电子设备</span><span style="color:var(--primary-cyan);">¥0 (0%)</span></div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);"><span data-i18n="dashboard.tevztik">物流服务</span><span style="color:#45B7D1;">¥0 (0%)</span></div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);"><span data-i18n="dashboard.tdgqt8f">机械配件</span><span style="color:#FFD93D;">¥0 (0%)</span></div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;"><span data-i18n="dashboard.teae8">其他</span><span style="color:#FF6B6B;">¥0 (17.8%)</span></div>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <h4 data-i18n="dashboard.t6n4klt">TOP3供应商</h4>
+                <div style="padding:12px 0;">
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);"><span>--</span><span style="color:var(--primary-cyan);">--</span></div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);"><span>--</span><span style="color:var(--primary-cyan);">--</span></div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;"><span data-i18n="dashboard.t1c0ef">--有限</span><span style="color:var(--primary-cyan);">--</span></div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:12px;">
+            <button class="btn-primary-sm">下载PDF</button>
+            <button class="btn-action">下载Excel</button>
+            <button class="btn-action">发送邮件</button>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 自定义报表 ==================== -->
+    <div class="page-view" id="view-custom-report">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-overview')">数据看板</a><span class="sep">/</span><a onclick="showView('view-reports')">报表中心</a><span class="sep">/</span><span data-i18n="dashboard.tmmoubg">自定义报表</span></div>
+        <button class="btn-back-sm" onclick="showView('view-reports')">返回报表中心</button>
+        <h2 style="margin:16px 0;">自定义报表</h2>
+        <div class="dashboard-card">
+            <h4 data-i18n="dashboard.td0lc9w">报表配置</h4>
+            <div style="padding:16px 0;">
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">报表名称</label><input type="text" placeholder="请输入报表名称" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;box-sizing:border-box;"></div>
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">报表类型</label><select style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;"><option data-i18n="dashboard.tiz0174">采购分析</option><option data-i18n="dashboard.tvltayc">供应商绩效</option><option data-i18n="dashboard.tcss292">成本分析</option><option data-i18n="dashboard.tgddhox">综合报告</option></select></div>
+                <div style="margin-bottom:16px;display:flex;gap:16px;">
+                    <div style="flex:1;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">开始日期</label><input type="date" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;box-sizing:border-box;"></div>
+                    <div style="flex:1;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">结束日期</label><input type="date" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;box-sizing:border-box;"></div>
+                </div>
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">包含维度</label>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                        <label style="display:flex;align-items:center;gap:4px;font-size:13px;padding:6px 12px;background:var(--bg-darker);border-radius:16px;cursor:pointer;"><input type="checkbox" checked> 订单数据</label>
+                        <label style="display:flex;align-items:center;gap:4px;font-size:13px;padding:6px 12px;background:var(--bg-darker);border-radius:16px;cursor:pointer;"><input type="checkbox" checked> 金额统计</label>
+                        <label style="display:flex;align-items:center;gap:4px;font-size:13px;padding:6px 12px;background:var(--bg-darker);border-radius:16px;cursor:pointer;"><input type="checkbox" checked> 供应商分析</label>
+                        <label style="display:flex;align-items:center;gap:4px;font-size:13px;padding:6px 12px;background:var(--bg-darker);border-radius:16px;cursor:pointer;"><input type="checkbox"> 品类分布</label>
+                        <label style="display:flex;align-items:center;gap:4px;font-size:13px;padding:6px 12px;background:var(--bg-darker);border-radius:16px;cursor:pointer;"><input type="checkbox"> 成本分析</label>
+                    </div>
+                </div>
+                <div style="display:flex;gap:12px;"><button class="btn-primary-sm">生成报表</button><button class="btn-action" onclick="showView('view-reports')">取消</button></div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-copyright"><p data-i18n="footer.copyright">&copy; 2026 全球供应链智能匹配平台 | 版权所有</p></div>
+        <nav class="footer-nav">
+            <a href="#">帮助中心</a><a href="#">客服中心</a><a href="#">关于我们</a><a href="#">隐私政策</a><a href="#">服务条款</a>
+        </nav>
+        <div style="text-align:center;padding:8px 0;font-size:12px;"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow noopener" style="color:#888;text-decoration:none;">粤ICP备2026015135号-2</a></div>
+    </footer>
+<script src="api.js"></script>
+<script src="auth-check.js"></script>
+    <script src="platform-scripts.js"></script>
+    <script>
+    function showView(viewId) {
+        document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+        const target = document.getElementById(viewId);
+        if (target) { target.classList.add('active'); window.scrollTo(0, 0); }
+    }
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+<script>
+// 仪表盘数据动态加载
+(async function loadDashboardData() {
+    if (typeof YicaiAPI === 'undefined') return;
+    const user = YicaiAPI.getCurrentUser();
+    if (!user || !user.id) return;
+
+    try {
+        // 获取买家订单数据
+        const ordersRes = await YicaiAPI.get('/orders/buyer/' + user.id + '?page=0&size=1000');
+        if (ordersRes && ordersRes.content) {
+            const orders = ordersRes.content;
+            const now = new Date();
+            const thisMonth = now.getMonth();
+            const thisYear = now.getFullYear();
+
+            // 本月订单
+            const monthOrders = orders.filter(o => {
+                const d = new Date(o.createdAt || o.createTime);
+                return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+            });
+
+            // 订单数
+            const el = document.getElementById('stat-order-count');
+            if (el) el.textContent = monthOrders.length;
+
+            // 本月采购额
+            const totalAmount = monthOrders.reduce((sum, o) => sum + (o.totalAmount || o.amount || 0), 0);
+            const amountEl = document.getElementById('stat-purchase-amount');
+            if (amountEl) {
+                if (totalAmount >= 10000) {
+                    amountEl.textContent = '¥' + (totalAmount / 10000).toFixed(1) + '万';
+                } else {
+                    amountEl.textContent = '¥' + totalAmount.toFixed(0);
+                }
+            }
+
+            // 合作供应商数
+            const supplierIds = new Set(orders.map(o => o.supplierId).filter(Boolean));
+            const supplierEl = document.getElementById('stat-supplier-count');
+            if (supplierEl) supplierEl.textContent = supplierIds.size;
+
+            // 平均履约周期
+            const completedOrders = orders.filter(o => o.status === 'COMPLETED' && o.completedAt && o.createdAt);
+            if (completedOrders.length > 0) {
+                const avgDays = completedOrders.reduce((sum, o) => {
+                    const days = (new Date(o.completedAt) - new Date(o.createdAt)) / (1000 * 60 * 60 * 24);
+                    return sum + days;
+                }, 0) / completedOrders.length;
+                const cycleEl = document.getElementById('stat-avg-cycle');
+                if (cycleEl) cycleEl.textContent = avgDays.toFixed(1) + '天';
+            }
+
+            // 更新副标题
+            const subEl = document.getElementById('stat-order-sub');
+            if (subEl) subEl.textContent = '共 ' + orders.length + ' 笔订单';
+        }
+    } catch (e) {
+        console.warn('Dashboard data load failed:', e);
+    }
+})();
+</script>
+</body>
+</html>

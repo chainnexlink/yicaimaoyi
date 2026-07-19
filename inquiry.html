@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="inquiry.t24041y">询盘管理 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="javascript:history.back()" class="inline-back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    返回
+                </a>
+                <a href="index.html" class="logo-link"><span class="logo-text">全球供应链智能匹配平台</span></a>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+                <a href="certification.html" class="nav-link" data-i18n="nav.certification">资质认证</a>
+                <a href="messages.html" class="nav-link" data-i18n="nav.messages">消息中心</a>
+                <a href="help.html" class="nav-link" data-i18n="nav.customerService">客服中心</a>
+            </nav>
+            <div class="header-right">
+                <a href="user-center.html" class="user-link"><span class="user-avatar-sm">A</span><span>admin</span></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== L1: 询盘列表 ==================== -->
+    <div class="page-view active" id="view-list">
+        <div class="page-banner">
+            <h1 data-i18n="inquiry.ti55vzv">询盘管理</h1>
+            <p data-i18n="inquiry.ts362d6">管理您发起和收到的所有询盘</p>
+        </div>
+
+        <section class="inquiry-section">
+            <div class="inquiry-stats">
+                <div class="inquiry-stat-card" style="cursor:pointer;" onclick="showView('view-list')">
+                    <div class="inquiry-stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+                    <div><span class="inquiry-stat-value">24</span><span class="inquiry-stat-label">总询盘数</span></div>
+                </div>
+                <div class="inquiry-stat-card" style="cursor:pointer;">
+                    <div class="inquiry-stat-icon" style="background: rgba(255, 217, 61, 0.1);"><svg viewBox="0 0 24 24" fill="none" stroke="#FFD93D" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+                    <div><span class="inquiry-stat-value">8</span><span class="inquiry-stat-label">待回复</span></div>
+                </div>
+                <div class="inquiry-stat-card" style="cursor:pointer;" onclick="showView('view-inquiry-stats')">
+                    <div class="inquiry-stat-icon" style="background: rgba(69, 183, 209, 0.1);"><svg viewBox="0 0 24 24" fill="none" stroke="#45B7D1" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+                    <div><span class="inquiry-stat-value">12</span><span class="inquiry-stat-label">已成交</span></div>
+                </div>
+                <div class="inquiry-stat-card" style="cursor:pointer;">
+                    <div class="inquiry-stat-icon" style="background: rgba(255, 107, 107, 0.1);"><svg viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>
+                    <div><span class="inquiry-stat-value">4</span><span class="inquiry-stat-label">已关闭</span></div>
+                </div>
+            </div>
+
+            <div class="msg-tabs-bar" style="margin-bottom:24px;">
+                <button class="msg-tab-btn active" onclick="filterInquiry('initiated')">我发起的 <span class="badge">0</span></button>
+                <button class="msg-tab-btn" onclick="filterInquiry('received')">我收到的 <span class="badge">0</span></button>
+                <button class="msg-tab-btn" onclick="showView('view-inquiry-stats')">询盘统计</button>
+                <button class="msg-tab-btn" onclick="showView('view-create-inquiry')">新建询盘</button>
+            </div>
+
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead><tr><th data-i18n="inquiry.ti56atz">询盘编号</th><th data-i18n="inquiry.tc4b9p">供应商</th><th data-i18n="inquiry.ty3y82x">产品/服务</th><th data-i18n="inquiry.thz4b8p">询价内容</th><th data-i18n="inquiry.tk1e3">状态</th><th data-i18n="inquiry.tb5sxdw">发起时间</th><th data-i18n="inquiry.thkxb">操作</th></tr></thead>
+                    <tbody id="inquiry-tbody">
+                        <tr data-type="initiated"><td class="order-id"></td><td>--</td><td>--</td><td data-i18n="inquiry.tp8vc46">询价100台，需要报价单</td><td><span class="status-badge status-open">等待报价</span></td><td>--</td><td><button class="btn-action" onclick="showView('view-inquiry-detail')">详情</button><button class="btn-action">催促</button></td></tr>
+                        <tr data-type="initiated"><td class="order-id"></td><td>--</td><td>--</td><td data-i18n="inquiry.t79vw6f">咨询5000平米仓储方案</td><td><span class="status-badge status-processing">已报价</span></td><td>--</td><td><button class="btn-action" onclick="showView('view-inquiry-detail')">查看报价</button><button class="btn-action">下单</button></td></tr>
+                        <tr data-type="initiated"><td class="order-id"></td><td>--</td><td data-i18n="inquiry.tdgqt8f">机械配件</td><td data-i18n="inquiry.tj6sfju">定制配件500件</td><td><span class="status-badge status-completed">已成交</span></td><td>--</td><td><button class="btn-action" onclick="showView('view-inquiry-detail')">详情</button><button class="btn-action">查看订单</button></td></tr>
+                        <tr data-type="received"><td class="order-id"></td><td>--</td><td data-i18n="inquiry.t18tsq">--咨询</td><td data-i18n="inquiry.typzxpd">询问B型号技术参数</td><td><span class="status-badge status-open">待回复</span></td><td>--</td><td><button class="btn-action" onclick="showView('view-inquiry-detail')">详情</button><button class="btn-action">回复</button></td></tr>
+                        <tr data-type="initiated"><td class="order-id"></td><td>--</td><td>--</td><td data-i18n="inquiry.t8ul0k5">品牌推广方案咨询</td><td><span class="status-badge status-completed">已成交</span></td><td>--</td><td><button class="btn-action" onclick="showView('view-inquiry-detail')">详情</button></td></tr>
+                        <tr data-type="received"><td class="order-id"></td><td data-i18n="inquiry.tj51wmx">北京创新科技</td><td data-i18n="inquiry.ttysswy">系统定制需求</td><td data-i18n="inquiry.t907mgy">ERP二次开发询价</td><td><span class="status-badge status-processing">已报价</span></td><td>--</td><td><button class="btn-action" onclick="showView('view-inquiry-detail')">详情</button></td></tr>
+                        <tr data-type="initiated"><td class="order-id"></td><td data-i18n="inquiry.tj51wmx">北京创新科技</td><td data-i18n="inquiry.tgasrim">系统集成</td><td data-i18n="inquiry.t3mv2gx">ERP系统咨询</td><td><span class="status-badge status-pending">已关闭</span></td><td>--</td><td><button class="btn-action" onclick="showView('view-inquiry-detail')">详情</button></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination"><button class="page-btn" disabled>上一页</button><span class="page-numbers"><button class="page-num active">1</button><button class="page-num">2</button></span><button class="page-btn">下一页</button></div>
+        </section>
+    </div>
+
+    <!-- ==================== L2: 询盘详情 ==================== -->
+    <div class="page-view" id="view-inquiry-detail">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><span data-i18n="inquiry.ti58jth">询盘详情</span></div>
+            <button class="btn-back-sm" onclick="showView('view-list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title"></span><span class="status-badge status-open">等待报价</span></div>
+                <div class="detail-grid">
+                    <div class="detail-row"><span class="detail-label">供应商</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label">产品/服务</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label">询价数量</span><span class="detail-val">100台</span></div>
+                    <div class="detail-row"><span class="detail-label">发起时间</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label">期望交期</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label">预算范围</span><span class="detail-val">-- - --</span></div>
+                </div>
+                <div style="padding:16px;border-top:1px solid var(--border-color);"><p style="font-size:13px;color:var(--text-secondary);"><strong data-i18n="inquiry.tb05cxb">询价内容：</strong>需要采购智能设备B型号100台，要求具备WiFi/蓝牙双模连接，工作温度-20至60度，支持OTA远程升级。请提供详细报价单含运费。</p></div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:16px;">
+                <button class="btn-primary-sm" onclick="showView('view-inquiry-timeline')">沟通记录</button>
+                <button class="btn-primary-sm" onclick="showView('view-quotations')" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);">查看报价 <span class="badge" style="background:var(--primary-cyan);color:#000;">2</span></button>
+                <button class="btn-primary-sm" onclick="showView('view-inquiry-edit')" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);">编辑询盘</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 沟通时间线 ==================== -->
+    <div class="page-view" id="view-inquiry-timeline">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><a onclick="showView('view-inquiry-detail')">询盘详情</a><span class="sep">/</span><span data-i18n="inquiry.teazku8">沟通记录</span></div>
+            <button class="btn-back-sm" onclick="showView('view-inquiry-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title"> 沟通记录</span></div>
+                <div style="padding:16px;">
+                    <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--primary-cyan);"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">--</div><div class="timeline-text"><strong data-i18n="inquiry.tj3c">您</strong>发起询盘：询价智能设备B型号100台</div></div></div>
+                    <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">--</div><div class="timeline-text"><strong>--</strong>已查看询盘</div></div></div>
+                    <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:#ffd93d;"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">--</div><div class="timeline-text"><strong>--</strong>回复：感谢贵司询价，正在为您准备详细报价单...</div></div></div>
+                    <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--primary-cyan);"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">--</div><div class="timeline-text"><strong data-i18n="inquiry.tj3c">您</strong>追问：请问报价单是否包含运费和安装费？</div></div></div>
+                    <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:#ffd93d;"></div></div><div class="timeline-content"><div class="timeline-time">--</div><div class="timeline-text"><strong>--</strong>提交了报价单（含运费，不含安装）</div></div></div>
+                </div>
+            </div>
+            <div style="margin-top:16px;"><button class="btn-primary-sm" onclick="showView('view-reply-message')">回复消息</button></div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 回复消息 ==================== -->
+    <div class="page-view" id="view-reply-message">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><a onclick="showView('view-inquiry-detail')">询盘详情</a><span class="sep">/</span><a onclick="showView('view-inquiry-timeline')">沟通记录</a><span class="sep">/</span><span data-i18n="inquiry.tbc08ba">回复消息</span></div>
+            <button class="btn-back-sm" onclick="showView('view-inquiry-timeline')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">回复 --</span></div>
+                <div style="padding:16px;">
+                    <div style="padding:12px;background:var(--bg-main);border-radius:8px;margin-bottom:16px;"><p style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">对方最后消息：</p><p style="font-size:13px;color:var(--text-secondary);">已提交报价单（含运费，不含安装）- --</p></div>
+                    <div class="form-group"><label data-i18n="inquiry.tbbvfur">回复内容</label><textarea placeholder="请输入回复内容..." style="min-height:120px;"></textarea></div>
+                    <div class="form-group"><label data-i18n="inquiry.tfscv3t">附件（可选）</label><div class="upload-area" style="padding:16px;"><p style="font-size:12px;">点击上传附件</p></div></div>
+                    <div class="form-actions"><button class="btn-secondary" onclick="showView('view-inquiry-timeline')">取消</button><button class="btn-primary-lg">发送回复</button></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 报价单列表 ==================== -->
+    <div class="page-view" id="view-quotations">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><a onclick="showView('view-inquiry-detail')">询盘详情</a><span class="sep">/</span><span data-i18n="inquiry.teu1er">报价单</span></div>
+            <button class="btn-back-sm" onclick="showView('view-inquiry-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">收到的报价 <span style="color:var(--primary-cyan);">(2)</span></span></div>
+                <div class="msg-card" onclick="showView('view-quotation-detail')" style="cursor:pointer;">
+                    <div class="msg-avatar" style="background:rgba(78,205,196,.15);color:var(--primary-cyan);">&#128196;</div>
+                    <div class="msg-card-body">
+                        <div class="msg-card-top"><div class="msg-card-title"><span class="status-badge status-processing" style="font-size:10px;padding:2px 6px;margin-right:6px;">最新</span>-- - 正式报价V2</div><span class="msg-card-time">--</span></div>
+                        <div class="msg-card-preview">单价：--/台 | 总价：-- | 含运费 | 交期：25个工作日</div>
+                    </div>
+                </div>
+                <div class="msg-card" onclick="showView('view-quotation-detail')" style="cursor:pointer;">
+                    <div class="msg-avatar" style="background:rgba(108,117,125,.15);color:#6c757d;">&#128196;</div>
+                    <div class="msg-card-body">
+                        <div class="msg-card-top"><div class="msg-card-title">-- - 初步报价V1</div><span class="msg-card-time">--</span></div>
+                        <div class="msg-card-preview">单价：--/台 | 总价：-- | 不含运费 | 交期：30个工作日</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 报价详情 ==================== -->
+    <div class="page-view" id="view-quotation-detail">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><a onclick="showView('view-inquiry-detail')">询盘详情</a><span class="sep">/</span><a onclick="showView('view-quotations')">报价单</a><span class="sep">/</span><span data-i18n="inquiry.tcs5d75">报价详情</span></div>
+            <button class="btn-back-sm" onclick="showView('view-quotations')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">正式报价V2 - --</span><span class="status-badge status-processing">有效</span></div>
+                <div class="detail-grid">
+                    <div class="detail-row"><span class="detail-label">产品名称</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label">数量</span><span class="detail-val">100台</span></div>
+                    <div class="detail-row"><span class="detail-label">单价</span><span class="detail-val" style="color:var(--primary-cyan);font-size:18px;font-weight:700;">--.00</span></div>
+                    <div class="detail-row"><span class="detail-label">总价</span><span class="detail-val" style="font-weight:700;">--.00</span></div>
+                    <div class="detail-row"><span class="detail-label">运费</span><span class="detail-val" style="color:#28a745;">包含</span></div>
+                    <div class="detail-row"><span class="detail-label">安装费</span><span class="detail-val" style="color:#ef4444;">不含（另计¥500/台）</span></div>
+                    <div class="detail-row"><span class="detail-label">交货周期</span><span class="detail-val">25个工作日</span></div>
+                    <div class="detail-row"><span class="detail-label">报价有效期</span><span class="detail-val">至--</span></div>
+                    <div class="detail-row"><span class="detail-label">付款条件</span><span class="detail-val">预付30%，发货前付40%，验收后30%</span></div>
+                    <div class="detail-row"><span class="detail-label">质保期</span><span class="detail-val">12个月</span></div>
+                </div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">价格明细</span></div>
+                <div style="overflow-x:auto;padding:16px;">
+                    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                        <thead><tr style="border-bottom:1px solid var(--border-color);"><th style="padding:8px;text-align:left;color:var(--text-muted);">项目</th><th style="padding:8px;text-align:center;">数量</th><th style="padding:8px;text-align:right;">单价</th><th style="padding:8px;text-align:right;">小计</th></tr></thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:8px;">智能设备B型号-标配</td><td style="padding:8px;text-align:center;">100</td><td style="padding:8px;text-align:right;">--</td><td style="padding:8px;text-align:right;">--</td></tr>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:8px;">WiFi/蓝牙双模模组升级</td><td style="padding:8px;text-align:center;">100</td><td style="padding:8px;text-align:right;">¥300</td><td style="padding:8px;text-align:right;">--</td></tr>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:8px;">OTA远程升级授权</td><td style="padding:8px;text-align:center;">100</td><td style="padding:8px;text-align:right;">¥100</td><td style="padding:8px;text-align:right;">--</td></tr>
+                            <tr style="font-weight:700;"><td style="padding:8px;">合计</td><td></td><td></td><td style="padding:8px;text-align:right;color:var(--primary-cyan);">--</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:16px;">
+                <button class="btn-primary-sm" onclick="showView('view-accept-quote')" style="background:var(--primary-cyan);color:#000;">接受报价</button>
+                <button class="btn-primary-sm" onclick="showView('view-quotation-compare')" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);">对比报价</button>
+                <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);">竞价</button>
+                <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);">下载PDF</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L5: 多报价对比 ==================== -->
+    <div class="page-view" id="view-quotation-compare">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><a onclick="showView('view-inquiry-detail')">询盘详情</a><span class="sep">/</span><a onclick="showView('view-quotations')">报价单</a><span class="sep">/</span><a onclick="showView('view-quotation-detail')">报价详情</a><span class="sep">/</span><span data-i18n="inquiry.tcrx9wt">报价对比</span></div>
+            <button class="btn-back-sm" onclick="showView('view-quotation-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">报价版本对比</span></div>
+                <div style="overflow-x:auto;padding:16px;">
+                    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                        <thead><tr style="border-bottom:1px solid var(--border-color);"><th style="padding:10px 8px;text-align:left;color:var(--text-muted);">对比项</th><th style="padding:10px 8px;text-align:center;color:var(--primary-cyan);font-weight:600;">正式报价V2 (最新)</th><th style="padding:10px 8px;text-align:center;">初步报价V1</th></tr></thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:10px 8px;color:var(--text-muted);">单价</td><td style="padding:10px 8px;text-align:center;color:var(--primary-cyan);font-weight:700;">-- &#8595;</td><td style="padding:10px 8px;text-align:center;">--</td></tr>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:10px 8px;color:var(--text-muted);">总价</td><td style="padding:10px 8px;text-align:center;color:var(--primary-cyan);font-weight:700;">-- &#8595;</td><td style="padding:10px 8px;text-align:center;">--</td></tr>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:10px 8px;color:var(--text-muted);">运费</td><td style="padding:10px 8px;text-align:center;color:#28a745;">包含 &#9989;</td><td style="padding:10px 8px;text-align:center;color:#ef4444;">不含</td></tr>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:10px 8px;color:var(--text-muted);">交期</td><td style="padding:10px 8px;text-align:center;color:var(--primary-cyan);font-weight:700;">25天 &#8595;</td><td style="padding:10px 8px;text-align:center;">30天</td></tr>
+                            <tr><td style="padding:10px 8px;color:var(--text-muted);">报价节省</td><td style="padding:10px 8px;text-align:center;color:#28a745;font-weight:700;" colspan="2">较V1节省 -- (8.6%)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div style="padding:12px;background:rgba(78,205,196,.08);border-radius:8px;margin-top:16px;"><p style="font-size:13px;color:var(--primary-cyan);">&#128161; V2报价较V1总价降低8.6%，且包含运费、交期缩短5天，建议接受V2报价。</p></div>
+        </section>
+    </div>
+
+    <!-- ==================== L5: 接受报价 ==================== -->
+    <div class="page-view" id="view-accept-quote">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><a onclick="showView('view-inquiry-detail')">询盘详情</a><span class="sep">/</span><a onclick="showView('view-quotations')">报价单</a><span class="sep">/</span><a onclick="showView('view-quotation-detail')">报价详情</a><span class="sep">/</span><span data-i18n="inquiry.tcx7f44">接受报价</span></div>
+            <button class="btn-back-sm" onclick="showView('view-quotation-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">确认接受报价并创建订单</span></div>
+                <div style="padding:16px;">
+                    <div style="padding:16px;background:var(--bg-main);border-radius:8px;margin-bottom:20px;">
+                        <h4 style="font-size:14px;margin-bottom:12px;">订单摘要</h4>
+                        <div class="detail-grid">
+                            <div class="detail-row"><span class="detail-label">供应商</span><span class="detail-val">--</span></div>
+                            <div class="detail-row"><span class="detail-label">产品</span><span class="detail-val">-- x100台</span></div>
+                            <div class="detail-row"><span class="detail-label">总金额</span><span class="detail-val" style="color:var(--primary-cyan);font-size:18px;font-weight:700;">--.00</span></div>
+                            <div class="detail-row"><span class="detail-label">交期</span><span class="detail-val">25个工作日</span></div>
+                        </div>
+                    </div>
+                    <div class="form-group"><label data-i18n="inquiry.tdcnrsx">收货地址</label><input type="text" placeholder="请输入收货地址"></div>
+                    <div class="form-group"><label data-i18n="inquiry.tjed0z">联系人</label><input type="text" value="admin"></div>
+                    <div class="form-group"><label data-i18n="inquiry.tgpkj3j">联系电话</label><input type="text" placeholder="请输入联系电话"></div>
+                    <div class="form-group"><label data-i18n="inquiry.tfqo1">备注</label><textarea placeholder="如有特殊要求请注明..."></textarea></div>
+                    <div style="padding:12px;background:rgba(255,217,61,.08);border-radius:8px;margin:16px 0;"><p style="font-size:12px;color:#ffd93d;">&#9888; 接受报价后将自动创建订单，供应商确认后开始执行。首笔付款（30%预付款 --）将在供应商确认后发起。</p></div>
+                    <div class="form-actions"><button class="btn-secondary" onclick="showView('view-quotation-detail')">取消</button><button class="btn-primary-lg">确认接受并下单</button></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 编辑询盘 ==================== -->
+    <div class="page-view" id="view-inquiry-edit">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><a onclick="showView('view-inquiry-detail')">询盘详情</a><span class="sep">/</span><span data-i18n="inquiry.tgmr835">编辑询盘</span></div>
+            <button class="btn-back-sm" onclick="showView('view-inquiry-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">编辑询盘 - </span></div>
+                <div class="publish-form" style="padding:16px;">
+                    <div class="form-group"><label data-i18n="inquiry.ty3y82x">产品/服务</label><input type="text" value="--"></div>
+                    <div class="form-row"><div class="form-group"><label data-i18n="inquiry.thz7zw4">询价数量</label><input type="text" value="100台"></div><div class="form-group"><label data-i18n="inquiry.tdfq0uv">期望交期</label><input type="date" value="--"></div></div>
+                    <div class="form-group"><label data-i18n="inquiry.thz4b8p">询价内容</label><textarea>需要采购智能设备B型号100台，要求具备WiFi/蓝牙双模连接，工作温度-20至60度，支持OTA远程升级。请提供详细报价单含运费。</textarea></div>
+                    <div class="form-group"><label data-i18n="inquiry.tjr8zz8">预算范围</label><div class="range-inputs"><input type="number" value="300000" class="range-input"><span>-</span><input type="number" value="500000" class="range-input"><span data-i18n="inquiry.tg1v">元</span></div></div>
+                    <button class="btn-primary-sm" onclick="showView('view-add-requirements')" style="background:var(--bg-card);color:var(--primary-cyan);border:1px solid var(--primary-cyan);margin-top:12px;">+ 补充需求</button>
+                    <div class="form-actions"><button class="btn-secondary" onclick="showView('view-inquiry-detail')">取消</button><button class="btn-primary-lg">保存修改</button></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 补充需求 ==================== -->
+    <div class="page-view" id="view-add-requirements">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><a onclick="showView('view-inquiry-detail')">询盘详情</a><span class="sep">/</span><a onclick="showView('view-inquiry-edit')">编辑询盘</a><span class="sep">/</span><span data-i18n="inquiry.thjy66a">补充需求</span></div>
+            <button class="btn-back-sm" onclick="showView('view-inquiry-edit')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">补充技术需求</span></div>
+                <div class="publish-form" style="padding:16px;">
+                    <div style="padding:12px;background:rgba(78,205,196,.08);border-radius:8px;margin-bottom:16px;"><p style="font-size:12px;color:var(--primary-cyan);">&#128161; 补充需求将发送给供应商，供应商可据此更新报价。</p></div>
+                    <div class="form-group"><label data-i18n="inquiry.tz83gz6">补充需求类型</label><select><option value="">请选择</option><option value="spec">技术规格补充</option><option value="sample">样品需求</option><option value="cert">资质要求</option><option value="other">其他</option></select></div>
+                    <div class="form-group"><label data-i18n="inquiry.thjm9g4">补充内容</label><textarea placeholder="请详细描述补充需求..." style="min-height:120px;"></textarea></div>
+                    <div class="form-group"><label data-i18n="inquiry.tpzqq">附件</label><div class="upload-area" style="padding:16px;"><p style="font-size:12px;">上传技术图纸、规格书等文件</p></div></div>
+                    <div class="form-actions"><button class="btn-secondary" onclick="showView('view-inquiry-edit')">取消</button><button class="btn-primary-lg">提交补充需求</button></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L2: 询盘统计 ==================== -->
+    <div class="page-view" id="view-inquiry-stats">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><span data-i18n="inquiry.ti56kig">询盘统计</span></div>
+            <button class="btn-back-sm" onclick="showView('view-list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">询盘数据概览</span><span style="font-size:12px;color:var(--text-muted);">最近30天</span></div>
+                <div class="msg-stats" style="padding:16px;">
+                    <div class="msg-stat-box"><div class="num" style="color:var(--primary-cyan);">24</div><div class="label">总询盘</div></div>
+                    <div class="msg-stat-box"><div class="num" style="color:#28a745;">50%</div><div class="label">成交率</div></div>
+                    <div class="msg-stat-box"><div class="num" style="color:#ffd93d;">2.3天</div><div class="label">平均响应</div></div>
+                    <div class="msg-stat-box"><div class="num" style="color:var(--primary-cyan);">¥128万</div><div class="label">成交总额</div></div>
+                </div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">按产品类别统计</span></div>
+                <div style="padding:16px;">
+                    <div onclick="showView('view-stats-by-category')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--border-color);">
+                        <div><span style="font-weight:600;">电子元器件</span><span style="font-size:12px;color:var(--text-muted);margin-left:8px;">8个询盘</span></div>
+                        <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--primary-cyan);font-weight:700;">¥52万</span><span style="color:var(--text-muted);">&#8594;</span></div>
+                    </div>
+                    <div onclick="showView('view-stats-by-category')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--border-color);">
+                        <div><span style="font-weight:600;">机械设备</span><span style="font-size:12px;color:var(--text-muted);margin-left:8px;">6个询盘</span></div>
+                        <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--primary-cyan);font-weight:700;">¥38万</span><span style="color:var(--text-muted);">&#8594;</span></div>
+                    </div>
+                    <div onclick="showView('view-stats-by-category')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--border-color);">
+                        <div><span style="font-weight:600;">物流服务</span><span style="font-size:12px;color:var(--text-muted);margin-left:8px;">5个询盘</span></div>
+                        <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--primary-cyan);font-weight:700;">¥22万</span><span style="color:var(--text-muted);">&#8594;</span></div>
+                    </div>
+                    <div onclick="showView('view-stats-by-category')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;padding:12px;">
+                        <div><span style="font-weight:600;">其他</span><span style="font-size:12px;color:var(--text-muted);margin-left:8px;">5个询盘</span></div>
+                        <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--primary-cyan);font-weight:700;">¥16万</span><span style="color:var(--text-muted);">&#8594;</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 按类别统计详情 ==================== -->
+    <div class="page-view" id="view-stats-by-category">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><a onclick="showView('view-inquiry-stats')">询盘统计</a><span class="sep">/</span><span data-i18n="inquiry.tg1xghb">类别详情</span></div>
+            <button class="btn-back-sm" onclick="showView('view-inquiry-stats')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">电子元器件 - 询盘统计</span></div>
+                <div class="detail-grid" style="padding:16px;">
+                    <div class="detail-row"><span class="detail-label">总询盘数</span><span class="detail-val">8</span></div>
+                    <div class="detail-row"><span class="detail-label">成交数</span><span class="detail-val">5</span></div>
+                    <div class="detail-row"><span class="detail-label">成交率</span><span class="detail-val" style="color:#28a745;">62.5%</span></div>
+                    <div class="detail-row"><span class="detail-label">成交总额</span><span class="detail-val" style="color:var(--primary-cyan);">--</span></div>
+                    <div class="detail-row"><span class="detail-label">平均响应时间</span><span class="detail-val">1.8天</span></div>
+                    <div class="detail-row"><span class="detail-label">平均成交周期</span><span class="detail-val">5.2天</span></div>
+                </div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">询盘列表</span></div>
+                <div style="padding:16px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color);cursor:pointer;" onclick="showView('view-category-detail')"><div><span style="font-weight:600;font-size:13px;"></span><span style="font-size:12px;color:var(--text-muted);margin-left:8px;">-- - 智能设备</span></div><span class="status-badge status-open">等待报价</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color);"><div><span style="font-weight:600;font-size:13px;"></span><span style="font-size:12px;color:var(--text-muted);margin-left:8px;">-- - 数字营销</span></div><span class="status-badge status-completed">已成交</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;"><div><span style="font-weight:600;font-size:13px;"></span><span style="font-size:12px;color:var(--text-muted);margin-left:8px;">武汉半导体 - IC芯片</span></div><span class="status-badge status-completed">已成交</span></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 类别深度分析 ==================== -->
+    <div class="page-view" id="view-category-detail">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><a onclick="showView('view-inquiry-stats')">询盘统计</a><span class="sep">/</span><a onclick="showView('view-stats-by-category')">类别详情</a><span class="sep">/</span><span data-i18n="inquiry.te9gvdr">深度分析</span></div>
+            <button class="btn-back-sm" onclick="showView('view-stats-by-category')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">电子元器件 - 供应商响应分析</span></div>
+                <div style="overflow-x:auto;padding:16px;">
+                    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                        <thead><tr style="border-bottom:1px solid var(--border-color);"><th style="padding:8px;text-align:left;color:var(--text-muted);">供应商</th><th style="padding:8px;text-align:center;">响应次数</th><th style="padding:8px;text-align:center;">成交次数</th><th style="padding:8px;text-align:center;">平均响应时间</th><th style="padding:8px;text-align:right;">累计金额</th></tr></thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:8px;font-weight:600;">--</td><td style="padding:8px;text-align:center;">5</td><td style="padding:8px;text-align:center;">3</td><td style="padding:8px;text-align:center;">1.2天</td><td style="padding:8px;text-align:right;color:var(--primary-cyan);">--</td></tr>
+                            <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:8px;font-weight:600;">--</td><td style="padding:8px;text-align:center;">3</td><td style="padding:8px;text-align:center;">2</td><td style="padding:8px;text-align:center;">2.1天</td><td style="padding:8px;text-align:right;color:var(--primary-cyan);">--</td></tr>
+                            <tr><td style="padding:8px;font-weight:600;">武汉半导体</td><td style="padding:8px;text-align:center;">2</td><td style="padding:8px;text-align:center;">1</td><td style="padding:8px;text-align:center;">3.0天</td><td style="padding:8px;text-align:right;color:var(--primary-cyan);">--</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">采购建议</span></div>
+                <div style="padding:16px;"><p style="font-size:13px;color:var(--text-secondary);line-height:1.8;">&#128161; 根据历史数据分析，电子元器件类别的<strong style="color:var(--primary-cyan);">--</strong>响应最快（平均1.2天）且成交率最高（60%），建议作为此类别的优先询价对象。该类别整体成交率62.5%，高于平台平均水平50%。</p></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L2: 新建询盘 ==================== -->
+    <div class="page-view" id="view-create-inquiry">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><span data-i18n="inquiry.td8bbpc">新建询盘</span></div>
+            <button class="btn-back-sm" onclick="showView('view-list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">新建询盘</span></div>
+                <div class="publish-form" style="padding:16px;">
+                    <div class="form-group"><label data-i18n="inquiry.ty83e0c">产品/服务名称 <span class="required">*</span></label><input type="text" placeholder="请输入要询价的产品或服务"></div>
+                    <div class="form-row"><div class="form-group"><label data-i18n="inquiry.ti1y7">数量 <span class="required">*</span></label><input type="text" placeholder="数量及单位"></div><div class="form-group"><label data-i18n="inquiry.tdfq0uv">期望交期</label><input type="date"></div></div>
+                    <div class="form-group"><label data-i18n="inquiry.thz4b8p">询价内容 <span class="required">*</span></label><textarea placeholder="请详细描述您的询价需求，包括产品规格、质量要求等"></textarea></div>
+                    <div class="form-group"><label data-i18n="inquiry.tjr8zz8">预算范围</label><div class="range-inputs"><input type="number" placeholder="最低" class="range-input"><span>-</span><input type="number" placeholder="最高" class="range-input"><span data-i18n="inquiry.tg1v">元</span></div></div>
+                    <div class="form-group"><label data-i18n="inquiry.tpzqq">附件</label><div class="upload-area" style="padding:16px;"><p style="font-size:12px;">上传图纸、规格书等</p></div></div>
+                    <div style="margin-top:16px;"><button class="btn-primary-sm" onclick="showView('view-select-suppliers')">选择询价供应商 &#8594;</button></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 选择供应商 ==================== -->
+    <div class="page-view" id="view-select-suppliers">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><a onclick="showView('view-create-inquiry')">新建询盘</a><span class="sep">/</span><span data-i18n="inquiry.t7qlpfx">选择供应商</span></div>
+            <button class="btn-back-sm" onclick="showView('view-create-inquiry')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">选择询价供应商</span><span style="font-size:12px;color:var(--primary-cyan);">已选 0 家</span></div>
+                <div style="padding:16px;">
+                    <input type="text" placeholder="搜索供应商名称..." style="width:100%;padding:10px 16px;background:var(--bg-main);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);margin-bottom:16px;">
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border-color);border-radius:8px;margin-bottom:8px;cursor:pointer;">
+                        <input type="checkbox" style="accent-color:var(--primary-cyan);">
+                        <div style="width:36px;height:36px;border-radius:50%;background:rgba(78,205,196,.15);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--primary-cyan);font-size:14px;">深</div>
+                        <div style="flex:1;"><div style="font-weight:600;font-size:13px;">--</div><div style="font-size:12px;color:var(--text-muted);">评分 4.9 | 智能设备 | 已合作3次</div></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border-color);border-radius:8px;margin-bottom:8px;cursor:pointer;">
+                        <input type="checkbox" style="accent-color:var(--primary-cyan);">
+                        <div style="width:36px;height:36px;border-radius:50%;background:rgba(69,183,209,.15);display:flex;align-items:center;justify-content:center;font-weight:600;color:#45b7d1;font-size:14px;">成</div>
+                        <div style="flex:1;"><div style="font-weight:600;font-size:13px;">--</div><div style="font-size:12px;color:var(--text-muted);">评分 4.7 | 机械配件 | 已合作1次</div></div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border-color);border-radius:8px;margin-bottom:8px;cursor:pointer;">
+                        <input type="checkbox" style="accent-color:var(--primary-cyan);">
+                        <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,217,61,.15);display:flex;align-items:center;justify-content:center;font-weight:600;color:#ffd93d;font-size:14px;">广</div>
+                        <div style="flex:1;"><div style="font-weight:600;font-size:13px;">--</div><div style="font-size:12px;color:var(--text-muted);">评分 4.9 | 物流服务 | 已合作2次</div></div>
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:16px;">
+                <button class="btn-primary-sm" onclick="showView('view-batch-inquiry')">确认并发送询盘</button>
+                <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);">智能推荐供应商</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 批量询盘确认 ==================== -->
+    <div class="page-view" id="view-batch-inquiry">
+        <section class="inquiry-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">询盘管理</a><span class="sep">/</span><a onclick="showView('view-create-inquiry')">新建询盘</a><span class="sep">/</span><a onclick="showView('view-select-suppliers')">选择供应商</a><span class="sep">/</span><span data-i18n="inquiry.td12nsc">批量确认</span></div>
+            <button class="btn-back-sm" onclick="showView('view-select-suppliers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="inquiry.toxvu">返回</span></button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">批量询盘确认</span></div>
+                <div style="padding:16px;">
+                    <div style="padding:12px;background:rgba(78,205,196,.08);border-radius:8px;margin-bottom:16px;"><p style="font-size:13px;color:var(--primary-cyan);">即将向以下 <strong>3</strong> 家供应商发送相同的询盘：</p></div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+                        <span style="padding:6px 12px;background:var(--bg-main);border-radius:20px;font-size:13px;">--</span>
+                        <span style="padding:6px 12px;background:var(--bg-main);border-radius:20px;font-size:13px;">--</span>
+                        <span style="padding:6px 12px;background:var(--bg-main);border-radius:20px;font-size:13px;">--</span>
+                    </div>
+                    <div style="padding:16px;background:var(--bg-main);border-radius:8px;">
+                        <h4 style="font-size:14px;margin-bottom:12px;">询盘内容预览</h4>
+                        <div class="detail-grid">
+                            <div class="detail-row"><span class="detail-label">产品/服务</span><span class="detail-val">待填写</span></div>
+                            <div class="detail-row"><span class="detail-label">数量</span><span class="detail-val">待填写</span></div>
+                            <div class="detail-row"><span class="detail-label">期望交期</span><span class="detail-val">待填写</span></div>
+                            <div class="detail-row"><span class="detail-label">预算范围</span><span class="detail-val">待填写</span></div>
+                        </div>
+                    </div>
+                    <div style="padding:12px;background:rgba(255,217,61,.08);border-radius:8px;margin-top:16px;"><p style="font-size:12px;color:#ffd93d;">&#9888; 发送后，3家供应商将收到通知并在3个工作日内回复报价。您可在询盘列表中跟踪进度。</p></div>
+                    <div class="form-actions"><button class="btn-secondary" onclick="showView('view-select-suppliers')">返回修改</button><button class="btn-primary-lg">确认发送</button></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-copyright"><p data-i18n="footer.copyright">&copy; 2026 全球供应链智能匹配平台 | 版权所有</p></div>
+        <nav class="footer-nav">
+            <a href="#">帮助中心</a><a href="#">客服中心</a><a href="#">关于我们</a><a href="#">隐私政策</a><a href="#">服务条款</a>
+        </nav>
+        <div style="text-align:center;padding:8px 0;font-size:12px;"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow noopener" style="color:#888;text-decoration:none;">粤ICP备2026015135号-2</a></div>
+    </footer>
+<script src="auth-check.js"></script>
+    <script src="platform-scripts.js"></script>
+    <script>
+        function showView(viewId) {
+            document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+        
+        // Filter inquiry table by type
+        function filterInquiry(type) {
+            // Update tab active state
+            document.querySelectorAll('.msg-tabs-bar .msg-tab-btn').forEach((btn, index) => {
+                btn.classList.remove('active');
+                if ((type === 'initiated' && index === 0) || (type === 'received' && index === 1)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Filter table rows
+            const rows = document.querySelectorAll('#inquiry-tbody tr');
+            rows.forEach(row => {
+                const rowType = row.getAttribute('data-type');
+                row.style.display = rowType === type ? '' : 'none';
+            });
+        }
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+</body>
+</html>

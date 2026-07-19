@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="onboarding.t7c07k">功能引导 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 50%, #0a1520 100%);
+            overflow: hidden;
+        }
+
+        .onboarding-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 背景装饰 */
+        .onboarding-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(0, 229, 204, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(0, 184, 163, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 顶部栏 */
+        .onboarding-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .page-indicator {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .skip-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: var(--text-muted);
+            font-size: 14px;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .skip-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .skip-btn:hover {
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+            background: rgba(0, 229, 204, 0.05);
+        }
+
+        /* 滑动区域 */
+        .slides-container {
+            flex: 1;
+            position: relative;
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateX(60px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .slide.exit-left {
+            opacity: 0;
+            transform: translateX(-60px);
+        }
+
+        .slide-content {
+            text-align: center;
+            max-width: 560px;
+            padding: 0 24px;
+        }
+
+        /* 图标区域 */
+        .feature-icon-box {
+            width: 120px;
+            height: 120px;
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 36px;
+            font-size: 52px;
+            position: relative;
+        }
+
+        .feature-icon-box::after {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 40px;
+            opacity: 0.25;
+            filter: blur(20px);
+        }
+
+        /* 颜色变体 */
+        .slide-red .feature-icon-box {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            box-shadow: 0 12px 40px rgba(239, 68, 68, 0.35);
+        }
+        .slide-red .feature-icon-box::after { background: #EF4444; }
+
+        .slide-yellow .feature-icon-box {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            box-shadow: 0 12px 40px rgba(245, 158, 11, 0.35);
+        }
+        .slide-yellow .feature-icon-box::after { background: #F59E0B; }
+
+        .slide-teal .feature-icon-box {
+            background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+            box-shadow: 0 12px 40px rgba(20, 184, 166, 0.35);
+        }
+        .slide-teal .feature-icon-box::after { background: #14B8A6; }
+
+        /* 标题副标题 */
+        .feature-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .feature-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 36px;
+        }
+
+        /* 功能描述卡片 */
+        .feature-desc-card {
+            border-radius: 16px;
+            padding: 24px;
+            text-align: left;
+            border: 1px solid;
+            margin-bottom: 24px;
+        }
+
+        .slide-red .feature-desc-card {
+            background: rgba(239, 68, 68, 0.06);
+            border-color: rgba(239, 68, 68, 0.15);
+        }
+        .slide-yellow .feature-desc-card {
+            background: rgba(245, 158, 11, 0.06);
+            border-color: rgba(245, 158, 11, 0.15);
+        }
+        .slide-teal .feature-desc-card {
+            background: rgba(20, 184, 166, 0.06);
+            border-color: rgba(20, 184, 166, 0.15);
+        }
+
+        .desc-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .desc-item:last-child { margin-bottom: 0; }
+
+        .desc-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .slide-red .desc-num { background: #EF4444; }
+        .slide-yellow .desc-num { background: #F59E0B; }
+        .slide-teal .desc-num { background: #14B8A6; }
+
+        .desc-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* 立即体验按钮 */
+        .try-now-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .slide-red .try-now-link { color: #EF4444; }
+        .slide-yellow .try-now-link { color: #F59E0B; }
+        .slide-teal .try-now-link { color: #14B8A6; }
+
+        .try-now-link:hover { opacity: 0.8; }
+
+        .try-now-link svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .try-now-link:hover svg { transform: translate(2px, -2px); }
+
+        /* 底部控制区 */
+        .onboarding-bottom {
+            padding: 0 40px 36px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 分页圆点 */
+        .dots-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .dot {
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            transition: all 0.4s ease;
+            width: 8px;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            width: 28px;
+        }
+
+        .dot.active.dot-red { background: #EF4444; }
+        .dot.active.dot-yellow { background: #F59E0B; }
+        .dot.active.dot-teal { background: #14B8A6; }
+
+        /* 按钮行 */
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            border-color: rgba(255,255,255,0.3);
+            color: var(--text-primary);
+        }
+
+        .btn-primary {
+            flex: 2;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            border: none;
+            color: #fff;
+        }
+
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-primary.btn-red { background: linear-gradient(135deg, #EF4444, #DC2626); }
+        .btn-primary.btn-yellow { background: linear-gradient(135deg, #F59E0B, #D97706); }
+        .btn-primary.btn-teal { background: linear-gradient(135deg, #14B8A6, #0D9488); }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .onboarding-topbar { padding: 16px 20px; }
+            .feature-title { font-size: 26px; }
+            .feature-icon-box { width: 96px; height: 96px; font-size: 44px; border-radius: 24px; }
+            .slide-content { max-width: 100%; }
+            .onboarding-bottom { padding: 0 20px 28px; }
+            .btn-row { max-width: 100%; }
+        }
+
+        /* 进场动画 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide.active .feature-icon-box { animation: fadeInUp 0.5s ease 0.1s both; }
+        .slide.active .feature-title { animation: fadeInUp 0.5s ease 0.2s both; }
+        .slide.active .feature-subtitle { animation: fadeInUp 0.5s ease 0.25s both; }
+        .slide.active .feature-desc-card { animation: fadeInUp 0.5s ease 0.3s both; }
+        .slide.active .try-now-link { animation: fadeInUp 0.5s ease 0.4s both; }
+    </style>
+</head>
+<body>
+    <div class="onboarding-wrapper">
+        <!-- 顶部栏 -->
+        <div class="onboarding-topbar">
+            <span class="page-indicator" id="pageIndicator">1 / 3</span>
+            <button class="skip-btn" id="skipBtn" onclick="goHome()">跳过全部</button>
+        </div>
+
+        <!-- 幻灯片 -->
+        <div class="slides-container">
+            <!-- Slide 1: AI 智能匹配 -->
+            <div class="slide slide-red active" data-index="0">
+                <div class="slide-content">
+                    <div class="feature-icon-box">&#129302;</div>
+                    <h1 class="feature-title">AI 智能匹配</h1>
+                    <p class="feature-subtitle">精准连接采购需求与优质供应商</p>
+                    <div class="feature-desc-card">
+                        <div class="desc-item">
+                            <span class="desc-num">1</span>
+                            <span class="desc-text">智能分析您的采购需求，自动推荐最匹配的供应商</span>
+                        </div>
+                        <div class="desc-item">
+                            <span class="desc-num">2</span>
+                            <span class="desc-text">多维度评估供应商能力：价格、质量、交期、信誉</span>
+                        </div>
+                        <div class="desc-item">
+                            <span class="desc-num">3</span>
+                            <span class="desc-text">一键发布需求，快速获取精准报价</span>
+                        </div>
+                    </div>
+                    <a href="smart-match.html" class="try-now-link">
+                        立即体验 AI 智能匹配
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Slide 2: 智能采购反向竞价 -->
+            <div class="slide slide-yellow" data-index="1">
+                <div class="slide-content">
+                    <div class="feature-icon-box">&#128296;</div>
+                    <h1 class="feature-title">智能采购反向竞价</h1>
+                    <p class="feature-subtitle">透明竞价，价格越拍越低</p>
+                    <div class="feature-desc-card">
+                        <div class="desc-item">
+                            <span class="desc-num">1</span>
+                            <span class="desc-text">采购商发布竞价，供应商反向出价竞争</span>
+                        </div>
+                        <div class="desc-item">
+                            <span class="desc-num">2</span>
+                            <span class="desc-text">实时竞价看板，价格走势一目了然</span>
+                        </div>
+                        <div class="desc-item">
+                            <span class="desc-num">3</span>
+                            <span class="desc-text">注册即赠押金抵用券，零成本体验竞价</span>
+                        </div>
+                    </div>
+                    <a href="auction-list.html" class="try-now-link">
+                        立即体验 智能采购反向竞价
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Slide 3: 生产订单监控 -->
+            <div class="slide slide-teal" data-index="2">
+                <div class="slide-content">
+                    <div class="feature-icon-box">&#128202;</div>
+                    <h1 class="feature-title">生产订单监控</h1>
+                    <p class="feature-subtitle">全流程可视化，交付有保障</p>
+                    <div class="feature-desc-card">
+                        <div class="desc-item">
+                            <span class="desc-num">1</span>
+                            <span class="desc-text">订单状态实时追踪，从下单到交付全程可视</span>
+                        </div>
+                        <div class="desc-item">
+                            <span class="desc-num">2</span>
+                            <span class="desc-text">生产进度自动同步，异常情况即时预警</span>
+                        </div>
+                        <div class="desc-item">
+                            <span class="desc-num">3</span>
+                            <span class="desc-text">物流节点跟踪，交货时间精准掌控</span>
+                        </div>
+                    </div>
+                    <a href="production-monitor.html" class="try-now-link">
+                        立即体验 生产订单监控
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部控制 -->
+        <div class="onboarding-bottom">
+            <div class="dots-row" id="dotsRow">
+                <span class="dot dot-red active" data-index="0" onclick="goToSlide(0)"></span>
+                <span class="dot dot-yellow" data-index="1" onclick="goToSlide(1)"></span>
+                <span class="dot dot-teal" data-index="2" onclick="goToSlide(2)"></span>
+            </div>
+            <div class="btn-row">
+                <button class="btn-secondary" id="btnSecondary" onclick="handleSecondary()">跳过</button>
+                <button class="btn-primary btn-red" id="btnPrimary" onclick="handlePrimary()">下一步</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        var currentPage = 0;
+        var totalPages = 3;
+        var visitedPages = [false, false, false];
+        var allViewed = false;
+
+        var featureTargets = ['smart-match.html', 'auction-list.html', 'production-monitor.html'];
+        var btnColors = ['btn-red', 'btn-yellow', 'btn-teal'];
+        var dotColors = ['dot-red', 'dot-yellow', 'dot-teal'];
+
+        // 解析URL参数，支持 ?feature=smart-match / auction / monitor / 0 / 1 / 2
+        var params = new URLSearchParams(window.location.search);
+        var featureParam = params.get('feature');
+        if (featureParam) {
+            var startMap = { 'smart-match': 0, 'auction': 1, 'monitor': 2, '0': 0, '1': 1, '2': 2 };
+            if (startMap[featureParam] !== undefined) {
+                currentPage = startMap[featureParam];
+            }
+        }
+
+        // 初始化
+        visitedPages[currentPage] = true;
+        updateUI();
+
+        function updateUI() {
+            var slides = document.querySelectorAll('.slide');
+            slides.forEach(function(s, i) {
+                s.classList.remove('active', 'exit-left');
+                if (i === currentPage) {
+                    s.classList.add('active');
+                } else if (i < currentPage) {
+                    s.classList.add('exit-left');
+                }
+            });
+
+            // 页码
+            document.getElementById('pageIndicator').textContent = (currentPage + 1) + ' / ' + totalPages;
+
+            // 分页圆点
+            var dots = document.querySelectorAll('.dot');
+            dots.forEach(function(d, i) {
+                d.classList.remove('active');
+                dotColors.forEach(function(c) { d.classList.remove(c); });
+                if (i === currentPage) {
+                    d.classList.add('active', dotColors[currentPage]);
+                }
+            });
+
+            // 主按钮颜色
+            var btnP = document.getElementById('btnPrimary');
+            btnColors.forEach(function(c) { btnP.classList.remove(c); });
+            btnP.classList.add(btnColors[currentPage]);
+
+            // 检查是否全部看过
+            allViewed = visitedPages.every(function(v) { return v; });
+
+            // 跳过全部按钮 - 只有全部看过后才显示
+            var skipBtn = document.getElementById('skipBtn');
+            if (allViewed) {
+                skipBtn.classList.add('visible');
+            } else {
+                skipBtn.classList.remove('visible');
+            }
+
+            // 底部按钮文案
+            var btnS = document.getElementById('btnSecondary');
+            if (currentPage < totalPages - 1) {
+                btnS.textContent = '跳过';
+                btnP.textContent = '下一步';
+            } else {
+                btnS.textContent = '进入首页';
+                btnP.textContent = '开始使用';
+            }
+        }
+
+        function goToSlide(index) {
+            if (index === currentPage) return;
+            currentPage = index;
+            visitedPages[currentPage] = true;
+            updateUI();
+        }
+
+        function handlePrimary() {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                visitedPages[currentPage] = true;
+                updateUI();
+            } else {
+                // 最后一页 - 进入用户中心
+                window.location.href = 'user-center.html';
+            }
+        }
+
+        function handleSecondary() {
+            if (currentPage < totalPages - 1) {
+                // 跳过当前，到下一页
+                currentPage++;
+                visitedPages[currentPage] = true;
+                updateUI();
+            } else {
+                // 进入首页
+                window.location.href = 'index.html';
+            }
+        }
+
+        function goHome() {
+            window.location.href = 'user-center.html';
+        }
+
+        // 键盘支持
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (currentPage < totalPages - 1) {
+                    currentPage++;
+                    visitedPages[currentPage] = true;
+                    updateUI();
+                }
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (currentPage > 0) {
+                    currentPage--;
+                    updateUI();
+                }
+            } else if (e.key === 'Enter') {
+                handlePrimary();
+            }
+        });
+
+        // 触摸滑动支持
+        var startX = 0;
+        var container = document.querySelector('.slides-container');
+        container.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        }, { passive: true });
+        container.addEventListener('touchend', function(e) {
+            var dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) > 60) {
+                if (dx < 0 && currentPage < totalPages - 1) {
+                    currentPage++;
+                    visitedPages[currentPage] = true;
+                    updateUI();
+                } else if (dx > 0 && currentPage > 0) {
+                    currentPage--;
+                    updateUI();
+                }
+            }
+        }, { passive: true });
+
+        // 暴露全局函数
+        window.goToSlide = goToSlide;
+        window.handlePrimary = handlePrimary;
+        window.handleSecondary = handleSecondary;
+        window.goHome = goHome;
+    })();
+    </script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+</body>
+</html>

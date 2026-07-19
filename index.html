@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="home.title">全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css?v=20260320c">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="lazy-load.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <div class="cursor-glow" id="cursorGlow"></div>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <div class="language-selector" id="langSelector">
+                    <svg class="lang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                    <span class="current-lang" id="currentLang">中文</span>
+                    <span class="dropdown-arrow">▼</span>
+                    <div class="language-dropdown">
+                        <div class="lang-option active" data-lang="zh" onclick="switchLanguage('zh')">
+                            <span class="lang-flag">🇨🇳</span>
+                            <span>中文</span>
+                        </div>
+                        <div class="lang-option" data-lang="en" onclick="switchLanguage('en')">
+                            <span class="lang-flag">🇺🇸</span>
+                            <span>English</span>
+                        </div>
+                        <div class="lang-option" data-lang="es" onclick="switchLanguage('es')">
+                            <span class="lang-flag">🇪🇸</span>
+                            <span>Español</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="search-box">
+                    <input type="text" placeholder="搜索供应商、产品、需求..." data-i18n="common.search">
+                    <button class="search-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link active" data-i18n="nav.home">首页</a>
+                <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+                <a href="certification.html" class="nav-link" data-i18n="nav.certification">资质认证</a>
+                <a href="messages.html" class="nav-link" data-i18n="nav.messages">消息中心</a>
+                <a href="help.html" class="nav-link" data-i18n="nav.customerService">客服中心</a>
+            </nav>
+            <div class="header-right">
+                <!-- 登录前显示 -->
+                <button class="btn-login" id="loginBtn" onclick="window.location.href='login.html'" data-i18n="common.login">登录/注册</button>
+                
+                <!-- 登录后显示 -->
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <div class="user-menu-trigger">
+                        <span class="user-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="8" r="4"></circle>
+                                <path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path>
+                            </svg>
+                        </span>
+                        <span class="user-name">admin</span>
+                        <span class="user-level">普通会员</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="user-dropdown">
+                        <div class="dropdown-section">
+                            <h4 class="dropdown-title" data-i18n="nav.userCenter">个人中心</h4>
+                            <a href="user-center.html#profile" class="dropdown-item" data-i18n="user.profile">个人资料</a>
+                            <a href="user-center.html#orders" class="dropdown-item" data-i18n="user.orders">订单管理</a>
+                            <a href="user-center.html#demands" class="dropdown-item" data-i18n="user.demands">需求管理</a>
+                            <a href="user-center.html#suppliers" class="dropdown-item" data-i18n="user.suppliers">供应商管理</a>
+                            <a href="user-center.html#logistics" class="dropdown-item" data-i18n="user.logistics">物流管理</a>
+                            <a href="user-center.html#analytics" class="dropdown-item" data-i18n="user.analytics">数据分析</a>
+                            <a href="user-center.html#contracts" class="dropdown-item" data-i18n="user.contracts">合同管理</a>
+                            <a href="user-center.html#production" class="dropdown-item" data-i18n="user.production">生产过程监控</a>
+                        </div>
+                        <div class="dropdown-section member-section">
+                            <h4 class="dropdown-title">会员中心</h4>
+                            <div class="member-info">
+                                <span class="member-level">普通会员</span>
+                                <span class="member-points">积分: 0</span>
+                            </div>
+                            <div class="member-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%;"></div>
+                                </div>
+                                <span class="progress-text">0% 升级</span>
+                            </div>
+                            <a href="user-center.html#membership" class="dropdown-item" data-i18n="user.membership">会员权益</a>
+                        </div>
+                        <div class="dropdown-section">
+                            <a href="login.html" class="dropdown-item logout-item" id="logoutBtn" data-i18n="common.logout">退出登录</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================
+         第一屏：Hero Banner - 一站式智能采购平台
+         ============================================ -->
+    <section class="hero-banner">
+        <div class="hero-banner-bg">
+            <canvas id="heroThreeCanvas"></canvas>
+            <div class="hero-particles" id="heroParticles"></div>
+            <div class="hero-gradient-orb hero-orb-1"></div>
+            <div class="hero-gradient-orb hero-orb-2"></div>
+        </div>
+        <div class="hero-banner-content">
+            <h1 class="hero-banner-title" data-i18n="hero.title">Cross-Border B2B Sourcing Platform</h1>
+            <p class="hero-banner-subtitle-cn" data-i18n="hero.subtitle">AI 快速对接中国工厂，降低成本</p>
+            <p class="hero-banner-tagline">
+                <span class="tagline-item" data-i18n="hero.tag1">Customization</span>
+                <span class="tagline-dot"></span>
+                <span class="tagline-item" data-i18n="hero.tag2">Wholesale</span>
+                <span class="tagline-dot"></span>
+                <span class="tagline-item" data-i18n="hero.tag3">Reverse Bidding</span>
+            </p>
+            <p class="hero-banner-tagline-cn" data-i18n="hero.taglineCn">实现定制、批发、反向竞价采购的跨境 B2B 平台</p>
+            <div class="hero-banner-actions">
+                <a href="smart-match.html" class="hero-btn hero-btn-primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M11 8v6M8 11h6" stroke-width="1.5"/></svg>
+                    <span data-i18n="hero.btnMatch">智能匹配工厂</span>
+                    <span class="hero-btn-en" data-i18n="hero.btnMatchEn">Match Factories</span>
+                </a>
+                <a href="auction-create.html" class="hero-btn hero-btn-secondary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+                    <span data-i18n="hero.btnAuction">发起反向竞价</span>
+                    <span class="hero-btn-en" data-i18n="hero.btnAuctionEn">Submit Request</span>
+                </a>
+            </div>
+            <div class="hero-stats-row">
+                <div class="hero-stat-item">
+                    <span class="hero-stat-num">KYB</span>
+                    <span class="hero-stat-label">供应商准入审核</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat-item">
+                    <span class="hero-stat-num">E2E</span>
+                    <span class="hero-stat-label">订单全流程追踪</span>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat-item">
+                    <span class="hero-stat-num">FOB</span>
+                    <span class="hero-stat-label">统一贸易口径报价</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         第二屏：三大核心功能卡片
+         ============================================ -->
+    <section class="core-features-section">
+        <canvas class="section-canvas" id="coreFeaturesCanvas"></canvas>
+        <h2 class="section-title" data-i18n="core.title">Three Core Services</h2>
+        <p class="section-subtitle" data-i18n="core.subtitle">三大核心功能，重新定义B2B采购体验</p>
+        <div class="core-features-grid">
+            <!-- 卡片1：智能匹配 -->
+            <div class="core-card core-card-match">
+                <div class="core-card-icon">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2" opacity="0.2"/>
+                        <circle cx="32" cy="32" r="20" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+                        <circle cx="32" cy="32" r="12" fill="currentColor" opacity="0.15"/>
+                        <circle cx="32" cy="32" r="6" fill="currentColor"/>
+                        <path d="M32 4v8M32 52v8M4 32h8M52 32h8" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div class="core-card-badge">Core #1</div>
+                <h3 class="core-card-title" data-i18n="core.matchTitle">AI Intelligent Factory Matching</h3>
+                <p class="core-card-title-cn" data-i18n="core.matchTitleCn">AI 智能工厂匹配</p>
+                <ul class="core-card-list">
+                    <li>
+                        <svg viewBox="0 0 16 16" width="16" height="16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" fill="currentColor"/></svg>
+                        <span data-i18n="core.matchL1">输入产品、数量、目的地</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 16 16" width="16" height="16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" fill="currentColor"/></svg>
+                        <span data-i18n="core.matchL2">自动匹配可生产的优质工厂</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 16 16" width="16" height="16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" fill="currentColor"/></svg>
+                        <span data-i18n="core.matchL3">自动核算成本、FOB、运费</span>
+                    </li>
+                </ul>
+                <a href="smart-match.html" class="core-card-btn"><span data-i18n="core.matchBtn">立即匹配工厂</span> <span data-i18n="core.matchBtnEn">Match Now &rarr;</span></a>
+            </div>
+
+            <!-- 卡片2：智能采购反向竞价 -->
+            <div class="core-card core-card-auction">
+                <div class="core-card-icon">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <rect x="8" y="36" width="48" height="4" rx="2" fill="currentColor" opacity="0.2"/>
+                        <path d="M40 12L24 28" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M20 24l8 8-12 12-8-8z" fill="currentColor" opacity="0.3"/>
+                        <path d="M36 8l8 8-4 4-8-8z" fill="currentColor"/>
+                        <path d="M14 44l-4 4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                        <path d="M44 40v12M38 46h12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="core-card-badge">Core #2</div>
+                <h3 class="core-card-title" data-i18n="core.auctionTitle">Smart Procurement Reverse Bidding</h3>
+                <p class="core-card-title-cn" data-i18n="core.auctionTitleCn">智能采购反向竞价</p>
+                <ul class="core-card-list">
+                    <li>
+                        <svg viewBox="0 0 16 16" width="16" height="16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" fill="currentColor"/></svg>
+                        <span data-i18n="core.auctionL1">同规格、同条款竞争报价</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 16 16" width="16" height="16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" fill="currentColor"/></svg>
+                        <span data-i18n="core.auctionL2">匿名报价、过程留痕</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 16 16" width="16" height="16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" fill="currentColor"/></svg>
+                        <span data-i18n="core.auctionL3">价格、交期、质量综合评审</span>
+                    </li>
+                </ul>
+                <a href="auction-create.html" class="core-card-btn"><span data-i18n="core.auctionBtn">提交需求</span> <span data-i18n="core.auctionBtnEn">Submit Request &rarr;</span></a>
+            </div>
+
+            <!-- 卡片3：订单生产实时监控 -->
+            <div class="core-card core-card-monitor">
+                <div class="core-card-icon">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <rect x="6" y="12" width="52" height="36" rx="4" stroke="currentColor" stroke-width="2.5" fill="none"/>
+                        <rect x="24" y="48" width="16" height="4" rx="1" fill="currentColor" opacity="0.3"/>
+                        <rect x="20" y="52" width="24" height="3" rx="1" fill="currentColor" opacity="0.2"/>
+                        <polyline points="14,36 22,28 30,32 38,22 46,26 50,20" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <circle cx="50" cy="20" r="3" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="core-card-badge">Core #3</div>
+                <h3 class="core-card-title" data-i18n="core.monitorTitle">Real-Time Production Monitoring</h3>
+                <p class="core-card-title-cn" data-i18n="core.monitorTitleCn">订单生产实时监控</p>
+                <ul class="core-card-list">
+                    <li>
+                        <svg viewBox="0 0 16 16" width="16" height="16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" fill="currentColor"/></svg>
+                        <span data-i18n="core.monitorL1">生产进度实时查看</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 16 16" width="16" height="16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" fill="currentColor"/></svg>
+                        <span data-i18n="core.monitorL2">质量检测节点追踪</span>
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 16 16" width="16" height="16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" fill="currentColor"/></svg>
+                        <span data-i18n="core.monitorL3">物流状态自动同步</span>
+                    </li>
+                </ul>
+                <a href="production-monitor.html" class="core-card-btn"><span data-i18n="core.monitorBtn">查看演示</span> <span data-i18n="core.monitorBtnEn">Live Demo &rarr;</span></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         第三屏：智能匹配快捷使用区 - 首页即功能
+         ============================================ -->
+    <section class="quick-match-section">
+        <canvas class="section-canvas" id="quickMatchCanvas"></canvas>
+        <div class="quick-match-container quick-match-centered">
+            <div class="quick-match-info">
+                <h2 class="quick-match-title" data-i18n="qmatch.title">Smart Match</h2>
+                <p class="quick-match-subtitle" data-i18n="qmatch.subtitle">首页即功能，无需跳转，立即匹配</p>
+                <p class="quick-match-desc" data-i18n="qmatch.desc">输入产品、数量和目的地，系统将从已审核的供应商资源中筛选候选工厂，并由易采团队复核生产能力与贸易条件。</p>
+                <div class="quick-match-badges">
+                    <span class="qm-badge"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" fill="currentColor"/></svg> AI-Powered</span>
+                    <span class="qm-badge"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" fill="currentColor"/></svg> Qualified Factory Pool</span>
+                    <span class="qm-badge"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z" fill="currentColor"/></svg> Auto Cost Calc</span>
+                </div>
+                <div class="quick-match-cta">
+                    <a href="smart-match.html" class="btn-primary" data-i18n="qmatch.cta">进入智能匹配 Enter Smart Match &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         第四屏：电子反拍优势 - 强化信任
+         ============================================ -->
+    <section class="auction-advantage-section">
+        <canvas class="section-canvas" id="auctionAdvCanvas"></canvas>
+        <div class="data-rain-container" id="dataRainContainer"></div>
+        <h2 class="section-title" data-i18n="auctionAdv.title">同口径电子反拍如何工作</h2>
+        <p class="section-subtitle" data-i18n="auctionAdv.subtitle">统一规格和贸易条款后，让合格供应商进行可比较报价</p>
+        <div class="advantage-grid">
+            <div class="advantage-card">
+                <div class="advantage-num">01</div>
+                <div class="advantage-icon">
+                    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+                        <circle cx="16" cy="20" r="8" stroke="currentColor" stroke-width="2.5"/>
+                        <circle cx="32" cy="20" r="8" stroke="currentColor" stroke-width="2.5"/>
+                        <circle cx="24" cy="34" r="8" stroke="currentColor" stroke-width="2.5"/>
+                        <path d="M16 28v-1M32 28v-1M18 27l6 3M30 27l-6 3" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="auctionAdv.adv1Title">同口径竞争，价格可比较</h3>
+                <p data-i18n="auctionAdv.adv1Desc">多家合格工厂按相同规格、交付条款和报价口径竞争，形成可直接比较的市场价格。</p>
+            </div>
+            <div class="advantage-card">
+                <div class="advantage-num">02</div>
+                <div class="advantage-icon">
+                    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+                        <rect x="8" y="8" width="32" height="32" rx="4" stroke="currentColor" stroke-width="2.5" fill="none"/>
+                        <path d="M16 24h16M24 16v16" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+                        <circle cx="24" cy="24" r="8" stroke="currentColor" stroke-width="2"/>
+                        <path d="M24 20v8l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="auctionAdv.adv2Title">匿名报价，全程留痕</h3>
+                <p data-i18n="auctionAdv.adv2Desc">供应商身份在竞价阶段匿名展示；报价、延时和评审动作保留审计记录，减少串标风险。</p>
+            </div>
+            <div class="advantage-card">
+                <div class="advantage-num">03</div>
+                <div class="advantage-icon">
+                    <svg viewBox="0 0 48 48" fill="none" width="48" height="48">
+                        <path d="M8 36l8-10 8 6 8-14 8 8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="40" cy="26" r="4" fill="currentColor" opacity="0.3"/>
+                        <path d="M36 12l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M40 8v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h3 data-i18n="auctionAdv.adv3Title">明确时窗，统一评审</h3>
+                <p data-i18n="auctionAdv.adv3Desc">通过报名截止、竞价时窗和末段自动延时，集中完成价格、交期、质量和合规评审。</p>
+            </div>
+        </div>
+        <div class="advantage-cta">
+            <a href="auction-create.html" class="btn-primary" data-i18n="auctionAdv.cta">提交竞价需求 &rarr;</a>
+        </div>
+    </section>
+
+    <!-- ============================================
+         第五屏：订单实时监控 - 动态滚动面板
+         ============================================ -->
+    <section class="live-monitor-section">
+        <canvas class="section-canvas" id="liveMonitorCanvas"></canvas>
+        <div class="live-monitor-header">
+            <div class="live-monitor-title-wrap">
+                <span class="live-dot"></span>
+                <h2 data-i18n="liveMonitor.title">Real-Time Order Monitoring</h2>
+                <span class="live-badge">DEMO</span>
+                <canvas id="pulseCanvas" width="120" height="40"></canvas>
+            </div>
+            <p class="live-monitor-subtitle" data-i18n="liveMonitor.subtitle">订单节点追踪交互演示 &middot; 示例数据不会被视为真实订单</p>
+        </div>
+        <div class="live-monitor-panel">
+            <div class="live-monitor-scroll" id="liveMonitorScroll">
+                <!-- 动态滚动内容由JS生成 -->
+            </div>
+            <div class="live-monitor-overlay-top"></div>
+            <div class="live-monitor-overlay-bottom"></div>
+        </div>
+        <div class="live-monitor-cta">
+            <a href="production-monitor.html" class="btn-primary" data-i18n="liveMonitor.cta">进入监控中心 Enter Monitoring Center &rarr;</a>
+        </div>
+    </section>
+
+    <!-- ============================================
+         智能采购反向竞价（原有模块保留）
+         ============================================ -->
+    <section class="auction-section">
+        <canvas class="section-canvas" id="auctionCanvas"></canvas>
+        <h2 class="section-title" data-i18n="auction.title">智能采购反向竞价</h2>
+        <p class="section-subtitle" data-i18n="auction.subtitle">实时竞价，价低者得，透明高效的采购新方式</p>
+        <div class="auction-grid" id="auctionGrid">
+            <div class="auction-loading">
+                <div class="spinner"></div>
+                <p>加载中...</p>
+            </div>
+        </div>
+        <div class="auction-actions">
+            <a href="auction-list.html" class="btn-secondary" data-i18n="auction.viewAll">查看全部竞价</a>
+            <a href="auction-create.html" class="btn-primary" data-i18n="auction.create">发起反向竞价</a>
+        </div>
+    </section>
+
+    <!-- 核心功能（原有模块保留） -->
+    <section class="features-section">
+        <canvas class="section-canvas" id="featuresCanvas"></canvas>
+        <h2 class="section-title" data-i18n="home.platformFeatures">核心功能</h2>
+        <div class="features-grid">
+            <a href="smart-match.html" class="feature-card active">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <circle cx="32" cy="32" r="24" stroke="#FF6B6B" stroke-width="4" fill="none"/>
+                        <circle cx="32" cy="32" r="12" fill="#FF6B6B"/>
+                        <path d="M32 8 L32 2" stroke="#FF6B6B" stroke-width="4"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title" data-i18n="feat.smartMatch">智能匹配</h3>
+                <p class="feature-desc" data-i18n="feat.smartMatchDesc">AI驱动的精准供应商匹配</p>
+                <span class="feature-arrow">&rarr;</span>
+            </a>
+            <a href="suppliers.html" class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <rect x="8" y="8" width="48" height="48" rx="4" stroke="#4ECDC4" stroke-width="3" fill="none"/>
+                        <rect x="16" y="16" width="12" height="12" fill="#4ECDC4"/>
+                        <rect x="36" y="16" width="12" height="12" fill="#4ECDC4"/>
+                        <rect x="16" y="36" width="12" height="12" fill="#4ECDC4"/>
+                        <rect x="36" y="36" width="12" height="12" fill="#4ECDC4"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title" data-i18n="feat.suppliers">供应商库</h3>
+                <p class="feature-desc" data-i18n="feat.suppliersDesc">全球优质供应商资源</p>
+            </a>
+            <a href="orders.html" class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <rect x="8" y="8" width="48" height="48" rx="4" stroke="#4ECDC4" stroke-width="3" fill="none"/>
+                        <line x1="8" y1="20" x2="56" y2="20" stroke="#4ECDC4" stroke-width="3"/>
+                        <rect x="16" y="28" width="32" height="4" fill="#4ECDC4"/>
+                        <rect x="16" y="36" width="24" height="4" fill="#4ECDC4" opacity="0.6"/>
+                        <rect x="16" y="44" width="28" height="4" fill="#4ECDC4" opacity="0.4"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title" data-i18n="feat.orders">订单管理</h3>
+                <p class="feature-desc" data-i18n="feat.ordersDesc">全流程订单跟踪与管理</p>
+            </a>
+            <a href="user-center.html#logistics" class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <rect x="12" y="28" width="28" height="20" rx="2" fill="#4ECDC4"/>
+                        <circle cx="20" cy="52" r="4" fill="#45B7D1"/>
+                        <circle cx="36" cy="52" r="4" fill="#45B7D1"/>
+                        <rect x="40" y="24" width="16" height="16" fill="#FFD93D"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title" data-i18n="feat.logistics">物流追踪</h3>
+                <p class="feature-desc" data-i18n="feat.logisticsDesc">实时物流状态监控</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- 快速访问（原有模块保留） -->
+    <section class="quick-access">
+        <canvas class="section-canvas" id="quickAccessCanvas"></canvas>
+        <h2 class="section-title" data-i18n="home.quickAccess">快速访问</h2>
+        <div class="quick-grid">
+            <a href="publish-demand.html" class="quick-card">
+                <div class="quick-icon">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <rect x="8" y="8" width="48" height="48" rx="6" stroke="#FFD93D" stroke-width="3" fill="none"/>
+                        <line x1="20" y1="22" x2="44" y2="22" stroke="#FFD93D" stroke-width="2"/>
+                        <line x1="20" y1="32" x2="40" y2="32" stroke="#FFD93D" stroke-width="2"/>
+                        <line x1="20" y1="42" x2="36" y2="42" stroke="#FFD93D" stroke-width="2"/>
+                        <circle cx="44" cy="44" r="10" stroke="#FFD93D" stroke-width="2.5" fill="none"/>
+                        <line x1="44" y1="39" x2="44" y2="49" stroke="#FFD93D" stroke-width="2.5"/>
+                        <line x1="39" y1="44" x2="49" y2="44" stroke="#FFD93D" stroke-width="2.5"/>
+                    </svg>
+                </div>
+                <span class="quick-label" data-i18n="home.quickPublish">需求论坛</span>
+            </a>
+            <a href="inquiry.html" class="quick-card">
+                <div class="quick-icon">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <ellipse cx="32" cy="36" rx="24" ry="16" stroke="#4ECDC4" stroke-width="3" fill="none"/>
+                        <circle cx="20" cy="36" r="4" fill="#4ECDC4"/>
+                        <circle cx="32" cy="36" r="4" fill="#4ECDC4"/>
+                        <circle cx="44" cy="36" r="4" fill="#4ECDC4"/>
+                    </svg>
+                </div>
+                <span class="quick-label" data-i18n="home.quickFind">询盘管理</span>
+            </a>
+            <a href="production-monitor.html" class="quick-card">
+                <div class="quick-icon">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <rect x="16" y="24" width="32" height="28" fill="#FF6B6B" opacity="0.8"/>
+                        <rect x="8" y="32" width="8" height="12" fill="#FF6B6B"/>
+                        <rect x="48" y="28" width="8" height="16" fill="#FF6B6B"/>
+                        <rect x="24" y="16" width="16" height="8" fill="#4ECDC4"/>
+                        <path d="M28 8 L36 8 L36 16 L28 16 Z" fill="#4ECDC4"/>
+                    </svg>
+                </div>
+                <span class="quick-label" data-i18n="home.quickOrder">生产监控</span>
+            </a>
+            <a href="dashboard.html" class="quick-card">
+                <div class="quick-icon">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <rect x="8" y="24" width="12" height="24" fill="#4ECDC4"/>
+                        <rect x="26" y="16" width="12" height="32" fill="#FF6B6B"/>
+                        <rect x="44" y="20" width="12" height="28" fill="#45B7D1"/>
+                    </svg>
+                </div>
+                <span class="quick-label" data-i18n="home.quickData">数据看板</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 平台资讯 + 行业资讯 -->
+    <section class="news-insights-section">
+        <canvas class="section-canvas" id="newsCanvas"></canvas>
+        <div class="news-insights-grid">
+            <!-- 左侧：平台资讯 -->
+            <div class="news-insights-panel">
+                <div class="news-insights-header">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="vertical-align:-3px;margin-right:6px;"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        <span data-i18n="news.platformInsights">Platform Insights</span>
+                    </h3>
+                    <a href="news.html" class="hero-news-more" data-i18n="news.viewAll">View All &rarr;</a>
+                </div>
+                <div class="hero-news-list" id="heroNewsList">
+                    <a href="news.html?id=1" class="hero-news-item">
+                        <div class="hero-news-tag">Smart Match</div>
+                        <h4>How YiCai Structures Supplier Matching</h4>
+                        <p>How product requirements are normalized before candidate suppliers are reviewed.</p>
+                        <span class="hero-news-time">2026-07-15</span>
+                    </a>
+                    <a href="news.html?id=2" class="hero-news-item">
+                        <div class="hero-news-tag">Reverse Bidding</div>
+                        <h4>A Practical Guide to Electronic Reverse Auctions</h4>
+                        <p>When timed supplier bidding is useful and why lowest price is not an automatic award.</p>
+                        <span class="hero-news-time">2026-07-15</span>
+                    </a>
+                    <a href="news.html?id=3" class="hero-news-item">
+                        <div class="hero-news-tag">Supply Chain</div>
+                        <h4>Sourcing Across China's Manufacturing Clusters</h4>
+                        <p>Common production clusters and project-specific checks before factory approval.</p>
+                        <span class="hero-news-time">2026-07-15</span>
+                    </a>
+                    <a href="news.html?id=4" class="hero-news-item">
+                        <div class="hero-news-tag">Payments</div>
+                        <h4>How Payments Work When YiCai Is the Contracting Seller</h4>
+                        <p>Customer collection and supplier settlement are separate contractual payment flows.</p>
+                        <span class="hero-news-time">2026-07-15</span>
+                    </a>
+                </div>
+            </div>
+            <!-- 右侧：行业资讯 -->
+            <div class="news-insights-articles">
+                <div class="news-insights-header">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="vertical-align:-3px;margin-right:6px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        <span data-i18n="news.industryNews">行业资讯 Industry News</span>
+                    </h3>
+                    <a href="news.html" class="hero-news-more" data-i18n="news.more">更多 &rarr;</a>
+                </div>
+                <div class="news-articles-list">
+                    <a href="news.html?id=1" class="news-article-item">
+                        <div class="news-article-icon">
+                            <svg viewBox="0 0 64 64" fill="none"><rect x="8" y="12" width="48" height="40" rx="4" stroke="#4ECDC4" stroke-width="2" fill="none"/><circle cx="24" cy="28" r="6" fill="#4ECDC4" opacity="0.5"/><path d="M8 44 L24 32 L36 40 L56 28" stroke="#4ECDC4" stroke-width="2"/></svg>
+                        </div>
+                        <div class="news-article-info">
+                            <h4>供应商匹配前需要明确哪些信息</h4>
+                            <p>规格、数量、目标市场、合规文件、交期与贸易条款决定报价能否比较。</p>
+                            <span class="news-article-date">2026-07-15</span>
+                        </div>
+                    </a>
+                    <a href="news.html?id=2" class="news-article-item">
+                        <div class="news-article-icon">
+                            <svg viewBox="0 0 64 64" fill="none"><path d="M32 8 L56 24 L56 56 L8 56 L8 24 Z" stroke="#4ECDC4" stroke-width="2" fill="none"/><rect x="24" y="36" width="16" height="20" stroke="#4ECDC4" stroke-width="2" fill="none"/></svg>
+                        </div>
+                        <div class="news-article-info">
+                            <h4>电子反拍不等于“最低价自动中标”</h4>
+                            <p>价格必须与样品、合规、产能、质量记录和交期一起评审。</p>
+                            <span class="news-article-date">2026-07-15</span>
+                        </div>
+                    </a>
+                    <a href="news.html?id=3" class="news-article-item">
+                        <div class="news-article-icon">
+                            <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="24" stroke="#4ECDC4" stroke-width="2" fill="none"/><ellipse cx="32" cy="32" rx="24" ry="10" stroke="#4ECDC4" stroke-width="2" fill="none"/><ellipse cx="32" cy="32" rx="10" ry="24" stroke="#4ECDC4" stroke-width="2" fill="none"/></svg>
+                        </div>
+                        <div class="news-article-info">
+                            <h4>产业带选择之后仍需项目级验厂</h4>
+                            <p>资源池只是起点，工厂状态与文件需要针对具体产品和目标市场复核。</p>
+                            <span class="news-article-date">2026-07-15</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-copyright">
+            <p data-i18n="footer.copyright">&copy; 2026 全球供应链智能匹配平台 | 版权所有</p>
+        </div>
+        <nav class="footer-nav">
+            <a href="help.html" data-i18n="footer.help">帮助中心</a>
+            <a href="service.html" data-i18n="footer.service">客服中心</a>
+            <a href="about.html" data-i18n="footer.about">关于我们</a>
+            <a href="privacy.html" data-i18n="footer.privacy">隐私政策</a>
+            <a href="terms.html" data-i18n="footer.terms">服务条款</a>
+        </nav>
+        <div style="text-align:center;padding:8px 0;font-size:12px;"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow noopener" style="color:#888;text-decoration:none;">粤ICP备2026015135号-2</a></div>
+    </footer>
+
+    <script src="lang-switcher.js?v=20260422"></script>
+<script src="lang-placeholder.js?v=20260422"></script>
+<script src="lang-hardcoded.js?v=20260422"></script>
+    <script src="auth-check.js"></script>
+    <script src="auction-demo-data.js?v=20260715a"></script>
+    <script src="platform-scripts.js?v=20260715a"></script>
+    <script src="three-visual.js?v=20260322c" defer></script>
+<script src="/js/ai-chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="cert.pageTitle">资质认证 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .page-view{display:none}.page-view.active{display:block}
+        .view-breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:16px}
+        .view-breadcrumb a{color:var(--primary-cyan);cursor:pointer;text-decoration:none}.view-breadcrumb .sep{opacity:.5}
+        .btn-back-sm{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:6px;color:var(--text-secondary);font-size:13px;cursor:pointer;margin-bottom:20px;transition:all .3s}
+        .btn-back-sm:hover{border-color:var(--primary-cyan);color:var(--primary-cyan)}
+        .btn-back-sm svg{width:14px;height:14px}
+        .detail-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:24px;margin-bottom:20px}
+        .detail-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border-color)}
+        .detail-card-title{font-size:16px;font-weight:600;color:var(--text-primary)}
+        .detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+        .detail-row{display:flex;flex-direction:column;gap:4px}
+        .detail-label{font-size:12px;color:var(--text-muted)}
+        .detail-val{font-size:14px;color:var(--text-primary);font-weight:500}
+        .cert-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+        .cert-stat-box{background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:20px;text-align:center}
+        .cert-stat-box .num{font-size:24px;font-weight:700;color:var(--primary-cyan)}
+        .cert-stat-box .label{font-size:12px;color:var(--text-muted);margin-top:4px}
+        .progress-track{display:flex;align-items:center;gap:0;margin:32px 0}
+        .progress-node{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+        .progress-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;z-index:1}
+        .progress-dot.done{background:var(--primary-cyan);color:#0a1628}
+        .progress-dot.current{background:var(--primary-cyan);color:#0a1628;box-shadow:0 0 12px rgba(78,205,196,.5)}
+        .progress-dot.pending{background:var(--bg-card);border:2px solid var(--border-color);color:var(--text-muted)}
+        .progress-label{font-size:11px;margin-top:8px;color:var(--text-muted);text-align:center}
+        .progress-line{flex:1;height:3px;background:var(--border-color);margin-top:-42px}
+        .progress-line.done{background:var(--primary-cyan)}
+        .cert-list-item{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;margin-bottom:12px;cursor:pointer;transition:all .3s}
+        .cert-list-item:hover{border-color:var(--primary-cyan);transform:translateY(-1px)}
+        .cert-item-left{display:flex;align-items:center;gap:14px}
+        .cert-type-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+        .cert-item-info h4{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px}
+        .cert-item-info p{font-size:12px;color:var(--text-muted)}
+        .cert-item-right{text-align:right}
+        .timeline-item{display:flex;gap:16px;margin-bottom:16px}
+        .timeline-dot-wrap{display:flex;flex-direction:column;align-items:center}
+        .timeline-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+        .timeline-line{width:2px;flex:1;background:var(--border-color);margin-top:4px}
+        .timeline-content{flex:1;padding-bottom:8px}
+        .timeline-time{font-size:12px;color:var(--text-muted)}
+        .timeline-text{font-size:13px;color:var(--text-secondary);margin-top:4px}
+        .form-step{display:none}.form-step.active{display:block}
+        .step-tabs{display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid var(--border-color)}
+        .step-tab{padding:12px 24px;font-size:14px;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .3s}
+        .step-tab.active{color:var(--primary-cyan);border-bottom-color:var(--primary-cyan);font-weight:600}
+        .step-tab.completed{color:var(--text-secondary)}
+        .form-group{margin-bottom:16px}
+        .form-group label{display:block;font-size:13px;color:var(--text-secondary);margin-bottom:6px;font-weight:500}
+        .form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 14px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit;transition:border-color .3s}
+        .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary-cyan);outline:none}
+        .required{color:#ef4444}
+        .upload-zone{border:2px dashed var(--border-color);border-radius:10px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .3s}
+        .upload-zone:hover{border-color:var(--primary-cyan);background:rgba(78,205,196,.03)}
+        .upload-zone svg{width:32px;height:32px;color:var(--text-muted);margin-bottom:8px}
+        .upload-zone p{font-size:13px;color:var(--text-muted)}
+        .doc-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg-secondary);border-radius:8px;margin-bottom:8px}
+        .doc-item-left{display:flex;align-items:center;gap:10px}
+        .doc-icon{width:36px;height:36px;border-radius:8px;background:rgba(78,205,196,.1);display:flex;align-items:center;justify-content:center}
+        .doc-icon svg{width:18px;height:18px;color:var(--primary-cyan)}
+        .doc-info .doc-name{font-size:13px;font-weight:500;color:var(--text-primary)}
+        .doc-info .doc-meta{font-size:11px;color:var(--text-muted);margin-top:2px}
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <div class="language-selector" id="langSelector">
+                    <svg class="lang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    <span class="current-lang" id="currentLang">中文</span>
+                    <span class="dropdown-arrow">&#9660;</span>
+                    <div class="language-dropdown">
+                        <div class="lang-option active" data-lang="zh" onclick="switchLanguage('zh')"><span class="lang-flag">&#127464;&#127475;</span><span>中文</span></div>
+                        <div class="lang-option" data-lang="en" onclick="switchLanguage('en')"><span class="lang-flag">&#127482;&#127480;</span><span>English</span></div>
+                        <div class="lang-option" data-lang="es" onclick="switchLanguage('es')"><span class="lang-flag">&#127466;&#127480;</span><span>Espanol</span></div>
+                    </div>
+                </div>
+                <a href="index.html" class="logo-link"><span class="logo-text" data-i18n="home.title">全球供应链智能匹配平台</span></a>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+                <a href="certification.html" class="nav-link active" data-i18n="nav.certification">资质认证</a>
+                <a href="messages.html" class="nav-link" data-i18n="nav.messages">消息中心</a>
+                <a href="help.html" class="nav-link" data-i18n="nav.customerService">客服中心</a>
+            </nav>
+            <div class="header-right">
+                <a href="user-center.html" class="user-link"><span class="user-avatar-sm">A</span><span>admin</span></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== L1: 认证总览 ==================== -->
+    <div class="page-view active" id="view-overview">
+        <div class="page-banner">
+            <h1 data-i18n="cert.title">资质认证</h1>
+            <p data-i18n="cert.subtitle">完成企业认证，获得更多平台权益与信任背书</p>
+        </div>
+
+        <section class="certification-section">
+            <!-- 统计卡片 -->
+            <div class="cert-stats">
+                <div class="cert-stat-box"><div class="num" id="stat-approved">-</div><div class="label" data-i18n="cert.totalCerts">已获认证</div></div>
+                <div class="cert-stat-box"><div class="num" id="stat-pending">-</div><div class="label" data-i18n="cert.pendingReview">审核中</div></div>
+                <div class="cert-stat-box"><div class="num">-</div><div class="label" data-i18n="cert.creditLevel">信用等级</div></div>
+                <div class="cert-stat-box"><div class="num">-</div><div class="label" data-i18n="cert.trustScore">信任分</div></div>
+            </div>
+
+            <!-- 认证进度 -->
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title" data-i18n="cert.progressTitle">认证进度</span></div>
+                <div class="progress-track">
+                    <div class="progress-node"><div class="progress-dot done">&#10003;</div><div class="progress-label" data-i18n="cert.stepRegister">账号注册</div></div>
+                    <div class="progress-line done"></div>
+                    <div class="progress-node"><div class="progress-dot done">&#10003;</div><div class="progress-label" data-i18n="cert.stepBasicInfo">基本信息</div></div>
+                    <div class="progress-line done"></div>
+                    <div class="progress-node"><div class="progress-dot done">&#10003;</div><div class="progress-label" data-i18n="cert.stepEnterprise">企业认证</div></div>
+                    <div class="progress-line done"></div>
+                    <div class="progress-node"><div class="progress-dot current">4</div><div class="progress-label" data-i18n="cert.stepAudit">资质审核</div></div>
+                    <div class="progress-line"></div>
+                    <div class="progress-node"><div class="progress-dot pending">5</div><div class="progress-label" data-i18n="cert.stepComplete">认证完成</div></div>
+                </div>
+            </div>
+
+            <!-- 认证列表 -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <span class="detail-card-title" data-i18n="cert.certListTitle">我的认证</span>
+                    <button class="btn-primary-sm" onclick="showView('view-apply')" data-i18n="cert.applyNew">申请新认证</button>
+                </div>
+                <div id="cert-list-container">
+                    <p style="text-align:center;color:var(--text-muted);padding:20px;">加载中...</p>
+                </div>
+            </div>
+
+            <!-- 认证权益说明 -->
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title" data-i18n="cert.benefitsTitle">认证权益</span></div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+                    <div style="padding:20px;background:var(--bg-secondary);border-radius:10px;text-align:center;">
+                        <div style="font-size:28px;margin-bottom:8px;">&#128176;</div>
+                        <div style="font-size:14px;font-weight:600;margin-bottom:4px;" data-i18n="cert.benefitTrade">优先交易匹配</div>
+                        <div style="font-size:12px;color:var(--text-muted);" data-i18n="cert.benefitTradeDesc">认证企业在智能匹配中获得优先推荐</div>
+                    </div>
+                    <div style="padding:20px;background:var(--bg-secondary);border-radius:10px;text-align:center;">
+                        <div style="font-size:28px;margin-bottom:8px;">&#128737;</div>
+                        <div style="font-size:14px;font-weight:600;margin-bottom:4px;" data-i18n="cert.benefitTrust">信任徽章展示</div>
+                        <div style="font-size:12px;color:var(--text-muted);" data-i18n="cert.benefitTrustDesc">获得平台认证标识，提升合作信任度</div>
+                    </div>
+                    <div style="padding:20px;background:var(--bg-secondary);border-radius:10px;text-align:center;">
+                        <div style="font-size:28px;margin-bottom:8px;">&#128200;</div>
+                        <div style="font-size:14px;font-weight:600;margin-bottom:4px;" data-i18n="cert.benefitCredit">信用额度提升</div>
+                        <div style="font-size:12px;color:var(--text-muted);" data-i18n="cert.benefitCreditDesc">完成认证后可获得更高的交易信用额度</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 供应商认证关联 -->
+            <div class="detail-card" style="border:1px solid rgba(0,229,204,0.2);background:linear-gradient(135deg,rgba(0,229,204,0.04),transparent);">
+                <div class="detail-card-header"><span class="detail-card-title" data-i18n="cert.supplierQualTitle">供应商资质管理</span></div>
+                <p style="color:var(--text-muted);font-size:14px;margin-bottom:16px;" data-i18n="cert.supplierQualDesc">如果您是供应商，可以在供应商中心管理您的行业资质证书（ISO、CE等），认证通过后自动同步至此页面。</p>
+                <div style="display:flex;gap:12px;">
+                    <a href="supplier-center.html" style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:linear-gradient(135deg,#00E5CC,#00b8a3);border-radius:8px;color:#0a1628;font-weight:600;font-size:14px;text-decoration:none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span data-i18n="cert.goSupplierCenter">前往供应商中心管理认证</span>
+                    </a>
+                    <a href="help.html" style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff;font-size:14px;text-decoration:none;"><span data-i18n="cert.contactSupport">认证问题咨询客服</span></a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L2: 申请认证（多步骤表单） ==================== -->
+    <div class="page-view" id="view-apply">
+        <section class="certification-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')" data-i18n="nav.certification">资质认证</a><span class="sep">/</span><span data-i18n="cert.applyTitle">申请认证</span></div>
+            <button class="btn-back-sm" onclick="showView('view-overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="common.back">返回</span></button>
+
+            <!-- 步骤标签 -->
+            <div class="step-tabs">
+                <div class="step-tab active" onclick="showFormStep(0)" data-i18n="cert.formStep1">1. 企业基本信息</div>
+                <div class="step-tab" onclick="showFormStep(1)" data-i18n="cert.formStep2">2. 法人信息</div>
+                <div class="step-tab" onclick="showFormStep(2)" data-i18n="cert.formStep3">3. 资质证书</div>
+                <div class="step-tab" onclick="showFormStep(3)" data-i18n="cert.formStep4">4. 联系人信息</div>
+            </div>
+
+            <!-- Step 1: 企业基本信息 -->
+            <div class="form-step active" id="step-0">
+                <div class="detail-card">
+                    <div class="detail-card-header"><span class="detail-card-title" data-i18n="cert.companyBasic">企业基本信息</span></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                        <div class="form-group">
+                            <label data-i18n="cert.companyName">企业名称 <span class="required">*</span></label>
+                            <input type="text" id="cert-companyName" placeholder="请输入企业名称">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="cert.creditCode">统一社会信用代码 <span class="required">*</span></label>
+                            <input type="text" id="cert-creditCode" placeholder="请输入统一社会信用代码">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="cert.companyType">企业类型 <span class="required">*</span></label>
+                            <select id="cert-companyType">
+                                <option value="有限责任公司" data-i18n="cert.typeLimited">有限责任公司</option>
+                                <option value="股份有限公司" data-i18n="cert.typeJoint">股份有限公司</option>
+                                <option value="个人独资企业" data-i18n="cert.typeSole">个人独资企业</option>
+                                <option value="合伙企业" data-i18n="cert.typePartnership">合伙企业</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="cert.registeredCapital">注册资本</label>
+                            <input type="text" id="cert-registeredCapital" placeholder="例如：1000万元">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="cert.foundDate">成立日期</label>
+                            <input type="date" id="cert-foundDate">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="cert.companyAddress">企业地址 <span class="required">*</span></label>
+                            <input type="text" id="cert-companyAddress" placeholder="请输入企业地址">
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+                        <button class="btn-primary-sm" onclick="showFormStep(1)" data-i18n="cert.nextStep">下一步</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: 法人信息 -->
+            <div class="form-step" id="step-1">
+                <div class="detail-card">
+                    <div class="detail-card-header"><span class="detail-card-title" data-i18n="cert.legalPerson">法人信息</span></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                        <div class="form-group">
+                            <label data-i18n="cert.legalName">法人姓名 <span class="required">*</span></label>
+                            <input type="text" id="cert-legalName" placeholder="请输入法人姓名">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="cert.legalId">法人身份证号 <span class="required">*</span></label>
+                            <input type="text" id="cert-legalIdNumber" placeholder="请输入法人身份证号">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="cert.legalPhone">法人手机号 <span class="required">*</span></label>
+                            <input type="tel" id="cert-legalPhone" placeholder="请输入法人手机号">
+                        </div>
+                        <div class="form-group" style="grid-column:span 2;">
+                            <label data-i18n="cert.legalIdPhoto">法人身份证照片 <span class="required">*</span></label>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                <div class="upload-zone" id="upload-idFront" onclick="document.getElementById('file-idFront').click()">
+                                    <input type="file" id="file-idFront" accept="image/*" style="display:none" onchange="handleFileUpload(this,'legalIdFront','upload-idFront')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                    <p data-i18n="cert.uploadFront">上传身份证正面</p>
+                                </div>
+                                <div class="upload-zone" id="upload-idBack" onclick="document.getElementById('file-idBack').click()">
+                                    <input type="file" id="file-idBack" accept="image/*" style="display:none" onchange="handleFileUpload(this,'legalIdBack','upload-idBack')">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                    <p data-i18n="cert.uploadBack">上传身份证反面</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-top:16px;">
+                        <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);" onclick="showFormStep(0)" data-i18n="cert.prevStep">上一步</button>
+                        <button class="btn-primary-sm" onclick="showFormStep(2)" data-i18n="cert.nextStep">下一步</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: 资质证书 -->
+            <div class="form-step" id="step-2">
+                <div class="detail-card">
+                    <div class="detail-card-header"><span class="detail-card-title" data-i18n="cert.credentials">企业资质证书</span></div>
+
+                    <div class="form-group">
+                        <label data-i18n="cert.businessLicense">营业执照 <span class="required">*</span></label>
+                        <div class="upload-zone" id="upload-businessLicense" onclick="document.getElementById('file-businessLicense').click()">
+                            <input type="file" id="file-businessLicense" accept="image/*,.pdf" style="display:none" onchange="handleFileUpload(this,'businessLicense','upload-businessLicense')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <p data-i18n="cert.uploadBusinessLicense">点击或拖拽上传营业执照</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="cert.certTypeSelect">认证类型 <span class="required">*</span></label>
+                        <select id="cert-certType">
+                            <option value="企业实名认证">企业实名认证</option>
+                            <option value="进出口经营许可" data-i18n="cert.typeExport">进出口经营许可</option>
+                            <option value="ISO 9001 质量管理认证" data-i18n="cert.typeISO">ISO 9001 质量管理认证</option>
+                            <option value="ISO 14001 环境管理认证">ISO 14001 环境管理认证</option>
+                            <option value="行业特种经营许可" data-i18n="cert.typeIndustry">行业特种经营许可</option>
+                            <option value="其他资质证书" data-i18n="cert.typeOther">其他资质证书</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="cert.otherCerts">其他资质证书（可选）</label>
+                        <div class="upload-zone" id="upload-otherCerts" onclick="document.getElementById('file-otherCerts').click()">
+                            <input type="file" id="file-otherCerts" accept="image/*,.pdf" style="display:none" multiple onchange="handleFileUpload(this,'otherCerts','upload-otherCerts')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <p data-i18n="cert.uploadOtherCerts">ISO认证、行业资质等</p>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;justify-content:space-between;margin-top:16px;">
+                        <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);" onclick="showFormStep(1)" data-i18n="cert.prevStep">上一步</button>
+                        <button class="btn-primary-sm" onclick="showFormStep(3)" data-i18n="cert.nextStep">下一步</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: 联系人信息 -->
+            <div class="form-step" id="step-3">
+                <div class="detail-card">
+                    <div class="detail-card-header"><span class="detail-card-title" data-i18n="cert.contactInfo">联系人信息</span></div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                        <div class="form-group">
+                            <label data-i18n="cert.contactName">联系人姓名 <span class="required">*</span></label>
+                            <input type="text" id="cert-contactName" placeholder="请输入联系人姓名">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="cert.contactTitle">联系人职务</label>
+                            <input type="text" id="cert-contactTitle" placeholder="请输入联系人职务">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="cert.contactPhone">联系人手机 <span class="required">*</span></label>
+                            <input type="tel" id="cert-contactPhone" placeholder="请输入联系人手机">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="cert.contactEmail">联系人邮箱 <span class="required">*</span></label>
+                            <input type="email" id="cert-contactEmail" placeholder="请输入联系人邮箱">
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-top:16px;">
+                        <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);" onclick="showFormStep(2)" data-i18n="cert.prevStep">上一步</button>
+                        <div style="display:flex;gap:12px;">
+                            <button class="btn-primary-sm" onclick="submitCertification()" id="btn-submit-cert" data-i18n="cert.submitApply">提交认证</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 提交成功 ==================== -->
+    <div class="page-view" id="view-submit-success">
+        <section class="certification-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')" data-i18n="nav.certification">资质认证</a><span class="sep">/</span><a onclick="showView('view-apply')" data-i18n="cert.applyTitle">申请认证</a><span class="sep">/</span><span data-i18n="cert.submitSuccess">提交成功</span></div>
+
+            <div class="detail-card" style="text-align:center;padding:48px 24px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary-cyan)" stroke-width="2" style="width:72px;height:72px;margin-bottom:20px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <h2 style="font-size:22px;margin-bottom:12px;" data-i18n="cert.submitSuccessTitle">认证申请已提交</h2>
+                <p style="font-size:14px;color:var(--text-muted);margin-bottom:8px;" data-i18n="cert.submitSuccessDesc">您的认证申请已成功提交，我们的审核团队将在3-5个工作日内完成审核。</p>
+                <p style="font-size:13px;color:var(--text-muted);margin-bottom:32px;" data-i18n="cert.submitSuccessNote">审核进度将通过消息中心和邮件通知您，请留意。</p>
+                <div style="display:flex;justify-content:center;gap:12px;">
+                    <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);" onclick="showView('view-overview')" data-i18n="cert.backToList">返回认证列表</button>
+                    <button class="btn-primary-sm" onclick="showView('view-audit-progress')" data-i18n="cert.viewProgress">查看审核进度</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L2: 认证详情 ==================== -->
+    <div class="page-view" id="view-cert-detail">
+        <section class="certification-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')" data-i18n="nav.certification">资质认证</a><span class="sep">/</span><span data-i18n="cert.certDetail">认证详情</span></div>
+            <button class="btn-back-sm" onclick="showView('view-overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="common.back">返回</span></button>
+
+            <!-- 认证信息 -->
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <span class="detail-card-title" data-i18n="cert.certInfo">认证信息</span>
+                    <span class="status-badge status-completed" data-i18n="cert.statusPassed">已通过</span>
+                </div>
+                <div class="detail-grid">
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.certNumber">认证编号</span><span class="detail-val">CERT-BIZ-20260115</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.certTypeName">认证类型</span><span class="detail-val">营业执照认证</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.applyDate">申请日期</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.approveDate">通过日期</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.validUntil">有效期至</span><span class="detail-val" style="color:var(--primary-cyan);">--</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.reviewer">审核人</span><span class="detail-val">平台审核组</span></div>
+                </div>
+            </div>
+
+            <!-- 企业信息 -->
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title" data-i18n="cert.companyInfo">企业信息</span></div>
+                <div class="detail-grid">
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.companyName">企业名称</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.creditCode">统一信用代码</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.companyType">企业类型</span><span class="detail-val">有限责任公司</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.registeredCapital">注册资本</span><span class="detail-val">1000万元</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.legalName">法定代表人</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.companyAddress">企业地址</span><span class="detail-val">--</span></div>
+                </div>
+            </div>
+
+            <!-- 上传的文件 -->
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title" data-i18n="cert.uploadedDocs">提交材料</span></div>
+                <div class="doc-item" onclick="showView('view-doc-preview')">
+                    <div class="doc-item-left">
+                        <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
+                        <div class="doc-info"><div class="doc-name">营业执照.pdf</div><div class="doc-meta">2.3 MB | -- 上传</div></div>
+                    </div>
+                    <span style="font-size:12px;color:var(--primary-cyan);cursor:pointer;" data-i18n="cert.preview">预览</span>
+                </div>
+                <div class="doc-item" onclick="showView('view-doc-preview')">
+                    <div class="doc-item-left">
+                        <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
+                        <div class="doc-info"><div class="doc-name">法人身份证正面.jpg</div><div class="doc-meta">1.1 MB | -- 上传</div></div>
+                    </div>
+                    <span style="font-size:12px;color:var(--primary-cyan);cursor:pointer;" data-i18n="cert.preview">预览</span>
+                </div>
+                <div class="doc-item" onclick="showView('view-doc-preview')">
+                    <div class="doc-item-left">
+                        <div class="doc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
+                        <div class="doc-info"><div class="doc-name">法人身份证反面.jpg</div><div class="doc-meta">1.0 MB | -- 上传</div></div>
+                    </div>
+                    <span style="font-size:12px;color:var(--primary-cyan);cursor:pointer;" data-i18n="cert.preview">预览</span>
+                </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <button class="btn-primary-sm" onclick="showView('view-audit-progress')" data-i18n="cert.viewAuditLog">查看审核记录</button>
+                <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);" data-i18n="cert.downloadCert">下载认证证书</button>
+                <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);" onclick="showView('view-renew')" data-i18n="cert.renewCert">续期认证</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 文档预览 ==================== -->
+    <div class="page-view" id="view-doc-preview">
+        <section class="certification-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')" data-i18n="nav.certification">资质认证</a><span class="sep">/</span><a onclick="showView('view-cert-detail')" data-i18n="cert.certDetail">认证详情</a><span class="sep">/</span><span data-i18n="cert.docPreview">文档预览</span></div>
+            <button class="btn-back-sm" onclick="showView('view-cert-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="common.back">返回</span></button>
+
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <span class="detail-card-title" data-i18n="cert.docInfo">文档信息</span>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--primary-cyan);border:1px solid var(--primary-cyan);font-size:12px;padding:6px 16px;" data-i18n="cert.downloadDoc">下载文件</button>
+                    </div>
+                </div>
+                <div class="detail-grid" style="margin-bottom:20px;">
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.fileName">文件名</span><span class="detail-val">营业执照.pdf</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.fileSize">文件大小</span><span class="detail-val">2.3 MB</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.uploadTime">上传时间</span><span class="detail-val">-- 09:30</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.verifyStatus">验证状态</span><span class="detail-val" style="color:#28a745;">&#10003; 已验证通过</span></div>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title" data-i18n="cert.docPreviewArea">文档预览</span></div>
+                <div style="height:400px;background:var(--bg-secondary);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                    <div style="text-align:center;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="width:48px;height:48px;margin-bottom:12px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        <p style="font-size:14px;color:var(--text-muted);" data-i18n="cert.previewPlaceholder">文档预览区域</p>
+                        <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">PDF / JPG / PNG</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 审核进度 ==================== -->
+    <div class="page-view" id="view-audit-progress">
+        <section class="certification-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')" data-i18n="nav.certification">资质认证</a><span class="sep">/</span><span data-i18n="cert.auditProgress">审核进度</span></div>
+            <button class="btn-back-sm" onclick="showView('view-overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="common.back">返回</span></button>
+
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <span class="detail-card-title" data-i18n="cert.auditInfo">审核信息</span>
+                    <span class="status-badge status-processing" data-i18n="cert.statusReviewing">审核中</span>
+                </div>
+                <div class="detail-grid">
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.certNumber">申请编号</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.certTypeName">认证类型</span><span class="detail-val">进出口经营许可认证</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.submitDate">提交日期</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.expectedComplete">预计完成</span><span class="detail-val" style="color:var(--primary-cyan);">--</span></div>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title" data-i18n="cert.auditTimeline">审核时间线</span></div>
+                <div style="padding-top:8px;">
+                    <div class="timeline-item">
+                        <div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--primary-cyan);box-shadow:0 0 8px rgba(78,205,196,.4);"></div><div class="timeline-line"></div></div>
+                        <div class="timeline-content">
+                            <div class="timeline-time">--</div>
+                            <div class="timeline-text" style="color:var(--primary-cyan);" data-i18n="cert.auditStep3">材料复核通过，进入终审阶段</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--text-muted);"></div><div class="timeline-line"></div></div>
+                        <div class="timeline-content">
+                            <div class="timeline-time">--</div>
+                            <div class="timeline-text" data-i18n="cert.auditStep2">资质材料初审通过，转入复核</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--text-muted);"></div><div class="timeline-line"></div></div>
+                        <div class="timeline-content">
+                            <div class="timeline-time">--</div>
+                            <div class="timeline-text" data-i18n="cert.auditStep1">系统已受理申请，分配至审核组</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot-wrap"><div class="timeline-dot" style="background:var(--text-muted);"></div></div>
+                        <div class="timeline-content">
+                            <div class="timeline-time">--</div>
+                            <div class="timeline-text" data-i18n="cert.auditStep0">认证申请已提交</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:12px;">
+                <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);" onclick="showView('view-overview')" data-i18n="cert.backToList">返回认证列表</button>
+                <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);" data-i18n="cert.contactAuditor">联系审核员</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 续期认证 ==================== -->
+    <div class="page-view" id="view-renew">
+        <section class="certification-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-overview')" data-i18n="nav.certification">资质认证</a><span class="sep">/</span><a onclick="showView('view-cert-detail')" data-i18n="cert.certDetail">认证详情</a><span class="sep">/</span><span data-i18n="cert.renewTitle">续期认证</span></div>
+            <button class="btn-back-sm" onclick="showView('view-cert-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> <span data-i18n="common.back">返回</span></button>
+
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title" data-i18n="cert.renewInfo">续期信息</span></div>
+                <div class="detail-grid" style="margin-bottom:20px;">
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.currentCert">当前认证</span><span class="detail-val">营业执照认证</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.currentExpiry">当前有效期</span><span class="detail-val">--</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.renewExpiry">续期后有效期</span><span class="detail-val" style="color:var(--primary-cyan);">2028-01-15</span></div>
+                    <div class="detail-row"><span class="detail-label" data-i18n="cert.renewFee">续期费用</span><span class="detail-val" style="color:var(--primary-cyan);">免费</span></div>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title" data-i18n="cert.renewDocs">更新材料</span></div>
+                <div class="form-group">
+                    <label data-i18n="cert.newBusinessLicense">最新营业执照 <span class="required">*</span></label>
+                    <div class="upload-zone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <p data-i18n="cert.uploadNewLicense">上传最新营业执照（如有变更）</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="cert.renewRemark">备注说明</label>
+                    <textarea rows="3" placeholder="如有信息变更请在此说明..." style="width:100%;padding:10px 14px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;font-family:inherit;resize:vertical;"></textarea>
+                </div>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;gap:12px;">
+                <button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);" onclick="showView('view-cert-detail')" data-i18n="common.cancel">取消</button>
+                <button class="btn-primary-sm" onclick="alert('续期申请已提交！');showView('view-overview')" data-i18n="cert.submitRenew">提交续期申请</button>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-copyright"><p data-i18n="footer.copyright">&copy; 2026 全球供应链智能匹配平台 | 版权所有</p></div>
+        <nav class="footer-nav">
+            <a href="help.html" data-i18n="footer.help">帮助中心</a>
+            <a href="service.html" data-i18n="footer.service">客服中心</a>
+            <a href="about.html" data-i18n="footer.about">关于我们</a>
+            <a href="privacy.html" data-i18n="footer.privacy">隐私政策</a>
+            <a href="terms.html" data-i18n="footer.terms">服务条款</a>
+        </nav>
+        <div style="text-align:center;padding:8px 0;font-size:12px;"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow noopener" style="color:#888;text-decoration:none;">粤ICP备2026015135号-2</a></div>
+    </footer>
+
+    <script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+<script src="auth-check.js"></script>
+    <script src="platform-scripts.js"></script>
+    <script>
+        // ========== API 基础配置 ==========
+        var API_BASE = '/api';
+        var uploadedFiles = {}; // 存储上传后的文件URL
+
+        function getToken() {
+            return localStorage.getItem('accessToken');
+        }
+
+        function authHeaders() {
+            var h = { 'Content-Type': 'application/json' };
+            var t = getToken();
+            if (t) h['Authorization'] = 'Bearer ' + t;
+            return h;
+        }
+
+        // ========== 视图切换 ==========
+        function showView(viewId) {
+            document.querySelectorAll('.page-view').forEach(function(v) { v.classList.remove('active'); });
+            document.getElementById(viewId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function showFormStep(stepIndex) {
+            document.querySelectorAll('.form-step').forEach(function(s) { s.classList.remove('active'); });
+            document.getElementById('step-' + stepIndex).classList.add('active');
+            document.querySelectorAll('.step-tab').forEach(function(tab, i) {
+                tab.classList.remove('active');
+                if (i < stepIndex) tab.classList.add('completed');
+                if (i === stepIndex) tab.classList.add('active');
+            });
+        }
+
+        // ========== 文件上传 ==========
+        function handleFileUpload(input, fieldName, zoneId) {
+            var file = input.files[0];
+            if (!file) return;
+            var zone = document.getElementById(zoneId);
+            zone.innerHTML = '<p style="color:var(--primary-cyan);">上传中...</p>';
+
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch(API_BASE + '/certification/upload', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + (getToken() || '') },
+                body: formData
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(result) {
+                if (result.code === 200 && result.data) {
+                    uploadedFiles[fieldName] = result.data.url;
+                    var isImage = file.type.startsWith('image/');
+                    if (isImage) {
+                        zone.innerHTML = '<img src="' + result.data.url + '" style="max-height:120px;max-width:100%;border-radius:8px;">' +
+                            '<p style="font-size:12px;color:var(--text-muted);margin-top:6px;">' + file.name + '</p>';
+                    } else {
+                        zone.innerHTML = '<p style="color:var(--primary-cyan);">' + file.name + ' - 上传成功</p>';
+                    }
+                } else {
+                    zone.innerHTML = '<p style="color:#ef4444;">上传失败: ' + (result.message || '未知错误') + '</p>';
+                }
+            })
+            .catch(function(err) {
+                zone.innerHTML = '<p style="color:#ef4444;">上传失败: ' + err.message + '</p>';
+            });
+        }
+
+        // ========== 加载我的认证列表 ==========
+        var myCerts = [];
+
+        function loadMyCerts() {
+            var token = getToken();
+            if (!token) {
+                document.getElementById('cert-list-container').innerHTML =
+                    '<p style="text-align:center;color:var(--text-muted);padding:20px;">请先登录后查看认证信息</p>';
+                return;
+            }
+
+            fetch(API_BASE + '/certification', {
+                headers: authHeaders()
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(result) {
+                if (result.code === 200 && result.data) {
+                    myCerts = result.data;
+                    renderCertList(myCerts);
+                    updateStats(myCerts);
+                } else {
+                    document.getElementById('cert-list-container').innerHTML =
+                        '<p style="text-align:center;color:var(--text-muted);padding:20px;" data-i18n="cert.noCerts">暂无认证记录，点击上方"申请新认证"开始</p>';
+                }
+            })
+            .catch(function() {
+                document.getElementById('cert-list-container').innerHTML =
+                    '<p style="text-align:center;color:var(--text-muted);padding:20px;" data-i18n="cert.noCerts">暂无认证记录，点击上方"申请新认证"开始</p>';
+            });
+        }
+
+        function updateStats(certs) {
+            var approved = 0, pending = 0;
+            certs.forEach(function(c) {
+                if (c.status === 'APPROVED') approved++;
+                if (c.status === 'PENDING') pending++;
+            });
+            var elApproved = document.getElementById('stat-approved');
+            var elPending = document.getElementById('stat-pending');
+            if (elApproved) elApproved.textContent = approved;
+            if (elPending) elPending.textContent = pending;
+        }
+
+        function renderCertList(certs) {
+            var container = document.getElementById('cert-list-container');
+            if (!certs || certs.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:20px;" data-i18n="cert.noCerts">暂无认证记录，点击上方"申请新认证"开始</p>';
+                return;
+            }
+
+            var html = '';
+            certs.forEach(function(cert) {
+                var statusMap = {
+                    'PENDING': { text: '审核中', class: 'status-processing', icon: '&#9203;', iconBg: 'rgba(255,193,7,.15)', iconColor: '#ffc107' },
+                    'APPROVED': { text: '已通过', class: 'status-completed', icon: '&#9989;', iconBg: 'rgba(78,205,196,.15)', iconColor: 'var(--primary-cyan)' },
+                    'REJECTED': { text: '已驳回', class: 'status-cancelled', icon: '&#10060;', iconBg: 'rgba(239,68,68,.15)', iconColor: '#ef4444' }
+                };
+                var st = statusMap[cert.status] || statusMap['PENDING'];
+                var dateStr = cert.status === 'APPROVED' && cert.expireAt
+                    ? '有效期至 ' + cert.expireAt.substring(0, 10)
+                    : '提交于 ' + (cert.createdAt ? cert.createdAt.substring(0, 10) : '-');
+
+                html += '<div class="cert-list-item" onclick="showCertDetail(' + cert.id + ')">' +
+                    '<div class="cert-item-left">' +
+                    '<div class="cert-type-icon" style="background:' + st.iconBg + ';color:' + st.iconColor + ';">' + st.icon + '</div>' +
+                    '<div class="cert-item-info"><h4>' + (cert.certType || '企业认证') + '</h4>' +
+                    '<p>编号: ' + (cert.certNo || '-') + ' | ' + dateStr + '</p></div></div>' +
+                    '<div class="cert-item-right"><span class="status-badge ' + st.class + '">' + st.text + '</span></div></div>';
+            });
+            container.innerHTML = html;
+        }
+
+        // ========== 查看认证详情 ==========
+        function showCertDetail(certId) {
+            var cert = myCerts.find(function(c) { return c.id === certId; });
+            if (!cert) return;
+
+            // 填充认证详情页
+            var detailView = document.getElementById('view-cert-detail');
+            var statusMap = {
+                'PENDING': { text: '审核中', class: 'status-processing' },
+                'APPROVED': { text: '已通过', class: 'status-completed' },
+                'REJECTED': { text: '已驳回', class: 'status-cancelled' }
+            };
+            var st = statusMap[cert.status] || statusMap['PENDING'];
+
+            // 更新认证信息卡
+            var infoCard = detailView.querySelectorAll('.detail-card')[0];
+            var badge = infoCard.querySelector('.status-badge');
+            if (badge) { badge.textContent = st.text; badge.className = 'status-badge ' + st.class; }
+
+            var vals = infoCard.querySelectorAll('.detail-val');
+            if (vals[0]) vals[0].textContent = cert.certNo || '-';
+            if (vals[1]) vals[1].textContent = cert.certType || '-';
+            if (vals[2]) vals[2].textContent = cert.createdAt ? cert.createdAt.substring(0, 10) : '-';
+            if (vals[3]) vals[3].textContent = cert.auditedAt ? cert.auditedAt.substring(0, 10) : '-';
+            if (vals[4]) vals[4].textContent = cert.expireAt ? cert.expireAt.substring(0, 10) : '-';
+            if (vals[5]) vals[5].textContent = cert.auditedBy || '待审核';
+
+            // 更新企业信息卡
+            var companyCard = detailView.querySelectorAll('.detail-card')[1];
+            var cvals = companyCard.querySelectorAll('.detail-val');
+            if (cvals[0]) cvals[0].textContent = cert.companyName || '-';
+            if (cvals[1]) cvals[1].textContent = cert.creditCode || '-';
+            if (cvals[2]) cvals[2].textContent = cert.companyType || '-';
+            if (cvals[3]) cvals[3].textContent = cert.registeredCapital || '-';
+            if (cvals[4]) cvals[4].textContent = cert.legalName || '-';
+            if (cvals[5]) cvals[5].textContent = cert.companyAddress || '-';
+
+            // 更新审核备注
+            if (cert.status === 'REJECTED' && cert.auditRemark) {
+                var remarkEl = detailView.querySelector('.audit-remark');
+                if (!remarkEl) {
+                    var remarkHtml = '<div class="detail-card audit-remark" style="border-color:#ef4444;">' +
+                        '<div class="detail-card-header"><span class="detail-card-title" style="color:#ef4444;">驳回原因</span></div>' +
+                        '<p style="color:var(--text-secondary);">' + cert.auditRemark + '</p></div>';
+                    companyCard.insertAdjacentHTML('afterend', remarkHtml);
+                }
+            }
+
+            showView('view-cert-detail');
+        }
+
+        // ========== 提交认证 ==========
+        function submitCertification() {
+            var btn = document.getElementById('btn-submit-cert');
+            // 收集表单数据
+            var data = {
+                companyName: (document.getElementById('cert-companyName') || {}).value || '',
+                creditCode: (document.getElementById('cert-creditCode') || {}).value || '',
+                companyType: (document.getElementById('cert-companyType') || {}).value || '',
+                registeredCapital: (document.getElementById('cert-registeredCapital') || {}).value || '',
+                foundDate: (document.getElementById('cert-foundDate') || {}).value || '',
+                companyAddress: (document.getElementById('cert-companyAddress') || {}).value || '',
+                legalName: (document.getElementById('cert-legalName') || {}).value || '',
+                legalIdNumber: (document.getElementById('cert-legalIdNumber') || {}).value || '',
+                legalPhone: (document.getElementById('cert-legalPhone') || {}).value || '',
+                legalIdFront: uploadedFiles['legalIdFront'] || '',
+                legalIdBack: uploadedFiles['legalIdBack'] || '',
+                businessLicense: uploadedFiles['businessLicense'] || '',
+                certType: (document.getElementById('cert-certType') || {}).value || '',
+                otherCerts: uploadedFiles['otherCerts'] || '',
+                contactName: (document.getElementById('cert-contactName') || {}).value || '',
+                contactTitle: (document.getElementById('cert-contactTitle') || {}).value || '',
+                contactPhone: (document.getElementById('cert-contactPhone') || {}).value || '',
+                contactEmail: (document.getElementById('cert-contactEmail') || {}).value || ''
+            };
+
+            // 必填校验
+            if (!data.companyName) { alert('请填写企业名称'); showFormStep(0); return; }
+            if (!data.creditCode) { alert('请填写统一社会信用代码'); showFormStep(0); return; }
+            if (!data.companyAddress) { alert('请填写企业地址'); showFormStep(0); return; }
+            if (!data.legalName) { alert('请填写法人姓名'); showFormStep(1); return; }
+            if (!data.legalIdNumber) { alert('请填写法人身份证号'); showFormStep(1); return; }
+            if (!data.legalPhone) { alert('请填写法人手机号'); showFormStep(1); return; }
+            if (!data.businessLicense) { alert('请上传营业执照'); showFormStep(2); return; }
+            if (!data.contactName) { alert('请填写联系人姓名'); showFormStep(3); return; }
+            if (!data.contactPhone) { alert('请填写联系人手机'); showFormStep(3); return; }
+            if (!data.contactEmail) { alert('请填写联系人邮箱'); showFormStep(3); return; }
+
+            var token = getToken();
+            if (!token) { alert('请先登录'); return; }
+
+            btn.disabled = true;
+            btn.textContent = '提交中...';
+
+            fetch(API_BASE + '/certification', {
+                method: 'POST',
+                headers: authHeaders(),
+                body: JSON.stringify(data)
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(result) {
+                btn.disabled = false;
+                btn.textContent = '提交认证';
+                if (result.code === 200) {
+                    showView('view-submit-success');
+                    loadMyCerts(); // 刷新列表
+                    // 清空表单
+                    uploadedFiles = {};
+                } else {
+                    alert('提交失败: ' + (result.message || '请稍后重试'));
+                }
+            })
+            .catch(function(err) {
+                btn.disabled = false;
+                btn.textContent = '提交认证';
+                alert('提交失败: ' + err.message);
+            });
+        }
+
+        // ========== 页面初始化 ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMyCerts();
+        });
+    </script>
+<script src="/js/ai-chat.js"></script>
+</body>
+</html>

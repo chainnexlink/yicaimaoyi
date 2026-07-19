@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="chat.t7ez3ib">即时通讯 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .chat-page {
+            min-height: 100vh;
+            background: var(--bg-dark);
+        }
+
+        .chat-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            height: calc(100vh - 65px);
+            display: grid;
+            grid-template-columns: 320px 1fr 300px;
+        }
+
+        /* 左侧会话列表 */
+        .chat-sidebar {
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chat-sidebar-header h2 {
+            font-size: 18px;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .chat-search {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-search input {
+            flex: 1;
+            padding: 10px 14px;
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .chat-search input:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+        }
+
+        .chat-tabs {
+            display: flex;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chat-tab {
+            flex: 1;
+            padding: 14px 0;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition-fast);
+        }
+
+        .chat-tab.active {
+            color: var(--primary-cyan);
+        }
+
+        .chat-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: var(--primary-cyan);
+        }
+
+        .chat-tab .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            background: var(--accent-red);
+            color: #fff;
+            font-size: 11px;
+            border-radius: 10px;
+            margin-left: 4px;
+        }
+
+        .conversation-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .conversation-item {
+            display: flex;
+            gap: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .conversation-item:hover,
+        .conversation-item.active {
+            background: rgba(0, 229, 204, 0.05);
+        }
+
+        .conversation-item.active {
+            border-left: 3px solid var(--primary-cyan);
+            padding-left: 17px;
+        }
+
+        .conversation-avatar {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 229, 204, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--primary-cyan);
+            flex-shrink: 0;
+        }
+
+        .conversation-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conversation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .conversation-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .conversation-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .conversation-preview {
+            font-size: 13px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .conversation-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .unread-badge {
+            width: 18px;
+            height: 18px;
+            background: var(--accent-red);
+            color: #fff;
+            font-size: 11px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .order-tag {
+            padding: 2px 6px;
+            background: rgba(0, 229, 204, 0.15);
+            color: var(--primary-cyan);
+            font-size: 11px;
+            border-radius: 4px;
+        }
+
+        /* 中间聊天区域 */
+        .chat-main {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-darker);
+        }
+
+        .chat-header {
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-target {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-target-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 229, 204, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-cyan);
+        }
+
+        .chat-target-info h3 {
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .chat-target-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .online-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-action-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chat-action-btn:hover {
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+
+        .chat-action-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* 消息区域 */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .message-date {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .message-date span {
+            padding: 6px 16px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .message.sent {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            background: rgba(0, 229, 204, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--primary-cyan);
+            flex-shrink: 0;
+        }
+
+        .message.sent .message-avatar {
+            background: rgba(69, 183, 209, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .message-content {
+            max-width: 60%;
+        }
+
+        .message-bubble {
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border-top-left-radius: 4px;
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .message.sent .message-bubble {
+            background: rgba(0, 229, 204, 0.15);
+            border-top-left-radius: 12px;
+            border-top-right-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .message.sent .message-time {
+            text-align: right;
+        }
+
+        /* 订单消息卡片 */
+        .message-order-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            max-width: 320px;
+        }
+
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .order-card-header h4 {
+            font-size: 14px;
+            color: var(--primary-cyan);
+        }
+
+        .order-card-header .status {
+            padding: 4px 10px;
+            background: rgba(255, 217, 61, 0.15);
+            color: var(--accent-yellow);
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .order-card-body {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .order-card-body p {
+            margin-bottom: 6px;
+        }
+
+        .order-card-footer {
+            display: flex;
+            gap: 8px;
+        }
+
+        .order-card-footer button {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .order-card-footer .btn-view {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .order-card-footer .btn-confirm {
+            background: var(--primary-cyan);
+            border: none;
+            color: #000;
+        }
+
+        /* 输入区域 */
+        .chat-input-area {
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chat-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .toolbar-btn {
+            padding: 8px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: var(--transition-fast);
+        }
+
+        .toolbar-btn:hover {
+            background: var(--bg-darker);
+            color: var(--primary-cyan);
+        }
+
+        .toolbar-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 12px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            resize: none;
+            min-height: 44px;
+            max-height: 120px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+        }
+
+        .chat-send-btn {
+            padding: 12px 24px;
+            background: var(--primary-cyan);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .chat-send-btn:hover {
+            background: var(--primary-cyan-light);
+        }
+
+        /* 右侧信息面板 */
+        .chat-info-panel {
+            background: var(--bg-card);
+            border-left: 1px solid var(--border-color);
+            overflow-y: auto;
+        }
+
+        .info-panel-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-panel-section h3 {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .partner-profile {
+            text-align: center;
+        }
+
+        .partner-avatar-lg {
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 229, 204, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--primary-cyan);
+            margin: 0 auto 16px;
+        }
+
+        .partner-name {
+            font-size: 18px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .partner-company {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .partner-badges {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .partner-badges .badge {
+            padding: 4px 10px;
+            background: rgba(0, 229, 204, 0.1);
+            color: var(--primary-cyan);
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .partner-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            text-align: center;
+        }
+
+        .partner-stat-item .value {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary-cyan);
+            display: block;
+        }
+
+        .partner-stat-item .label {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .related-orders {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .related-order-item {
+            padding: 12px;
+            background: var(--bg-darker);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .related-order-item:hover {
+            background: rgba(0, 229, 204, 0.05);
+        }
+
+        .related-order-item .order-id {
+            font-size: 13px;
+            color: var(--primary-cyan);
+            margin-bottom: 4px;
+        }
+
+        .related-order-item .order-product {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .related-order-item .order-status {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+        }
+
+        .order-status.processing {
+            background: rgba(69, 183, 209, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .order-status.pending {
+            background: rgba(255, 217, 61, 0.15);
+            color: var(--accent-yellow);
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .quick-action-item {
+            padding: 12px;
+            background: var(--bg-darker);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            text-decoration: none;
+        }
+
+        .quick-action-item:hover {
+            background: rgba(0, 229, 204, 0.1);
+        }
+
+        .quick-action-item svg {
+            width: 24px;
+            height: 24px;
+            color: var(--primary-cyan);
+            margin-bottom: 8px;
+        }
+
+        .quick-action-item span {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: block;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1200px) {
+            .chat-container {
+                grid-template-columns: 280px 1fr;
+            }
+            .chat-info-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                grid-template-columns: 1fr;
+            }
+            .chat-sidebar {
+                display: none;
+            }
+        }
+
+        /* ========== 模态面板系统 ========== */
+        .chat-modal-overlay {
+            display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:1000;
+            align-items:center; justify-content:center; backdrop-filter:blur(4px);
+        }
+        .chat-modal-overlay.show { display:flex; animation:cmFadeIn .25s ease; }
+        @keyframes cmFadeIn { from{opacity:0} to{opacity:1} }
+        .chat-modal {
+            background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px;
+            width:580px; max-width:92vw; max-height:85vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.4);
+            animation:cmSlideUp .3s ease;
+        }
+        @keyframes cmSlideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+        .cm-header {
+            display:flex; justify-content:space-between; align-items:center; padding:20px 24px;
+            border-bottom:1px solid var(--border-color); position:sticky; top:0; background:var(--bg-card); z-index:2; border-radius:16px 16px 0 0;
+        }
+        .cm-header h3 { font-size:17px; font-weight:600; color:var(--text-primary); }
+        .cm-close { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:20px; padding:4px 8px; border-radius:6px; transition:all .2s; }
+        .cm-close:hover { background:var(--bg-secondary); color:var(--primary-cyan); }
+        .cm-body { padding:24px; }
+        .cm-footer { padding:16px 24px; border-top:1px solid var(--border-color); display:flex; justify-content:flex-end; gap:10px; }
+        .cm-form-group { margin-bottom:18px; }
+        .cm-form-group label { display:block; font-size:13px; color:var(--text-muted); margin-bottom:6px; font-weight:500; }
+        .cm-form-group input, .cm-form-group select, .cm-form-group textarea {
+            width:100%; padding:10px 14px; background:var(--bg-secondary); border:1px solid var(--border-color);
+            border-radius:8px; color:var(--text-primary); font-size:14px; font-family:inherit; box-sizing:border-box;
+        }
+        .cm-form-group input:focus, .cm-form-group select:focus, .cm-form-group textarea:focus { border-color:var(--primary-cyan); outline:none; }
+        .cm-form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+        .cm-btn { padding:10px 22px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; border:none; transition:all .2s; }
+        .cm-btn-primary { background:var(--primary-cyan); color:#0a1628; }
+        .cm-btn-primary:hover { filter:brightness(1.1); }
+        .cm-btn-secondary { background:var(--bg-secondary); color:var(--text-secondary); border:1px solid var(--border-color); }
+        .cm-btn-secondary:hover { border-color:var(--primary-cyan); color:var(--primary-cyan); }
+        .cm-btn-success { background:#28a745; color:#fff; }
+        .cm-btn-success:hover { background:#218838; }
+        .cm-btn-danger { background:transparent; color:#ef4444; border:1px solid #ef4444; }
+        .cm-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+        .cm-info-item { display:flex; flex-direction:column; gap:2px; }
+        .cm-info-label { font-size:12px; color:var(--text-muted); margin-bottom:3px; }
+        .cm-info-val { font-size:14px; color:var(--text-primary); font-weight:500; }
+        .cm-divider { height:1px; background:var(--border-color); margin:16px 0; }
+        .cm-section-title { font-size:15px; font-weight:600; color:var(--text-primary); margin-bottom:12px; }
+        .cm-tag { display:inline-block; padding:3px 10px; border-radius:4px; font-size:11px; font-weight:500; }
+        .cm-tag-cyan { background:rgba(78,205,196,.12); color:var(--primary-cyan); }
+        .cm-tag-yellow { background:rgba(255,193,7,.12); color:#ffc107; }
+        .cm-tag-green { background:rgba(40,167,69,.12); color:#28a745; }
+        .cm-tag-blue { background:rgba(69,183,209,.12); color:#45B7D1; }
+        .cm-progress-bar { width:100%; height:8px; background:var(--bg-secondary); border-radius:4px; overflow:hidden; margin:8px 0; }
+        .cm-progress-fill { height:100%; background:var(--primary-cyan); border-radius:4px; transition:width .5s ease; }
+        .cm-timeline { padding-left:20px; border-left:2px solid var(--border-color); }
+        .cm-timeline-item { position:relative; padding:0 0 16px 16px; }
+        .cm-timeline-item::before { content:''; position:absolute; left:-7px; top:4px; width:12px; height:12px; border-radius:50%; background:var(--border-color); }
+        .cm-timeline-item.active::before { background:var(--primary-cyan); box-shadow:0 0 8px rgba(78,205,196,.4); }
+        .cm-timeline-time { font-size:11px; color:var(--text-muted); }
+        .cm-timeline-text { font-size:13px; color:var(--text-secondary); margin-top:2px; }
+        .cm-stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:16px 0; }
+        .cm-stat-box { text-align:center; padding:12px; background:var(--bg-secondary); border-radius:8px; }
+        .cm-stat-box .num { font-size:20px; font-weight:700; color:var(--primary-cyan); }
+        .cm-stat-box .lbl { font-size:11px; color:var(--text-muted); margin-top:2px; }
+        .cm-file-item { display:flex; align-items:center; gap:12px; padding:12px; background:var(--bg-secondary); border-radius:8px; margin-bottom:8px; }
+        .cm-file-icon { width:36px; height:36px; border-radius:8px; background:rgba(78,205,196,.1); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .cm-file-info { flex:1; }
+        .cm-file-name { font-size:13px; font-weight:500; color:var(--text-primary); }
+        .cm-file-size { font-size:11px; color:var(--text-muted); }
+        .cm-checkbox { display:flex; align-items:center; gap:10px; padding:12px; background:var(--bg-secondary); border-radius:8px; cursor:pointer; margin-bottom:8px; }
+        .cm-checkbox input { accent-color:var(--primary-cyan); width:16px; height:16px; }
+        .cm-checkbox span { font-size:13px; color:var(--text-secondary); }
+        .cm-signature-area { width:100%; height:80px; border:2px dashed var(--border-color); border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:13px; cursor:pointer; margin-top:8px; }
+        .cm-signature-area.signed { border-color:var(--primary-cyan); background:rgba(78,205,196,.05); color:var(--primary-cyan); }
+
+        /* 工具栏弹出面板 */
+        .toolbar-popup { display:none; position:absolute; bottom:100%; left:0; right:0; background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px 12px 0 0; box-shadow:0 -4px 20px rgba(0,0,0,.3); z-index:100; padding:16px 20px; }
+        .toolbar-popup.show { display:block; animation:cmSlideUp .25s ease; }
+        .toolbar-popup-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+        .toolbar-popup-header h4 { font-size:14px; font-weight:600; color:var(--text-primary); }
+        .toolbar-popup-close { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:16px; }
+        .quick-reply-item { display:block; width:100%; text-align:left; padding:10px 14px; background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:8px; color:var(--text-secondary); font-size:13px; cursor:pointer; margin-bottom:6px; transition:all .2s; }
+        .quick-reply-item:hover { border-color:var(--primary-cyan); color:var(--primary-cyan); background:rgba(78,205,196,.05); }
+        .upload-drop-zone { border:2px dashed var(--border-color); border-radius:10px; padding:30px; text-align:center; cursor:pointer; transition:all .2s; }
+        .upload-drop-zone:hover { border-color:var(--primary-cyan); background:rgba(78,205,196,.03); }
+        .upload-drop-zone svg { width:32px; height:32px; color:var(--text-muted); margin-bottom:8px; }
+        .upload-drop-zone p { font-size:13px; color:var(--text-muted); }
+        .upload-drop-zone .sub { font-size:11px; color:var(--text-muted); margin-top:4px; opacity:.7; }
+        .order-select-item { padding:12px; background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:8px; cursor:pointer; margin-bottom:8px; transition:all .2s; }
+        .order-select-item:hover { border-color:var(--primary-cyan); }
+        .order-select-item .os-id { font-size:13px; color:var(--primary-cyan); font-weight:500; }
+        .order-select-item .os-info { font-size:12px; color:var(--text-muted); margin-top:4px; }
+
+        /* 消息中的文件/图片附件 */
+        .message-file-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:10px; padding:12px; display:flex; align-items:center; gap:10px; max-width:280px; margin-top:6px; }
+        .message-file-card .mf-icon { width:32px; height:32px; background:rgba(78,205,196,.1); border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .message-file-card .mf-name { font-size:13px; color:var(--text-primary); }
+        .message-file-card .mf-size { font-size:11px; color:var(--text-muted); }
+        .message-img-preview { max-width:240px; border-radius:10px; margin-top:6px; cursor:pointer; border:1px solid var(--border-color); }
+
+        /* chat-input-area needs relative for popup */
+        .chat-input-area { position:relative; }
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <div class="chat-page">
+        <!-- 顶部导航 -->
+        <header class="header">
+            <div class="header-container">
+                <div class="header-left">
+                    <a href="javascript:history.back()" class="inline-back">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        返回
+                    </a>
+                    <a href="index.html" style="color: var(--primary-cyan); font-size: 18px; font-weight: 700; text-decoration: none;">
+                        全球供应链智能匹配平台
+                    </a>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                    <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                    <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+                    <a href="messages.html" class="nav-link" data-i18n="nav.messages">消息中心</a>
+                    <a href="user-center.html" class="nav-link">个人中心</a>
+                </nav>
+            </div>
+        </header>
+
+        <div class="chat-container">
+            <!-- 左侧会话列表 -->
+            <aside class="chat-sidebar">
+                <div class="chat-sidebar-header">
+                    <h2 data-i18n="chat.tj5rb">消息</h2>
+                    <div class="chat-search">
+                        <input type="search" placeholder="搜索联系人..." id="chatSearchInput">
+                    </div>
+                </div>
+
+                <div class="chat-tabs">
+                    <button class="chat-tab active" data-filter="all">全部</button>
+                    <button class="chat-tab" data-filter="order">订单相关 <span class="badge">3</span></button>
+                    <button class="chat-tab" data-filter="inquiry">询盘</button>
+                </div>
+
+                <div class="conversation-list">
+                    <div class="conversation-item active" data-conv-id="shenzhen" data-conv-type="order">
+                        <div class="conversation-avatar">深</div>
+                        <div class="conversation-info">
+                            <div class="conversation-header">
+                                <span class="conversation-name">--</span>
+                                <span class="conversation-time">10:35</span>
+                            </div>
+                            <div class="conversation-preview">订单已确认，预计3天内发货</div>
+                            <div class="conversation-meta">
+                                <span class="order-tag"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="conversation-item" data-conv-id="guangzhou" data-conv-type="order">
+                        <div class="conversation-avatar">广</div>
+                        <div class="conversation-info">
+                            <div class="conversation-header">
+                                <span class="conversation-name">--</span>
+                                <span class="conversation-time">昨天</span>
+                            </div>
+                            <div class="conversation-preview">物流单号已更新，请查收</div>
+                            <div class="conversation-meta">
+                                <span class="unread-badge">2</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="conversation-item" data-conv-id="hangzhou" data-conv-type="inquiry">
+                        <div class="conversation-avatar">杭</div>
+                        <div class="conversation-info">
+                            <div class="conversation-header">
+                                <span class="conversation-name">--</span>
+                                <span class="conversation-time">02-13</span>
+                            </div>
+                            <div class="conversation-preview">报价单已发送，请查看附件</div>
+                        </div>
+                    </div>
+
+                    <div class="conversation-item" data-conv-id="chengdu" data-conv-type="order">
+                        <div class="conversation-avatar">成</div>
+                        <div class="conversation-info">
+                            <div class="conversation-header">
+                                <span class="conversation-name">--</span>
+                                <span class="conversation-time">02-12</span>
+                            </div>
+                            <div class="conversation-preview">生产进度已更新到80%</div>
+                            <div class="conversation-meta">
+                                <span class="order-tag">生产中</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="conversation-item" data-conv-id="beijing" data-conv-type="general">
+                        <div class="conversation-avatar">北</div>
+                        <div class="conversation-info">
+                            <div class="conversation-header">
+                                <span class="conversation-name">北京采购中心</span>
+                                <span class="conversation-time">02-10</span>
+                            </div>
+                            <div class="conversation-preview">感谢您的合作，期待下次...</div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 中间聊天区域 -->
+            <main class="chat-main">
+                <div class="chat-header">
+                    <div class="chat-target">
+                        <div class="chat-target-avatar">深</div>
+                        <div class="chat-target-info">
+                            <h3>--</h3>
+                            <p class="online-status">
+                                <span class="online-dot"></span>
+                                在线
+                            </p>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="chat-action-btn" onclick="openModal('modal-order-overview')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                                <line x1="3" y1="9" x2="21" y2="9"></line>
+                            </svg>
+                            查看订单
+                        </button>
+                        <button class="chat-action-btn" onclick="openModal('modal-contract-detail')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            合同
+                        </button>
+                        <button class="chat-action-btn" onclick="openModal('modal-more-actions')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="1"></circle>
+                                <circle cx="19" cy="12" r="1"></circle>
+                                <circle cx="5" cy="12" r="1"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="chat-messages">
+                    <div class="message-date">
+                        <span data-i18n="chat.tnj0v7d">2026年2月15日</span>
+                    </div>
+
+                    <div class="message">
+                        <div class="message-avatar">深</div>
+                        <div class="message-content">
+                            <div class="message-bubble">
+                                您好，您的订单  已经确认，我们将在3个工作日内安排发货。
+                            </div>
+                            <div class="message-time">09:30</div>
+                        </div>
+                    </div>
+
+                    <div class="message sent">
+                        <div class="message-avatar">我</div>
+                        <div class="message-content">
+                            <div class="message-bubble">
+                                好的，收到。请问可以加急处理吗？我们这边比较着急使用。
+                            </div>
+                            <div class="message-time">09:45</div>
+                        </div>
+                    </div>
+
+                    <div class="message">
+                        <div class="message-avatar">深</div>
+                        <div class="message-content">
+                            <div class="message-bubble">
+                                可以的，我这边已经安排加急生产了。预计明天就可以发货，我会实时更新生产进度给您。
+                            </div>
+                            <div class="message-time">09:52</div>
+                        </div>
+                    </div>
+
+                    <div class="message sent">
+                        <div class="message-avatar">我</div>
+                        <div class="message-content">
+                            <div class="message-bubble">
+                                太好了，非常感谢！另外，合同那边可以先发电子版过来吗？
+                            </div>
+                            <div class="message-time">10:05</div>
+                        </div>
+                    </div>
+
+                    <div class="message">
+                        <div class="message-avatar">深</div>
+                        <div class="message-content">
+                            <div class="message-bubble">
+                                合同已经生成，请查看并确认：
+                            </div>
+                            <div class="message-order-card">
+                                <div class="order-card-header">
+                                    <h4 data-i18n="chat.tiz09my">采购合同</h4>
+                                    <span class="status">待签署</span>
+                                </div>
+                                <div class="order-card-body">
+                                    <p data-i18n="chat.tfgpuqz">合同编号：</p>
+                                    <p data-i18n="chat.tlnqm0d">订单金额：--.00</p>
+                                    <p data-i18n="chat.trd7krw">交付日期：--</p>
+                                </div>
+                                <div class="order-card-footer">
+                                    <button class="btn-view" onclick="openModal('modal-contract-detail')">查看详情</button>
+                                    <button class="btn-confirm" onclick="openModal('modal-contract-sign')">确认签署</button>
+                                </div>
+                            </div>
+                            <div class="message-time">10:15</div>
+                        </div>
+                    </div>
+
+                    <div class="message sent">
+                        <div class="message-avatar">我</div>
+                        <div class="message-content">
+                            <div class="message-bubble">
+                                收到，我查看一下合同内容。
+                            </div>
+                            <div class="message-time">10:20</div>
+                        </div>
+                    </div>
+
+                    <div class="message">
+                        <div class="message-avatar">深</div>
+                        <div class="message-content">
+                            <div class="message-bubble">
+                                好的，有任何问题随时联系我。另外，生产进度已更新：
+                            </div>
+                            <div class="message-order-card">
+                                <div class="order-card-header">
+                                    <h4 data-i18n="chat.tvxknpr">生产进度更新</h4>
+                                    <span class="status" style="background: rgba(69, 183, 209, 0.15); color: var(--accent-blue);">生产中</span>
+                                </div>
+                                <div class="order-card-body">
+                                    <p data-i18n="chat.thynsc6">订单号：</p>
+                                    <p data-i18n="chat.thebzq8">当前进度：零件加工 (60%)</p>
+                                    <p data-i18n="chat.txgx0s9">预计完成：--</p>
+                                </div>
+                                <div class="order-card-footer">
+                                    <button class="btn-view" onclick="openModal('modal-production-detail')">查看详情</button>
+                                    <button class="btn-confirm" onclick="openModal('modal-progress-monitor')">进度监控</button>
+                                </div>
+                            </div>
+                            <div class="message-time">10:35</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <div class="chat-toolbar">
+                        <button class="toolbar-btn" title="发送图片" onclick="toggleToolbarPopup('popup-image')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="发送文件" onclick="toggleToolbarPopup('popup-file')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="发送订单卡片" onclick="toggleToolbarPopup('popup-order-card')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                                <line x1="3" y1="9" x2="21" y2="9"></line>
+                            </svg>
+                        </button>
+                        <button class="toolbar-btn" title="快捷回复" onclick="toggleToolbarPopup('popup-quick-reply')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- 图片上传弹出面板 -->
+                    <div class="toolbar-popup" id="popup-image">
+                        <div class="toolbar-popup-header">
+                            <h4 data-i18n="chat.tb63knt">发送图片</h4>
+                            <button class="toolbar-popup-close" onclick="closeAllPopups()">&times;</button>
+                        </div>
+                        <div class="upload-drop-zone" onclick="simulateImageUpload()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                            <p data-i18n="chat.tu1ejaa">点击选择图片或拖拽到此处</p>
+                            <p class="sub">支持 JPG/PNG/GIF 格式，最大 10MB</p>
+                        </div>
+                        <div style="display:flex;gap:8px;margin-top:12px;">
+                            <div class="order-select-item" style="flex:1;text-align:center;" onclick="sendImageMessage('产品实拍图_001.jpg','产品外观照片')">
+                                <div style="font-size:24px;margin-bottom:4px;">&#128247;</div>
+                                <div class="os-info">产品实拍图</div>
+                            </div>
+                            <div class="order-select-item" style="flex:1;text-align:center;" onclick="sendImageMessage('质检报告截图.png','质检报告截图')">
+                                <div style="font-size:24px;margin-bottom:4px;">&#128203;</div>
+                                <div class="os-info">质检截图</div>
+                            </div>
+                            <div class="order-select-item" style="flex:1;text-align:center;" onclick="sendImageMessage('包装方案.jpg','包装设计方案')">
+                                <div style="font-size:24px;margin-bottom:4px;">&#128230;</div>
+                                <div class="os-info">包装方案</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 文件上传弹出面板 -->
+                    <div class="toolbar-popup" id="popup-file">
+                        <div class="toolbar-popup-header">
+                            <h4 data-i18n="chat.tb65uov">发送文件</h4>
+                            <button class="toolbar-popup-close" onclick="closeAllPopups()">&times;</button>
+                        </div>
+                        <div class="upload-drop-zone" onclick="simulateFileUpload()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                            <p data-i18n="chat.tj2p7l0">点击选择文件或拖拽到此处</p>
+                            <p class="sub">支持 PDF/DOC/XLS/PPT 等格式，最大 50MB</p>
+                        </div>
+                        <div style="margin-top:12px;">
+                            <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">常用文件：</p>
+                            <div class="cm-file-item" style="cursor:pointer;" onclick="sendFileMessage('采购合同_.pdf','3.2 MB')">
+                                <div class="cm-file-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--primary-cyan)" stroke-width="2" style="width:18px;height:18px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
+                                <div class="cm-file-info"><div class="cm-file-name">采购合同_.pdf</div><div class="cm-file-size">3.2 MB</div></div>
+                            </div>
+                            <div class="cm-file-item" style="cursor:pointer;" onclick="sendFileMessage('报价单_--.xlsx','1.8 MB')">
+                                <div class="cm-file-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="width:18px;height:18px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
+                                <div class="cm-file-info"><div class="cm-file-name">报价单_--.xlsx</div><div class="cm-file-size">1.8 MB</div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 订单卡片弹出面板 -->
+                    <div class="toolbar-popup" id="popup-order-card">
+                        <div class="toolbar-popup-header">
+                            <h4 data-i18n="chat.teoanbd">发送订单卡片</h4>
+                            <button class="toolbar-popup-close" onclick="closeAllPopups()">&times;</button>
+                        </div>
+                        <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">选择要分享的订单：</p>
+                        <div class="order-select-item" onclick="sendOrderCardMessage('','电子元器件 × 5000件','--','生产中')">
+                            <div class="os-id"></div>
+                            <div class="os-info">电子元器件 × 5000件 | -- | 生产中</div>
+                        </div>
+                        <div class="order-select-item" onclick="sendOrderCardMessage('','传感器模块 × 1000件','--','待付款')">
+                            <div class="os-id"></div>
+                            <div class="os-info">传感器模块 × 1000件 | -- | 待付款</div>
+                        </div>
+                        <div class="order-select-item" onclick="sendOrderCardMessage('','--询盘','待报价','询盘中')">
+                            <div class="os-id"></div>
+                            <div class="os-info">--询盘 | 待报价 | 询盘中</div>
+                        </div>
+                    </div>
+
+                    <!-- 快捷回复弹出面板 -->
+                    <div class="toolbar-popup" id="popup-quick-reply">
+                        <div class="toolbar-popup-header">
+                            <h4 data-i18n="chat.tciipjv">快捷回复</h4>
+                            <button class="toolbar-popup-close" onclick="closeAllPopups()">&times;</button>
+                        </div>
+                        <button class="quick-reply-item" onclick="quickReply('您好，请问这批货物的最新生产进度如何？')">您好，请问这批货物的最新生产进度如何？</button>
+                        <button class="quick-reply-item" onclick="quickReply('收到，我已确认无误，请继续推进。')">收到，我已确认无误，请继续推进。</button>
+                        <button class="quick-reply-item" onclick="quickReply('请尽快发送合同/报价单，我们审核后回复。')">请尽快发送合同/报价单，我们审核后回复。</button>
+                        <button class="quick-reply-item" onclick="quickReply('请问可以安排加急处理吗？我们这边比较着急。')">请问可以安排加急处理吗？我们这边比较着急。</button>
+                        <button class="quick-reply-item" onclick="quickReply('物流信息已收到，我们会安排验收，感谢配合。')">物流信息已收到，我们会安排验收，感谢配合。</button>
+                        <button class="quick-reply-item" onclick="quickReply('您好，关于这个订单我还有几个问题需要确认。')">您好，关于这个订单我还有几个问题需要确认。</button>
+                    </div>
+
+                    <div class="chat-input-wrapper">
+                        <textarea class="chat-input" placeholder="输入消息..." id="chatInput"></textarea>
+                        <button class="chat-send-btn" id="chatSendBtn">发送</button>
+                    </div>
+                </div>
+            </main>
+
+            <!-- 右侧信息面板 -->
+            <aside class="chat-info-panel">
+                <div class="info-panel-section">
+                    <h3 data-i18n="chat.tkmzhb5">联系人信息</h3>
+                    <div class="partner-profile">
+                        <div class="partner-avatar-lg">深</div>
+                        <h4 class="partner-name">--</h4>
+                        <p class="partner-company">张经理</p>
+                        <div class="partner-badges">
+                            <span class="badge">已认证</span>
+                            <span class="badge">优质供应商</span>
+                        </div>
+                        <div class="partner-stats">
+                            <div class="partner-stat-item">
+                                <span class="value">4.9</span>
+                                <span class="label">评分</span>
+                            </div>
+                            <div class="partner-stat-item">
+                                <span class="value">156</span>
+                                <span class="label">成交</span>
+                            </div>
+                            <div class="partner-stat-item">
+                                <span class="value">98%</span>
+                                <span class="label">履约</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-panel-section">
+                    <h3 data-i18n="chat.tfcsl9q">相关订单</h3>
+                    <div class="related-orders">
+                        <div class="related-order-item" onclick="openModal('modal-order-overview')">
+                            <div class="order-id"></div>
+                            <div class="order-product">电子元器件 × 5000件</div>
+                            <span class="order-status processing">生产中</span>
+                        </div>
+                        <div class="related-order-item" onclick="openModal('modal-order-pay')">
+                            <div class="order-id"></div>
+                            <div class="order-product">传感器模块 × 1000件</div>
+                            <span class="order-status pending">待付款</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-panel-section">
+                    <h3 data-i18n="chat.tcil0yj">快捷操作</h3>
+                    <div class="quick-actions-grid">
+                        <div class="quick-action-item" onclick="openModal('modal-new-order')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <span data-i18n="chat.td8b35p">新建订单</span>
+                        </div>
+                        <div class="quick-action-item" onclick="openModal('modal-draft-contract')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            </svg>
+                            <span data-i18n="chat.tidz6ly">起草合同</span>
+                        </div>
+                        <div class="quick-action-item" onclick="openModal('modal-inquiry')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                            <span data-i18n="chat.tb5z7gc">发起询盘</span>
+                        </div>
+                        <div class="quick-action-item" onclick="openModal('modal-supplier-profile')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            </svg>
+                            <span data-i18n="chat.tvm1axl">供应商主页</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- ==================== 模态面板区域 ==================== -->
+
+    <!-- 新建订单 -->
+    <div class="chat-modal-overlay" id="modal-new-order">
+        <div class="chat-modal">
+            <div class="cm-header"><h3 data-i18n="chat.td8b35p">新建订单</h3><button class="cm-close" onclick="closeModal('modal-new-order')">&times;</button></div>
+            <div class="cm-body">
+                <div class="cm-form-row">
+                    <div class="cm-form-group"><label data-i18n="chat.tc4b9p">供应商</label><input type="text" value="--" readonly style="opacity:.7;"></div>
+                    <div class="cm-form-group"><label data-i18n="chat.thytrc3">订单类型</label><select><option data-i18n="chat.tk61yag">标准采购订单</option><option data-i18n="chat.te6akpq">框架协议订单</option><option data-i18n="chat.t8rf4if">紧急采购订单</option></select></div>
+                </div>
+                <div class="cm-form-group"><label data-i18n="chat.ta9yk8t">产品名称 <span style="color:#ef4444;">*</span></label><input type="text" placeholder="请输入采购产品名称" id="newOrderProduct"></div>
+                <div class="cm-form-row">
+                    <div class="cm-form-group"><label data-i18n="chat.tiz3kf9">采购数量 <span style="color:#ef4444;">*</span></label><input type="number" placeholder="请输入数量" id="newOrderQty"></div>
+                    <div class="cm-form-group"><label data-i18n="chat.tely0">单位</label><select><option data-i18n="chat.tfli">件</option><option data-i18n="chat.thnb">套</option><option data-i18n="chat.tjg9">批</option><option data-i18n="chat.tgkw">台</option><option data-i18n="chat.telwo">千克</option></select></div>
+                </div>
+                <div class="cm-form-row">
+                    <div class="cm-form-group"><label data-i18n="chat.tw5q8wi">单价 (¥)</label><input type="number" placeholder="请输入单价" id="newOrderPrice"></div>
+                    <div class="cm-form-group"><label data-i18n="chat.tezv7va">期望交付日期</label><input type="date" value="--"></div>
+                </div>
+                <div class="cm-form-group"><label data-i18n="chat.tdcnrsx">收货地址</label><input type="text" value="上海市浦东新区张江高科技园区1001号" placeholder="请输入收货地址"></div>
+                <div class="cm-form-group"><label data-i18n="chat.tbov8kb">备注说明</label><textarea rows="3" placeholder="请输入备注信息（可选）"></textarea></div>
+            </div>
+            <div class="cm-footer">
+                <button class="cm-btn cm-btn-secondary" onclick="closeModal('modal-new-order')">取消</button>
+                <button class="cm-btn cm-btn-secondary" onclick="saveOrderDraft()">保存草稿</button>
+                <button class="cm-btn cm-btn-primary" onclick="submitNewOrder()">提交订单</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 起草合同 -->
+    <div class="chat-modal-overlay" id="modal-draft-contract">
+        <div class="chat-modal">
+            <div class="cm-header"><h3 data-i18n="chat.tidz6ly">起草合同</h3><button class="cm-close" onclick="closeModal('modal-draft-contract')">&times;</button></div>
+            <div class="cm-body">
+                <div class="cm-form-row">
+                    <div class="cm-form-group"><label data-i18n="chat.taygrqs">合同类型 <span style="color:#ef4444;">*</span></label><select id="contractType"><option data-i18n="chat.tiz09my">采购合同</option><option data-i18n="chat.tdcfdbs">服务合同</option><option data-i18n="chat.tdl2kq7">框架协议</option><option data-i18n="chat.te20jsi">保密协议 (NDA)</option></select></div>
+                    <div class="cm-form-group"><label data-i18n="chat.tatar5g">关联订单</label><select><option data-i18n="chat.tr2vu6i"> 电子元器件</option><option data-i18n="chat.tx5tyg1"> 传感器模块</option><option data-i18n="chat.tbu49a">不关联</option></select></div>
+                </div>
+                <div class="cm-form-row">
+                    <div class="cm-form-group"><label data-i18n="chat.t310gtb">甲方（买方）</label><input type="text" value="--" readonly style="opacity:.7;"></div>
+                    <div class="cm-form-group"><label data-i18n="chat.thlxi6a">乙方（卖方）</label><input type="text" value="--" readonly style="opacity:.7;"></div>
+                </div>
+                <div class="cm-form-row">
+                    <div class="cm-form-group"><label data-i18n="chat.tr6t4po">合同金额 (¥) <span style="color:#ef4444;">*</span></label><input type="number" placeholder="请输入合同金额" id="contractAmount"></div>
+                    <div class="cm-form-group"><label data-i18n="chat.taydhcl">合同期限</label><select><option data-i18n="chat.tez10">6个月</option><option data-i18n="chat.tjtv">1年</option><option data-i18n="chat.tjuq">2年</option><option data-i18n="chat.tjh1ll">自定义</option></select></div>
+                </div>
+                <div class="cm-form-group"><label data-i18n="chat.tae7hcr">付款条件</label><select><option data-i18n="chat.t34vg6w">预付30% + 交货70%</option><option data-i18n="chat.t8gir7s">预付50% + 交货50%</option><option data-i18n="chat.ti5cgen">货到付款</option><option data-i18n="chat.t7c6dkv">月结30天</option></select></div>
+                <div class="cm-form-group"><label data-i18n="chat.tafuyhv">主要条款</label><textarea rows="4" placeholder="请输入合同主要条款或使用模板自动生成...">1. 乙方按照甲方需求提供指定产品/服务
+2. 质量标准：符合国标/行业标准
+3. 交付方式：乙方负责运输至甲方指定地点
+4. 违约责任：违约方赔偿合同金额10%
+5. 争议解决：友好协商，协商不成提交仲裁</textarea></div>
+                <div class="cm-form-group"><label data-i18n="chat.t7sytgg">附加条款（可选）</label><textarea rows="2" placeholder="如有特殊要求请在此填写..."></textarea></div>
+            </div>
+            <div class="cm-footer">
+                <button class="cm-btn cm-btn-secondary" onclick="closeModal('modal-draft-contract')">取消</button>
+                <button class="cm-btn cm-btn-secondary" onclick="previewContract()">预览合同</button>
+                <button class="cm-btn cm-btn-primary" onclick="submitContract()">生成并发送</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 发起询盘 -->
+    <div class="chat-modal-overlay" id="modal-inquiry">
+        <div class="chat-modal">
+            <div class="cm-header"><h3 data-i18n="chat.tb5z7gc">发起询盘</h3><button class="cm-close" onclick="closeModal('modal-inquiry')">&times;</button></div>
+            <div class="cm-body">
+                <div class="cm-form-group"><label data-i18n="chat.ti52r6v">询盘标题 <span style="color:#ef4444;">*</span></label><input type="text" placeholder="例如：电子元器件批量采购询价" id="inquiryTitle"></div>
+                <div class="cm-form-row">
+                    <div class="cm-form-group"><label data-i18n="chat.taa57yi">产品类别</label><select><option data-i18n="chat.tr2vu6i">电子元器件</option><option>--</option><option data-i18n="chat.tcr294">原材料</option><option data-i18n="chat.tb1hvhl">包装材料</option><option data-i18n="chat.tevztik">物流服务</option><option data-i18n="chat.teae8">其他</option></select></div>
+                    <div class="cm-form-group"><label data-i18n="chat.tjhzp5t">需求数量</label><input type="text" placeholder="例如：5000件" id="inquiryQty"></div>
+                </div>
+                <div class="cm-form-row">
+                    <div class="cm-form-group"><label data-i18n="chat.tffnnq3">目标单价</label><input type="text" placeholder="例如：¥15-20/件"></div>
+                    <div class="cm-form-group"><label data-i18n="chat.tdfq0uv">期望交期</label><input type="date" value="--"></div>
+                </div>
+                <div class="cm-form-group"><label data-i18n="chat.t1fikyl">详细需求描述 <span style="color:#ef4444;">*</span></label><textarea rows="4" placeholder="请详细描述您的采购需求，包括规格参数、质量标准、包装要求等..."></textarea></div>
+                <div class="cm-form-group">
+                    <label data-i18n="chat.tfscv3t">附件（可选）</label>
+                    <div class="upload-drop-zone" style="padding:16px;" onclick="this.innerHTML='<p style=color:var(--primary-cyan)>&#10003; 需求规格书.pdf 已添加</p>'">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <p data-i18n="chat.trxuw6t">点击上传附件（规格书、图纸等）</p>
+                    </div>
+                </div>
+            </div>
+            <div class="cm-footer">
+                <button class="cm-btn cm-btn-secondary" onclick="closeModal('modal-inquiry')">取消</button>
+                <button class="cm-btn cm-btn-primary" onclick="submitInquiry()">发送询盘</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 供应商主页 -->
+    <div class="chat-modal-overlay" id="modal-supplier-profile">
+        <div class="chat-modal" style="width:640px;">
+            <div class="cm-header"><h3 data-i18n="chat.tvm1axl">供应商主页</h3><button class="cm-close" onclick="closeModal('modal-supplier-profile')">&times;</button></div>
+            <div class="cm-body">
+                <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px;">
+                    <div style="width:72px;height:72px;background:rgba(78,205,196,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--primary-cyan);flex-shrink:0;">深</div>
+                    <div style="flex:1;">
+                        <h2 style="font-size:20px;font-weight:700;margin-bottom:6px;color:var(--text-primary);">--</h2>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                            <span class="cm-tag cm-tag-cyan">已认证</span>
+                            <span class="cm-tag cm-tag-yellow">优质供应商</span>
+                            <span class="cm-tag cm-tag-green">信用A+</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="cm-stats-row">
+                    <div class="cm-stat-box"><div class="num">4.9</div><div class="lbl">综合评分</div></div>
+                    <div class="cm-stat-box"><div class="num">156</div><div class="lbl">成交订单</div></div>
+                    <div class="cm-stat-box"><div class="num">98%</div><div class="lbl">准时交付</div></div>
+                    <div class="cm-stat-box"><div class="num">99.2%</div><div class="lbl">质量合格</div></div>
+                </div>
+                <div class="cm-divider"></div>
+                <div class="cm-section-title">企业信息</div>
+                <div class="cm-info-grid">
+                    <div class="cm-info-item"><div class="cm-info-label">主营产品</div><div class="cm-info-val">电子元器件、传感器、智能设备</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">企业规模</div><div class="cm-info-val">500-1000人</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">成立年份</div><div class="cm-info-val">2012年</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">所在地区</div><div class="cm-info-val">广东省深圳市南山区</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">注册资本</div><div class="cm-info-val">5000万元</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">年营业额</div><div class="cm-info-val">2.5亿元</div></div>
+                </div>
+                <div class="cm-divider"></div>
+                <div class="cm-section-title">资质认证</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+                    <span class="cm-tag cm-tag-cyan">ISO 9001</span>
+                    <span class="cm-tag cm-tag-cyan">ISO 14001</span>
+                    <span class="cm-tag cm-tag-cyan">IATF 16949</span>
+                    <span class="cm-tag cm-tag-green">高新技术企业</span>
+                    <span class="cm-tag cm-tag-blue">AAA信用等级</span>
+                </div>
+                <div class="cm-divider"></div>
+                <div class="cm-section-title">合作历史</div>
+                <div class="cm-info-grid">
+                    <div class="cm-info-item"><div class="cm-info-label">首次合作</div><div class="cm-info-val">2025-06-15</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">合作次数</div><div class="cm-info-val">8次</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">累计金额</div><div class="cm-info-val" style="color:var(--primary-cyan);">--</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">平均评价</div><div class="cm-info-val" style="color:#ffd700;">4.9 &#9733;</div></div>
+                </div>
+            </div>
+            <div class="cm-footer">
+                <button class="cm-btn cm-btn-secondary" onclick="closeModal('modal-supplier-profile')">关闭</button>
+                <button class="cm-btn cm-btn-secondary" onclick="openModal('modal-inquiry');closeModal('modal-supplier-profile')">发起询盘</button>
+                <button class="cm-btn cm-btn-primary" onclick="openModal('modal-new-order');closeModal('modal-supplier-profile')">新建订单</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 合同详情 -->
+    <div class="chat-modal-overlay" id="modal-contract-detail">
+        <div class="chat-modal" style="width:620px;">
+            <div class="cm-header"><h3 data-i18n="chat.tayjfz7">合同详情</h3><button class="cm-close" onclick="closeModal('modal-contract-detail')">&times;</button></div>
+            <div class="cm-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                    <div><span class="cm-tag cm-tag-yellow">待签署</span><span style="font-size:16px;font-weight:600;margin-left:10px;color:var(--text-primary);">采购合同</span></div>
+                    <span style="font-size:12px;color:var(--text-muted);"></span>
+                </div>
+                <div class="cm-info-grid">
+                    <div class="cm-info-item"><div class="cm-info-label">甲方</div><div class="cm-info-val">--</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">乙方</div><div class="cm-info-val">--</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">合同金额</div><div class="cm-info-val" style="color:var(--primary-cyan);font-size:16px;">--.00</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">交付日期</div><div class="cm-info-val">--</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">付款方式</div><div class="cm-info-val">预付30% + 交货70%</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">签署截止</div><div class="cm-info-val" style="color:#ef4444;">--</div></div>
+                </div>
+                <div class="cm-divider"></div>
+                <div class="cm-section-title">合同条款摘要</div>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.8;">
+                    <p><strong data-i18n="chat.thj3dgb">第一条 产品规格</strong><br>电子元器件 × 5000件，型号EC-5000A，符合IEC标准</p>
+                    <p><strong data-i18n="chat.tef83ln">第二条 质量标准</strong><br>良品率不低于99%，提供质检报告</p>
+                    <p><strong data-i18n="chat.triu6sa">第三条 交付方式</strong><br>乙方负责运输至甲方指定仓库，运费含在合同价格内</p>
+                    <p><strong data-i18n="chat.tmpxl0v">第四条 违约责任</strong><br>延迟交货按日0.5%扣款，质量不合格免费换货</p>
+                </div>
+                <div class="cm-divider"></div>
+                <div class="cm-section-title">合同文件</div>
+                <div class="cm-file-item">
+                    <div class="cm-file-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--primary-cyan)" stroke-width="2" style="width:18px;height:18px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
+                    <div class="cm-file-info"><div class="cm-file-name">采购合同_.pdf</div><div class="cm-file-size">3.2 MB</div></div>
+                    <button class="cm-btn cm-btn-secondary" style="padding:6px 14px;font-size:12px;">下载</button>
+                </div>
+            </div>
+            <div class="cm-footer">
+                <button class="cm-btn cm-btn-secondary" onclick="closeModal('modal-contract-detail')">关闭</button>
+                <button class="cm-btn cm-btn-danger" onclick="rejectContract()">拒绝签署</button>
+                <button class="cm-btn cm-btn-success" onclick="openModal('modal-contract-sign');closeModal('modal-contract-detail')">确认签署</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 合同签署流程 -->
+    <div class="chat-modal-overlay" id="modal-contract-sign">
+        <div class="chat-modal">
+            <div class="cm-header"><h3 data-i18n="chat.thiylda">合同签署确认</h3><button class="cm-close" onclick="closeModal('modal-contract-sign')">&times;</button></div>
+            <div class="cm-body">
+                <div style="text-align:center;padding:10px 0 20px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary-cyan)" stroke-width="2" style="width:48px;height:48px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    <h4 style="font-size:16px;color:var(--text-primary);margin-top:12px;">确认签署采购合同</h4>
+                    <p style="font-size:13px;color:var(--text-muted);margin-top:6px;">合同编号： | 金额：--.00</p>
+                </div>
+
+                <!-- 平台服务费提示 -->
+                <div style="margin:0 0 16px;padding:14px 16px;background:rgba(255,193,7,0.06);border:1px solid rgba(255,193,7,0.2);border-radius:10px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffc107" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        <span style="font-size:13px;font-weight:600;color:#ffc107;">平台服务费 (纳入合同金额)</span>
+                    </div>
+                    <div style="font-size:12px;color:var(--text-secondary);line-height:1.8;">
+                        <div style="display:flex;justify-content:space-between;">
+                            <span data-i18n="chat.t8ylcho">平台固定佣金：合同金额 x 2%</span>
+                            <span style="color:#ffc107;font-weight:500;">--.00</span>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;">
+                            <span data-i18n="chat.tyl9265">返佣 (您设定比例，合同完成后返还至零钱)</span>
+                            <span style="color:var(--primary-cyan);font-weight:500;">1%-10%</span>
+                        </div>
+                    </div>
+                    <div style="margin-top:8px;font-size:11px;color:#28a745;background:rgba(40,167,69,0.08);padding:6px 10px;border-radius:6px;">
+                        返佣部分将在合同完成后自动返回至您的零钱账户
+                    </div>
+                </div>
+
+                <div class="cm-divider"></div>
+                <div class="cm-section-title">签署确认项</div>
+                <label class="cm-checkbox" id="signCheck1"><input type="checkbox"><span data-i18n="chat.tsm12i3">我已仔细阅读并理解合同全部条款</span></label>
+                <label class="cm-checkbox" id="signCheck2"><input type="checkbox"><span data-i18n="chat.tuhkt1g">我确认合同金额、交付日期及付款条件无误</span></label>
+                <label class="cm-checkbox" id="signCheck3"><input type="checkbox"><span data-i18n="chat.tggns1z">我同意按照合同条款履行各项义务</span></label>
+                <label class="cm-checkbox" id="signCheck4"><input type="checkbox"><span data-i18n="chat.tb5diy2">我了解平台服务费规则，服务费纳入合同金额</span></label>
+                <div class="cm-divider"></div>
+                <div class="cm-section-title">电子签名</div>
+                <div class="cm-signature-area" id="signatureArea" onclick="doSignature(this)">
+                    点击此处进行电子签名
+                </div>
+            </div>
+            <div class="cm-footer">
+                <button class="cm-btn cm-btn-secondary" onclick="closeModal('modal-contract-sign')">取消</button>
+                <button class="cm-btn cm-btn-success" onclick="confirmSign()">确认签署合同</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 生产详情 -->
+    <div class="chat-modal-overlay" id="modal-production-detail">
+        <div class="chat-modal" style="width:620px;">
+            <div class="cm-header"><h3 data-i18n="chat.tf3zxtz">生产详情</h3><button class="cm-close" onclick="closeModal('modal-production-detail')">&times;</button></div>
+            <div class="cm-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                    <div><span class="cm-tag cm-tag-blue">生产中</span><span style="font-size:16px;font-weight:600;margin-left:10px;color:var(--text-primary);">生产进度详情</span></div>
+                    <span style="font-size:12px;color:var(--text-muted);"></span>
+                </div>
+                <div class="cm-info-grid">
+                    <div class="cm-info-item"><div class="cm-info-label">产品名称</div><div class="cm-info-val">电子元器件 EC-5000A</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">订购数量</div><div class="cm-info-val">5,000件</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">已完成</div><div class="cm-info-val" style="color:var(--primary-cyan);">3,000件 (60%)</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">预计完成</div><div class="cm-info-val">--</div></div>
+                </div>
+                <div class="cm-divider"></div>
+                <div class="cm-section-title">总体进度</div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:4px;"><span data-i18n="chat.t7bwdtw">零件加工阶段</span><span>60%</span></div>
+                <div class="cm-progress-bar"><div class="cm-progress-fill" style="width:60%;"></div></div>
+                <div class="cm-divider"></div>
+                <div class="cm-section-title">生产节点</div>
+                <div class="cm-timeline">
+                    <div class="cm-timeline-item active"><div class="cm-timeline-time">--</div><div class="cm-timeline-text" style="color:var(--primary-cyan);">零件加工中 - 已完成3000/5000件</div></div>
+                    <div class="cm-timeline-item active"><div class="cm-timeline-time">--</div><div class="cm-timeline-text">原材料检验完成，开始加工</div></div>
+                    <div class="cm-timeline-item active"><div class="cm-timeline-time">--</div><div class="cm-timeline-text">原材料到货，开始入库检验</div></div>
+                    <div class="cm-timeline-item active"><div class="cm-timeline-time">--</div><div class="cm-timeline-text">生产计划确认，采购原材料</div></div>
+                    <div class="cm-timeline-item active"><div class="cm-timeline-time">--</div><div class="cm-timeline-text">订单确认，排产安排</div></div>
+                </div>
+                <div class="cm-divider"></div>
+                <div class="cm-section-title">质量数据</div>
+                <div class="cm-info-grid">
+                    <div class="cm-info-item"><div class="cm-info-label">抽检批次</div><div class="cm-info-val">6批</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">良品率</div><div class="cm-info-val" style="color:#28a745;">99.5%</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">返工数</div><div class="cm-info-val">15件</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">报废数</div><div class="cm-info-val">0件</div></div>
+                </div>
+            </div>
+            <div class="cm-footer">
+                <button class="cm-btn cm-btn-secondary" onclick="closeModal('modal-production-detail')">关闭</button>
+                <button class="cm-btn cm-btn-primary" onclick="openModal('modal-progress-monitor');closeModal('modal-production-detail')">进入进度监控</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 进度监控 -->
+    <div class="chat-modal-overlay" id="modal-progress-monitor">
+        <div class="chat-modal" style="width:640px;">
+            <div class="cm-header"><h3 data-i18n="chat.tf23jp5">实时进度监控</h3><button class="cm-close" onclick="closeModal('modal-progress-monitor')">&times;</button></div>
+            <div class="cm-body">
+                <div class="cm-stats-row">
+                    <div class="cm-stat-box"><div class="num">60%</div><div class="lbl">总进度</div></div>
+                    <div class="cm-stat-box"><div class="num">3000</div><div class="lbl">已完成</div></div>
+                    <div class="cm-stat-box"><div class="num">99.5%</div><div class="lbl">良品率</div></div>
+                    <div class="cm-stat-box"><div class="num">1天</div><div class="lbl">剩余</div></div>
+                </div>
+                <div class="cm-section-title">各阶段进度</div>
+                <div style="margin-bottom:14px;">
+                    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--text-secondary);">1. 订单确认</span><span style="color:#28a745;">100%</span></div>
+                    <div class="cm-progress-bar"><div class="cm-progress-fill" style="width:100%;background:#28a745;"></div></div>
+                </div>
+                <div style="margin-bottom:14px;">
+                    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--text-secondary);">2. 原材料采购</span><span style="color:#28a745;">100%</span></div>
+                    <div class="cm-progress-bar"><div class="cm-progress-fill" style="width:100%;background:#28a745;"></div></div>
+                </div>
+                <div style="margin-bottom:14px;">
+                    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--text-secondary);">3. 零件加工</span><span style="color:var(--primary-cyan);">60%</span></div>
+                    <div class="cm-progress-bar"><div class="cm-progress-fill" style="width:60%;"></div></div>
+                </div>
+                <div style="margin-bottom:14px;">
+                    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--text-secondary);">4. 组装测试</span><span style="color:var(--text-muted);">0%</span></div>
+                    <div class="cm-progress-bar"><div class="cm-progress-fill" style="width:0%;"></div></div>
+                </div>
+                <div style="margin-bottom:14px;">
+                    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--text-secondary);">5. 质检包装</span><span style="color:var(--text-muted);">0%</span></div>
+                    <div class="cm-progress-bar"><div class="cm-progress-fill" style="width:0%;"></div></div>
+                </div>
+                <div style="margin-bottom:14px;">
+                    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--text-secondary);">6. 发货交付</span><span style="color:var(--text-muted);">0%</span></div>
+                    <div class="cm-progress-bar"><div class="cm-progress-fill" style="width:0%;"></div></div>
+                </div>
+                <div class="cm-divider"></div>
+                <div class="cm-section-title">最新动态</div>
+                <div class="cm-timeline">
+                    <div class="cm-timeline-item active"><div class="cm-timeline-time">--</div><div class="cm-timeline-text" style="color:var(--primary-cyan);">第6批次零件加工完成，良品率99.5%</div></div>
+                    <div class="cm-timeline-item active"><div class="cm-timeline-time">--</div><div class="cm-timeline-text">第5批次检验通过</div></div>
+                    <div class="cm-timeline-item active"><div class="cm-timeline-time">--</div><div class="cm-timeline-text">产线增员加急生产</div></div>
+                </div>
+            </div>
+            <div class="cm-footer">
+                <button class="cm-btn cm-btn-secondary" onclick="closeModal('modal-progress-monitor')">关闭</button>
+                <button class="cm-btn cm-btn-secondary" onclick="requestProgressReport()">导出报告</button>
+                <button class="cm-btn cm-btn-primary" onclick="sendProgressInquiry()">催促进度</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 订单概览 -->
+    <div class="chat-modal-overlay" id="modal-order-overview">
+        <div class="chat-modal" style="width:620px;">
+            <div class="cm-header"><h3 data-i18n="chat.thyqt2x">订单概览</h3><button class="cm-close" onclick="closeModal('modal-order-overview')">&times;</button></div>
+            <div class="cm-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                    <div><span class="cm-tag cm-tag-blue">生产中</span><span style="font-size:16px;font-weight:600;margin-left:10px;color:var(--text-primary);"></span></div>
+                    <span style="font-size:14px;font-weight:600;color:var(--primary-cyan);">--.00</span>
+                </div>
+                <div class="cm-info-grid">
+                    <div class="cm-info-item"><div class="cm-info-label">产品</div><div class="cm-info-val">电子元器件 EC-5000A</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">数量</div><div class="cm-info-val">5,000件</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">供应商</div><div class="cm-info-val">--</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">下单日期</div><div class="cm-info-val">--</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">预计交付</div><div class="cm-info-val">--</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">付款状态</div><div class="cm-info-val" style="color:#28a745;">预付款已付 --</div></div>
+                </div>
+                <div class="cm-divider"></div>
+                <div class="cm-section-title">订单进度</div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:4px;"><span data-i18n="chat.td4z0sq">整体进度</span><span>60%</span></div>
+                <div class="cm-progress-bar"><div class="cm-progress-fill" style="width:60%;"></div></div>
+                <div class="cm-timeline" style="margin-top:16px;">
+                    <div class="cm-timeline-item active"><div class="cm-timeline-time">--</div><div class="cm-timeline-text" style="color:var(--primary-cyan);">生产中 - 零件加工60%</div></div>
+                    <div class="cm-timeline-item active"><div class="cm-timeline-time">--</div><div class="cm-timeline-text">原材料到货检验</div></div>
+                    <div class="cm-timeline-item active"><div class="cm-timeline-time">--</div><div class="cm-timeline-text">订单确认，开始排产</div></div>
+                    <div class="cm-timeline-item active"><div class="cm-timeline-time">--</div><div class="cm-timeline-text">预付款 -- 到账</div></div>
+                </div>
+            </div>
+            <div class="cm-footer">
+                <button class="cm-btn cm-btn-secondary" onclick="closeModal('modal-order-overview')">关闭</button>
+                <button class="cm-btn cm-btn-secondary" onclick="openModal('modal-production-detail');closeModal('modal-order-overview')">查看生产详情</button>
+                <button class="cm-btn cm-btn-primary" onclick="openModal('modal-contract-detail');closeModal('modal-order-overview')">查看合同</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 待付款订单 -->
+    <div class="chat-modal-overlay" id="modal-order-pay">
+        <div class="chat-modal">
+            <div class="cm-header"><h3 data-i18n="chat.thysqza">订单详情 - 待付款</h3><button class="cm-close" onclick="closeModal('modal-order-pay')">&times;</button></div>
+            <div class="cm-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                    <div><span class="cm-tag cm-tag-yellow">待付款</span><span style="font-size:16px;font-weight:600;margin-left:10px;color:var(--text-primary);"></span></div>
+                    <span style="font-size:14px;font-weight:600;color:var(--primary-cyan);">--.00</span>
+                </div>
+                <div class="cm-info-grid">
+                    <div class="cm-info-item"><div class="cm-info-label">产品</div><div class="cm-info-val">传感器模块 SM-200B</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">数量</div><div class="cm-info-val">1,000件</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">供应商</div><div class="cm-info-val">--</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">下单日期</div><div class="cm-info-val">--</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">付款截止</div><div class="cm-info-val" style="color:#ef4444;">--</div></div>
+                    <div class="cm-info-item"><div class="cm-info-label">付款方式</div><div class="cm-info-val">预付50% + 交货50%</div></div>
+                </div>
+                <div class="cm-divider"></div>
+                <div class="cm-section-title">应付金额</div>
+                <div style="text-align:center;padding:16px;background:var(--bg-secondary);border-radius:10px;">
+                    <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">首付金额（50%）</div>
+                    <div style="font-size:28px;font-weight:700;color:var(--primary-cyan);">--.00</div>
+                </div>
+            </div>
+            <div class="cm-footer">
+                <button class="cm-btn cm-btn-secondary" onclick="closeModal('modal-order-pay')">稍后处理</button>
+                <button class="cm-btn cm-btn-primary" onclick="processPayment()">立即付款</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 更多操作 -->
+    <div class="chat-modal-overlay" id="modal-more-actions">
+        <div class="chat-modal" style="width:420px;">
+            <div class="cm-header"><h3 data-i18n="chat.tdd0d3p">更多操作</h3><button class="cm-close" onclick="closeModal('modal-more-actions')">&times;</button></div>
+            <div class="cm-body">
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <div class="order-select-item" onclick="openModal('modal-supplier-profile');closeModal('modal-more-actions')"><div class="os-id">查看供应商资料</div><div class="os-info">查看--的完整企业信息</div></div>
+                    <div class="order-select-item" onclick="openModal('modal-order-overview');closeModal('modal-more-actions')"><div class="os-id">订单管理</div><div class="os-info">查看当前会话关联的所有订单</div></div>
+                    <div class="order-select-item" onclick="openModal('modal-progress-monitor');closeModal('modal-more-actions')"><div class="os-id">进度监控</div><div class="os-info">实时查看生产及交付进度</div></div>
+                    <div class="order-select-item" onclick="exportChatHistory()"><div class="os-id">导出聊天记录</div><div class="os-info">将聊天记录导出为PDF文件</div></div>
+                    <div class="order-select-item" onclick="toggleNotification()"><div class="os-id">消息免打扰</div><div class="os-info">关闭该会话的消息通知提醒</div></div>
+                    <div class="order-select-item" style="border-color:rgba(239,68,68,.3);" onclick="blockConversation()"><div class="os-id" style="color:#ef4444;">举报/拉黑</div><div class="os-info">举报不良行为或拉黑该联系人</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ========== 模态面板控制 ========== */
+        function openModal(id) {
+            closeAllPopups();
+            document.getElementById(id).classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        // 点击遮罩关闭
+        document.querySelectorAll('.chat-modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', e => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('show');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        /* ========== 工具栏弹出面板 ========== */
+        function toggleToolbarPopup(id) {
+            const popup = document.getElementById(id);
+            const isOpen = popup.classList.contains('show');
+            closeAllPopups();
+            if (!isOpen) popup.classList.add('show');
+        }
+        function closeAllPopups() {
+            document.querySelectorAll('.toolbar-popup').forEach(p => p.classList.remove('show'));
+        }
+
+        /* ========== 消息发送核心 ========== */
+        function getNowTime() {
+            const d = new Date();
+            return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+        }
+        function appendMessage(html, type) {
+            const msgArea = document.querySelector('.chat-messages');
+            const div = document.createElement('div');
+            div.className = 'message ' + (type || 'sent');
+            div.innerHTML = html;
+            msgArea.appendChild(div);
+            msgArea.scrollTop = msgArea.scrollHeight;
+        }
+        function appendSentText(text) {
+            appendMessage(`
+                <div class="message-avatar">我</div>
+                <div class="message-content">
+                    <div class="message-bubble">${escapeHtml(text)}</div>
+                    <div class="message-time">${getNowTime()}</div>
+                </div>
+            `, 'sent');
+        }
+        function appendReceivedText(text) {
+            var avatar = (typeof currentConvId !== 'undefined' && conversationData[currentConvId]) ? conversationData[currentConvId].short : '客';
+            appendMessage(`
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    <div class="message-bubble">${text}</div>
+                    <div class="message-time">${getNowTime()}</div>
+                </div>
+            `, '');
+        }
+        function escapeHtml(t) {
+            const d = document.createElement('div');
+            d.textContent = t;
+            return d.innerHTML;
+        }
+        function simulateReply(text, delay) {
+            setTimeout(() => appendReceivedText(text), delay || 1500);
+        }
+
+        /* ========== 发送按钮 ========== */
+        document.getElementById('chatSendBtn').addEventListener('click', () => {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+            appendSentText(text);
+            input.value = '';
+            input.style.height = 'auto';
+            // 模拟供应商回复
+            simulateReply('收到您的消息，我这边确认后尽快回复您。', 1500);
+        });
+        document.getElementById('chatInput').addEventListener('keypress', e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                document.getElementById('chatSendBtn').click();
+            }
+        });
+
+        /* ========== 快捷回复 ========== */
+        function quickReply(text) {
+            closeAllPopups();
+            appendSentText(text);
+            if (text.includes('生产进度')) {
+                simulateReply('目前零件加工阶段已完成60%，共3000件，预计明天完成全部加工，良品率99.5%。', 1800);
+            } else if (text.includes('合同') || text.includes('报价')) {
+                simulateReply('好的，合同/报价单正在准备中，预计1小时内发送给您。', 1500);
+            } else if (text.includes('加急')) {
+                simulateReply('已安排加急处理，我们会全力加快进度，有最新情况第一时间通知您。', 1600);
+            } else if (text.includes('验收') || text.includes('物流')) {
+                simulateReply('好的，收到。验收如有任何问题请随时联系我们，我们全力配合。', 1400);
+            } else {
+                simulateReply('收到，我这边确认后尽快回复您。', 1500);
+            }
+        }
+
+        /* ========== 图片/文件发送 ========== */
+        function simulateImageUpload() {
+            sendImageMessage('产品实拍图_' + Date.now() + '.jpg', '上传的产品照片');
+        }
+        function sendImageMessage(name, desc) {
+            closeAllPopups();
+            appendMessage(`
+                <div class="message-avatar">我</div>
+                <div class="message-content">
+                    <div class="message-bubble">&#128247; 已发送图片</div>
+                    <div class="message-file-card">
+                        <div class="mf-icon" style="background:rgba(78,205,196,.1);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary-cyan)" stroke-width="2" style="width:16px;height:16px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        </div>
+                        <div><div class="mf-name">${escapeHtml(name)}</div><div class="mf-size">${desc}</div></div>
+                    </div>
+                    <div class="message-time">${getNowTime()}</div>
+                </div>
+            `, 'sent');
+            simulateReply('图片已收到，我查看一下。', 1200);
+        }
+        function simulateFileUpload() {
+            sendFileMessage('文档_' + Date.now() + '.pdf', '2.1 MB');
+        }
+        function sendFileMessage(name, size) {
+            closeAllPopups();
+            appendMessage(`
+                <div class="message-avatar">我</div>
+                <div class="message-content">
+                    <div class="message-bubble">&#128206; 已发送文件</div>
+                    <div class="message-file-card">
+                        <div class="mf-icon" style="background:rgba(78,205,196,.1);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary-cyan)" stroke-width="2" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        </div>
+                        <div><div class="mf-name">${escapeHtml(name)}</div><div class="mf-size">${size}</div></div>
+                    </div>
+                    <div class="message-time">${getNowTime()}</div>
+                </div>
+            `, 'sent');
+            simulateReply('文件已收到，我下载查看一下内容。', 1500);
+        }
+
+        /* ========== 订单卡片发送 ========== */
+        function sendOrderCardMessage(id, product, amount, status) {
+            closeAllPopups();
+            appendMessage(`
+                <div class="message-avatar">我</div>
+                <div class="message-content">
+                    <div class="message-bubble">请查看以下订单信息：</div>
+                    <div class="message-order-card">
+                        <div class="order-card-header"><h4>${escapeHtml(id)}</h4><span class="status">${escapeHtml(status)}</span></div>
+                        <div class="order-card-body"><p>产品：${escapeHtml(product)}</p><p>金额：${escapeHtml(amount)}</p></div>
+                        <div class="order-card-footer">
+                            <button class="btn-view" onclick="openModal('modal-order-overview')">查看详情</button>
+                        </div>
+                    </div>
+                    <div class="message-time">${getNowTime()}</div>
+                </div>
+            `, 'sent');
+            simulateReply('收到订单信息，我核实一下数据后回复您。', 1800);
+        }
+
+        /* ========== 新建订单 ========== */
+        function submitNewOrder() {
+            const product = document.getElementById('newOrderProduct').value.trim();
+            const qty = document.getElementById('newOrderQty').value.trim();
+            if (!product || !qty) { alert('请填写产品名称和采购数量'); return; }
+            const price = document.getElementById('newOrderPrice').value.trim();
+            const orderId = 'PO-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + Math.floor(Math.random()*100).toString().padStart(2,'0');
+            closeModal('modal-new-order');
+            appendMessage(`
+                <div class="message-avatar">我</div>
+                <div class="message-content">
+                    <div class="message-bubble">我已创建新订单，请确认：</div>
+                    <div class="message-order-card">
+                        <div class="order-card-header"><h4 data-i18n="chat.td8b35p">新建订单</h4><span class="status" style="background:rgba(40,167,69,.15);color:#28a745;">待确认</span></div>
+                        <div class="order-card-body">
+                            <p>订单号：${orderId}</p>
+                            <p>产品：${escapeHtml(product)} × ${escapeHtml(qty)}</p>
+                            ${price ? '<p data-i18n="chat.toha0d">单价：¥' + escapeHtml(price) + '</p>' : ''}
+                        </div>
+                        <div class="order-card-footer"><button class="btn-view" onclick="openModal('modal-order-overview')">查看详情</button></div>
+                    </div>
+                    <div class="message-time">${getNowTime()}</div>
+                </div>
+            `, 'sent');
+            simulateReply('新订单已收到，我确认一下产品规格和库存情况，稍后回复您。', 2000);
+        }
+        function saveOrderDraft() {
+            closeModal('modal-new-order');
+            appendSentText('订单草稿已保存，稍后我会完善信息后正式提交。');
+        }
+
+        /* ========== 合同相关 ========== */
+        function submitContract() {
+            const amount = document.getElementById('contractAmount').value.trim();
+            if (!amount) { alert('请填写合同金额'); return; }
+            const type = document.getElementById('contractType').value;
+            closeModal('modal-draft-contract');
+            appendMessage(`
+                <div class="message-avatar">我</div>
+                <div class="message-content">
+                    <div class="message-bubble">我已起草${escapeHtml(type)}，请您查阅：</div>
+                    <div class="message-order-card">
+                        <div class="order-card-header"><h4>${escapeHtml(type)}</h4><span class="status">待确认</span></div>
+                        <div class="order-card-body"><p>金额：¥${parseFloat(amount).toLocaleString()}</p><p data-i18n="chat.t9l3d3o">已包含标准条款</p></div>
+                        <div class="order-card-footer"><button class="btn-view" onclick="openModal('modal-contract-detail')">查看详情</button><button class="btn-confirm" onclick="openModal('modal-contract-sign')">签署</button></div>
+                    </div>
+                    <div class="message-time">${getNowTime()}</div>
+                </div>
+            `, 'sent');
+            simulateReply('合同已收到，我让法务部门审核后回复您。', 2000);
+        }
+        function previewContract() {
+            alert('合同预览功能已触发，将以PDF形式展示合同全文。');
+        }
+        function rejectContract() {
+            closeModal('modal-contract-detail');
+            appendSentText('关于合同，有部分条款需要修改，我们能否协商一下？');
+            simulateReply('好的，请告诉我具体需要修改的条款，我们尽快调整。', 1800);
+        }
+        function doSignature(el) {
+            el.classList.add('signed');
+            el.innerHTML = '<span style="font-size:24px;font-style:italic;font-weight:600;">--</span><br><span style="font-size:11px;">签署时间：' + new Date().toLocaleString('zh-CN') + '</span>';
+        }
+        function confirmSign() {
+            const checks = document.querySelectorAll('#modal-contract-sign .cm-checkbox input');
+            const allChecked = [...checks].every(c => c.checked);
+            const signed = document.getElementById('signatureArea').classList.contains('signed');
+            if (!allChecked) { alert('请勾选所有确认项'); return; }
+            if (!signed) { alert('请完成电子签名'); return; }
+            closeModal('modal-contract-sign');
+            appendMessage(`
+                <div class="message-avatar">我</div>
+                <div class="message-content">
+                    <div class="message-bubble">&#9989; 合同  已签署完成，金额 --.00。请贵司尽快安排生产。</div>
+                    <div class="message-time">${getNowTime()}</div>
+                </div>
+            `, 'sent');
+            simulateReply('合同签署已确认！我们将立即安排生产，预计2月20日前完成交付。感谢您的信任！', 2000);
+            // 更新合同卡片状态
+            setTimeout(() => {
+                document.querySelectorAll('.order-card-header .status').forEach(s => {
+                    if (s.textContent === '待签署') {
+                        s.textContent = '已签署';
+                        s.style.background = 'rgba(40,167,69,.15)';
+                        s.style.color = '#28a745';
+                    }
+                });
+            }, 500);
+        }
+
+        /* ========== 询盘 ========== */
+        function submitInquiry() {
+            const title = document.getElementById('inquiryTitle').value.trim();
+            if (!title) { alert('请填写询盘标题'); return; }
+            const qty = document.getElementById('inquiryQty').value.trim();
+            closeModal('modal-inquiry');
+            appendMessage(`
+                <div class="message-avatar">我</div>
+                <div class="message-content">
+                    <div class="message-bubble">我发起了一个新的询盘，请查看：</div>
+                    <div class="message-order-card">
+                        <div class="order-card-header"><h4 data-i18n="chat.ti58mht">询盘请求</h4><span class="status" style="background:rgba(69,183,209,.15);color:#45B7D1;">询盘中</span></div>
+                        <div class="order-card-body"><p>${escapeHtml(title)}</p>${qty ? '<p data-i18n="chat.th0u87a">需求数量：' + escapeHtml(qty) + '</p>' : ''}</div>
+                        <div class="order-card-footer"><button class="btn-confirm" onclick="openModal('modal-inquiry')">查看询盘</button></div>
+                    </div>
+                    <div class="message-time">${getNowTime()}</div>
+                </div>
+            `, 'sent');
+            simulateReply('询盘已收到，我核实库存和价格后为您报价，预计2小时内回复。', 2000);
+        }
+
+        /* ========== 进度监控操作 ========== */
+        function requestProgressReport() {
+            closeModal('modal-progress-monitor');
+            appendSentText('请发送最新的生产进度报告，包含质量数据和预计交付时间。');
+            simulateReply('好的，报告正在生成，稍后发送给您。', 1500);
+            setTimeout(() => {
+                appendMessage(`
+                    <div class="message-avatar">深</div>
+                    <div class="message-content">
+                        <div class="message-bubble">&#128206; 生产进度报告已生成：</div>
+                        <div class="message-file-card">
+                            <div class="mf-icon" style="background:rgba(78,205,196,.1);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary-cyan)" stroke-width="2" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                            </div>
+                            <div><div class="mf-name">生产进度报告_.pdf</div><div class="mf-size">1.6 MB</div></div>
+                        </div>
+                        <div class="message-time">${getNowTime()}</div>
+                    </div>
+                `, '');
+            }, 3500);
+        }
+        function sendProgressInquiry() {
+            closeModal('modal-progress-monitor');
+            appendSentText('您好，请问订单的生产进度能否加快？我们希望提前交付。');
+            simulateReply('已安排加班赶工，预计可以提前1天完成，我会持续更新进度给您。', 2000);
+        }
+
+        /* ========== 付款操作 ========== */
+        function processPayment() {
+            closeModal('modal-order-pay');
+            appendMessage(`
+                <div class="message-avatar">我</div>
+                <div class="message-content">
+                    <div class="message-bubble">&#9989; 订单  首付款 --.00 已提交付款，请确认收款。</div>
+                    <div class="message-time">${getNowTime()}</div>
+                </div>
+            `, 'sent');
+            simulateReply('收到付款通知，财务部门确认后将为您安排生产。感谢！', 2000);
+        }
+
+        /* ========== 更多操作 ========== */
+        function exportChatHistory() {
+            closeModal('modal-more-actions');
+            appendSentText('正在导出聊天记录...');
+            setTimeout(() => {
+                appendMessage(`
+                    <div class="message-avatar">我</div>
+                    <div class="message-content">
+                        <div class="message-bubble">&#128206; 聊天记录已导出：</div>
+                        <div class="message-file-card">
+                            <div class="mf-icon" style="background:rgba(78,205,196,.1);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary-cyan)" stroke-width="2" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                            </div>
+                            <div><div class="mf-name">聊天记录_--_20260217.pdf</div><div class="mf-size">856 KB</div></div>
+                        </div>
+                        <div class="message-time">${getNowTime()}</div>
+                    </div>
+                `, 'sent');
+            }, 1500);
+        }
+        function toggleNotification() {
+            closeModal('modal-more-actions');
+            alert('已开启消息免打扰模式');
+        }
+        function blockConversation() {
+            if (confirm('确定要举报/拉黑该联系人吗？此操作需要客服审核。')) {
+                closeModal('modal-more-actions');
+                alert('举报已提交，客服团队将在24小时内处理。');
+            }
+        }
+
+        /* ========== 会话数据模型 ========== */
+        var currentConvId = 'shenzhen';
+        var savedMessagesHTML = {};
+        var conversationData = {
+            shenzhen: {
+                name: '--', short: '深', contact: '张经理', online: true,
+                badges: ['已认证', '优质供应商'],
+                stats: { rating: '4.9', deals: '156', delivery: '98%' },
+                orders: [
+                    { id: '', product: '电子元器件 × 5000件', status: '生产中', statusClass: 'processing', modal: 'modal-order-overview' },
+                    { id: '', product: '传感器模块 × 1000件', status: '待付款', statusClass: 'pending', modal: 'modal-order-pay' }
+                ]
+            },
+            guangzhou: {
+                name: '--', short: '广', contact: '李经理', online: false,
+                badges: ['已认证', '物流合作伙伴'],
+                stats: { rating: '4.7', deals: '89', delivery: '97%' },
+                orders: [
+                    { id: 'LG-2026021301', product: '集装箱运输服务', status: '运输中', statusClass: 'processing', modal: '' }
+                ],
+                messages: [
+                    { type: 'date', text: '2026年2月14日' },
+                    { type: 'received', text: '您好，您的货物已从深圳仓库发出，预计2天内到达上海。', time: '09:20' },
+                    { type: 'received', text: '物流单号：SF-2026021401，您可以在物流追踪页面查看实时位置。', time: '09:22' },
+                    { type: 'sent', text: '收到，谢谢通知。请问是否包含保险？', time: '10:15' },
+                    { type: 'received', text: '已包含基础运输保险，保额为货物价值的110%。如需额外保险可另行购买。', time: '10:30' },
+                    { type: 'sent', text: '好的，基础保险就够了。到货后我安排人验收。', time: '11:00' },
+                    { type: 'date', text: '2026年2月15日' },
+                    { type: 'received', text: '物流单号已更新，货物目前在杭州中转站，预计明天上午到达上海。', time: '14:30' },
+                    { type: 'received', text: '提醒：请提前安排好收货人员和验收流程。', time: '14:32' }
+                ]
+            },
+            hangzhou: {
+                name: '--', short: '杭', contact: '王经理', online: true,
+                badges: ['已认证'],
+                stats: { rating: '4.8', deals: '67', delivery: '96%' },
+                orders: [],
+                messages: [
+                    { type: 'date', text: '2026年2月13日' },
+                    { type: 'received', text: '您好，感谢您的询盘。关于智能传感器模组的报价单已准备好。', time: '10:00' },
+                    { type: 'received', text: '报价单已发送，请查看附件。有效期15天。', time: '10:05', file: { name: '报价单_--_202602.xlsx', size: '1.2 MB' } },
+                    { type: 'sent', text: '收到报价单，我看一下。数量如果增加到10000件，价格能否再优惠？', time: '11:30' },
+                    { type: 'received', text: '可以的，10000件以上可以享受批量优惠价，预计每件优惠8%。我重新出一版报价给您。', time: '13:20' },
+                    { type: 'sent', text: '好的，等您的新报价。另外质检报告能一并提供吗？', time: '14:00' },
+                    { type: 'received', text: '没问题，质检报告和新报价一起发给您，预计今天下午完成。', time: '14:15' }
+                ]
+            },
+            chengdu: {
+                name: '--', short: '成', contact: '赵经理', online: false,
+                badges: ['已认证', '生产基地'],
+                stats: { rating: '4.6', deals: '42', delivery: '95%' },
+                orders: [
+                    { id: '', product: '-- × 2000套', status: '生产中', statusClass: 'processing', modal: '' }
+                ],
+                messages: [
+                    { type: 'date', text: '2026年2月12日' },
+                    { type: 'received', text: '您好，订单的生产进度已更新。', time: '09:00' },
+                    { type: 'received', text: '当前进度：模具加工完成，正在进行批量生产，已完成1600套(80%)。', time: '09:05' },
+                    { type: 'sent', text: '进度不错！质量检测情况怎么样？', time: '10:30' },
+                    { type: 'received', text: '前三批次抽检良品率99.2%，全部符合图纸标准。详细质检报告后续发送。', time: '11:00' },
+                    { type: 'sent', text: '好的，继续保持。预计什么时候能全部完成？', time: '11:15' },
+                    { type: 'received', text: '按目前进度，预计2月15日全部完工，16日可以安排发货。', time: '11:30' }
+                ]
+            },
+            beijing: {
+                name: '北京采购中心', short: '北', contact: '刘主任', online: false,
+                badges: ['已认证'],
+                stats: { rating: '4.5', deals: '28', delivery: '99%' },
+                orders: [],
+                messages: [
+                    { type: 'date', text: '2026年2月10日' },
+                    { type: 'sent', text: '刘主任，上批货物已全部验收入库，质量很好，感谢贵方的配合。', time: '09:00' },
+                    { type: 'received', text: '感谢您的认可！很高兴合作顺利，期待下次合作。', time: '09:30' },
+                    { type: 'sent', text: '下个季度我们有一批新的采购计划，到时候再联系您。', time: '10:00' },
+                    { type: 'received', text: '好的，随时欢迎。我们近期也在拓展新品类，有新样品可以先寄给您看看。', time: '10:15' },
+                    { type: 'sent', text: '可以的，您安排寄送就好，收到后我组织评估。', time: '10:30' },
+                    { type: 'received', text: '好的，我明天安排快递寄出，预计后天到达。祝商祺！', time: '10:45' }
+                ]
+            }
+        };
+
+        // 页面加载时保存深圳聊天内容
+        savedMessagesHTML['shenzhen'] = document.querySelector('.chat-messages').innerHTML;
+
+        function renderMessagesFromData(convId) {
+            var conv = conversationData[convId];
+            if (!conv || !conv.messages) return '';
+            var html = '';
+            conv.messages.forEach(function(msg) {
+                if (msg.type === 'date') {
+                    html += '<div class="message-date"><span>' + msg.text + '</span></div>';
+                } else if (msg.type === 'sent') {
+                    html += '<div class="message sent"><div class="message-avatar">我</div><div class="message-content"><div class="message-bubble">' + escapeHtml(msg.text) + '</div>';
+                    if (msg.file) {
+                        html += '<div class="message-file-card"><div class="mf-icon" style="background:rgba(78,205,196,.1);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--primary-cyan)" stroke-width="2" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div><div><div class="mf-name">' + escapeHtml(msg.file.name) + '</div><div class="mf-size">' + msg.file.size + '</div></div></div>';
+                    }
+                    html += '<div class="message-time">' + msg.time + '</div></div></div>';
+                } else if (msg.type === 'received') {
+                    html += '<div class="message"><div class="message-avatar">' + conv.short + '</div><div class="message-content"><div class="message-bubble">' + escapeHtml(msg.text) + '</div>';
+                    if (msg.file) {
+                        html += '<div class="message-file-card"><div class="mf-icon" style="background:rgba(78,205,196,.1);"><svg viewBox="0 0 24 24" fill="none" stroke="var(--primary-cyan)" stroke-width="2" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div><div><div class="mf-name">' + escapeHtml(msg.file.name) + '</div><div class="mf-size">' + msg.file.size + '</div></div></div>';
+                    }
+                    html += '<div class="message-time">' + msg.time + '</div></div></div>';
+                }
+            });
+            return html;
+        }
+
+        function switchConversation(convId) {
+            if (convId === currentConvId) return;
+            var conv = conversationData[convId];
+            if (!conv) return;
+
+            // 保存当前会话的消息
+            savedMessagesHTML[currentConvId] = document.querySelector('.chat-messages').innerHTML;
+            currentConvId = convId;
+
+            // 更新左侧选中状态
+            document.querySelectorAll('.conversation-item').forEach(function(item) {
+                item.classList.toggle('active', item.getAttribute('data-conv-id') === convId);
+            });
+
+            // 清除未读标记
+            var activeItem = document.querySelector('.conversation-item[data-conv-id="' + convId + '"]');
+            if (activeItem) {
+                var badge = activeItem.querySelector('.unread-badge');
+                if (badge) badge.remove();
+            }
+
+            // 更新聊天区域头部
+            document.querySelector('.chat-target-avatar').textContent = conv.short;
+            document.querySelector('.chat-target-info h3').textContent = conv.name;
+            var statusP = document.querySelector('.chat-target-info p');
+            if (conv.online) {
+                statusP.innerHTML = '<span class="online-dot"></span> 在线';
+            } else {
+                statusP.innerHTML = '<span class="online-dot" style="background:var(--text-muted);"></span> 离线';
+            }
+
+            // 更新消息区域
+            var msgArea = document.querySelector('.chat-messages');
+            if (savedMessagesHTML[convId]) {
+                msgArea.innerHTML = savedMessagesHTML[convId];
+            } else {
+                msgArea.innerHTML = renderMessagesFromData(convId);
+                savedMessagesHTML[convId] = msgArea.innerHTML;
+            }
+            msgArea.scrollTop = msgArea.scrollHeight;
+
+            // 更新右侧面板
+            updateRightPanel(convId);
+        }
+
+        function updateRightPanel(convId) {
+            var conv = conversationData[convId];
+            if (!conv) return;
+
+            document.querySelector('.partner-avatar-lg').textContent = conv.short;
+            document.querySelector('.partner-name').textContent = conv.name;
+            document.querySelector('.partner-company').textContent = conv.contact;
+
+            var badgesDiv = document.querySelector('.partner-badges');
+            badgesDiv.innerHTML = conv.badges.map(function(b) { return '<span class="badge">' + b + '</span>'; }).join('');
+
+            var statItems = document.querySelectorAll('.partner-stat-item');
+            if (statItems[0]) statItems[0].querySelector('.value').textContent = conv.stats.rating;
+            if (statItems[1]) statItems[1].querySelector('.value').textContent = conv.stats.deals;
+            if (statItems[2]) statItems[2].querySelector('.value').textContent = conv.stats.delivery;
+
+            var ordersDiv = document.querySelector('.related-orders');
+            if (conv.orders && conv.orders.length > 0) {
+                ordersDiv.innerHTML = conv.orders.map(function(o) {
+                    return '<div class="related-order-item"' + (o.modal ? ' onclick="openModal(\'' + o.modal + '\')"' : '') + '>' +
+                        '<div class="order-id">' + o.id + '</div>' +
+                        '<div class="order-product">' + o.product + '</div>' +
+                        '<span class="order-status ' + o.statusClass + '">' + o.status + '</span></div>';
+                }).join('');
+            } else {
+                ordersDiv.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">暂无关联订单</div>';
+            }
+        }
+
+        /* ========== 会话切换事件 ========== */
+        document.querySelectorAll('.conversation-item').forEach(function(item) {
+            item.addEventListener('click', function() {
+                var convId = item.getAttribute('data-conv-id');
+                if (convId) switchConversation(convId);
+            });
+        });
+
+        /* ========== 标签页筛选 ========== */
+        document.querySelectorAll('.chat-tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.chat-tab').forEach(function(t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+                var filter = tab.getAttribute('data-filter');
+                filterConversations(filter);
+            });
+        });
+
+        function filterConversations(filter) {
+            var searchVal = (document.getElementById('chatSearchInput').value || '').trim().toLowerCase();
+            document.querySelectorAll('.conversation-item').forEach(function(item) {
+                var type = item.getAttribute('data-conv-type');
+                var name = item.querySelector('.conversation-name').textContent.toLowerCase();
+                var preview = item.querySelector('.conversation-preview').textContent.toLowerCase();
+                var typeMatch = (filter === 'all' || type === filter);
+                var searchMatch = !searchVal || name.indexOf(searchVal) !== -1 || preview.indexOf(searchVal) !== -1;
+                item.style.display = (typeMatch && searchMatch) ? '' : 'none';
+            });
+        }
+
+        /* ========== 搜索联系人 ========== */
+        var chatSearchEl = document.getElementById('chatSearchInput');
+        function onSearchChange() {
+            var activeTab = document.querySelector('.chat-tab.active');
+            var filter = activeTab ? (activeTab.getAttribute('data-filter') || 'all') : 'all';
+            filterConversations(filter);
+        }
+        chatSearchEl.addEventListener('input', onSearchChange);
+        chatSearchEl.addEventListener('keyup', onSearchChange);
+        chatSearchEl.addEventListener('search', onSearchChange);
+
+        /* ========== 点击外部关闭弹出面板 ========== */
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.toolbar-btn') && !e.target.closest('.toolbar-popup')) {
+                closeAllPopups();
+            }
+        });
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+<script src="auth-check.js"></script>
+</body>
+</html>

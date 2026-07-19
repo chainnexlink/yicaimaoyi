@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="orders.pageTitle">订单管理 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .page-view{display:none}.page-view.active{display:block}
+        .view-breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:16px}
+        .view-breadcrumb a{color:var(--primary-cyan);cursor:pointer;text-decoration:none}.view-breadcrumb .sep{opacity:.5}
+        .btn-back-sm{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:6px;color:var(--text-secondary);font-size:13px;cursor:pointer;margin-bottom:20px;transition:all .3s}
+        .btn-back-sm:hover{border-color:var(--primary-cyan);color:var(--primary-cyan)}
+        .btn-back-sm svg{width:14px;height:14px}
+        .detail-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:24px;margin-bottom:20px}
+        .detail-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border-color)}
+        .detail-card-title{font-size:16px;font-weight:600;color:var(--text-primary)}
+        .detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+        .detail-row{display:flex;flex-direction:column;gap:4px}
+        .detail-label{font-size:12px;color:var(--text-muted)}
+        .detail-val{font-size:14px;color:var(--text-primary);font-weight:500}
+        .progress-track{display:flex;align-items:center;gap:0;margin:32px 0}
+        .progress-node{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+        .progress-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;z-index:1}
+        .progress-dot.done{background:var(--primary-cyan);color:#0a1628}
+        .progress-dot.current{background:var(--primary-cyan);color:#0a1628;box-shadow:0 0 12px rgba(78,205,196,.5)}
+        .progress-dot.pending{background:var(--bg-card);border:2px solid var(--border-color);color:var(--text-muted)}
+        .progress-label{font-size:11px;margin-top:8px;color:var(--text-muted);text-align:center}
+        .progress-line{flex:1;height:3px;background:var(--border-color);margin-top:-42px}
+        .progress-line.done{background:var(--primary-cyan)}
+        .timeline-item{display:flex;gap:16px;margin-bottom:16px}
+        .timeline-dot-wrap{display:flex;flex-direction:column;align-items:center}
+        .timeline-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+        .timeline-line{width:2px;flex:1;background:var(--border-color);margin-top:4px}
+        .timeline-content{flex:1;padding-bottom:8px}
+        .timeline-time{font-size:12px;color:var(--text-muted)}
+        .timeline-text{font-size:13px;color:var(--text-secondary);margin-top:4px}
+        .rating-stars{display:flex;gap:4px;margin:12px 0}
+        .rating-star{width:32px;height:32px;cursor:pointer;color:var(--border-color);transition:color .2s}
+        .rating-star.active{color:#ffd700}
+        
+        /* 统计卡片样式 */
+        .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+        .stat-box{background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .3s}
+        .stat-box:hover{border-color:var(--primary-cyan);transform:translateY(-2px)}
+        .stat-box.active{border-color:var(--primary-cyan);background:rgba(0,229,204,.05)}
+        .stat-box .num{font-size:24px;font-weight:700;color:var(--primary-cyan)}
+        .stat-box .label{font-size:12px;color:var(--text-muted);margin-top:4px}
+        
+        /* 订单表格增强样式 */
+        .data-table-wrapper{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;overflow:hidden}
+        .data-table{width:100%;border-collapse:collapse}
+        .data-table th{background:var(--bg-darker);padding:14px 16px;text-align:left;font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border-color)}
+        .data-table td{padding:16px;border-bottom:1px solid var(--border-color);font-size:14px;color:var(--text-secondary)}
+        .data-table tr:last-child td{border-bottom:none}
+        .data-table tr:hover td{background:var(--bg-card-hover)}
+        .data-table .order-id{color:var(--primary-cyan);font-family:monospace;font-weight:500}
+        .data-table .amount{font-weight:600;color:var(--text-primary)}
+        .data-table .supplier-link{color:var(--primary-cyan);cursor:pointer;text-decoration:none}
+        .data-table .supplier-link:hover{text-decoration:underline}
+        
+        /* 状态标签增强 */
+        .status-badge{display:inline-block;padding:4px 12px;border-radius:4px;font-size:12px;font-weight:500}
+        .status-pending{background:rgba(255,255,255,.1);color:var(--text-muted)}
+        .status-processing{background:rgba(69,183,209,.2);color:#45B7D1}
+        .status-in-production{background:rgba(255,165,0,.2);color:#FFA500}
+        .status-shipped{background:rgba(255,217,61,.2);color:#FFD93D}
+        .status-completed{background:rgba(0,229,204,.2);color:var(--primary-cyan)}
+        
+        /* 操作按钮增强 */
+        .btn-action{padding:6px 14px;background:transparent;color:var(--primary-cyan);border:1px solid var(--primary-cyan);border-radius:4px;font-size:12px;cursor:pointer;transition:all .2s;margin-right:6px}
+        .btn-action:hover{background:rgba(0,229,204,.1)}
+        .btn-action:last-child{margin-right:0}
+        .btn-action.btn-pay{background:var(--primary-cyan);color:var(--bg-dark);border-color:var(--primary-cyan)}
+        .btn-action.btn-pay:hover{background:var(--primary-cyan-light)}
+        
+        /* 平台客服互动窗口 */
+        .platform-chat-btn{position:fixed;bottom:24px;right:24px;width:56px;height:56px;background:linear-gradient(135deg,var(--primary-cyan),#45B7D1);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(0,229,204,.4);transition:all .3s;z-index:1000}
+        .platform-chat-btn:hover{transform:scale(1.1);box-shadow:0 6px 30px rgba(0,229,204,.5)}
+        .platform-chat-btn svg{width:28px;height:28px;color:var(--bg-dark)}
+        .platform-chat-btn .badge{position:absolute;top:-4px;right:-4px;width:20px;height:20px;background:#FF6B6B;color:#fff;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+        
+        /* 平台互动弹窗 */
+        .chat-modal{position:fixed;bottom:90px;right:24px;width:380px;max-height:520px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.4);z-index:1001;display:none;flex-direction:column;overflow:hidden}
+        .chat-modal.active{display:flex}
+        .chat-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:var(--bg-darker);border-bottom:1px solid var(--border-color)}
+        .chat-modal-header h4{font-size:15px;font-weight:600;color:var(--text-primary);display:flex;align-items:center;gap:8px}
+        .chat-modal-header h4 .online-dot{width:8px;height:8px;background:#28a745;border-radius:50%}
+        .chat-modal-close{width:32px;height:32px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all .2s}
+        .chat-modal-close:hover{border-color:var(--primary-cyan);color:var(--primary-cyan)}
+        .chat-messages{flex:1;padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;max-height:340px}
+        .chat-msg{max-width:85%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5}
+        .chat-msg.platform{background:var(--bg-darker);color:var(--text-secondary);align-self:flex-start;border-bottom-left-radius:4px}
+        .chat-msg.user{background:var(--primary-cyan);color:var(--bg-dark);align-self:flex-end;border-bottom-right-radius:4px}
+        .chat-msg .msg-time{font-size:10px;opacity:.7;margin-top:4px;display:block}
+        .chat-input-area{padding:12px 16px;border-top:1px solid var(--border-color);display:flex;gap:8px}
+        .chat-input{flex:1;padding:10px 14px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:13px}
+        .chat-input:focus{border-color:var(--primary-cyan);outline:none}
+        .chat-send-btn{padding:10px 16px;background:var(--primary-cyan);color:var(--bg-dark);border:none;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+        .chat-send-btn:hover{background:var(--primary-cyan-light)}
+        .quick-replies{padding:8px 16px;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid var(--border-color)}
+        .quick-reply{padding:6px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:16px;font-size:11px;color:var(--text-muted);cursor:pointer;transition:all .2s}
+        .quick-reply:hover{border-color:var(--primary-cyan);color:var(--primary-cyan)}
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <div class="language-selector" id="langSelector">
+                    <svg class="lang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    <span class="current-lang" id="currentLang">中文</span>
+                    <span class="dropdown-arrow">▼</span>
+                    <div class="language-dropdown">
+                        <div class="lang-option active" data-lang="zh" onclick="switchLanguage('zh')"><span class="lang-flag">🇨🇳</span><span data-i18n="orders.tdure">中文</span></div>
+                        <div class="lang-option" data-lang="en" onclick="switchLanguage('en')"><span class="lang-flag">🇺🇸</span><span>English</span></div>
+                        <div class="lang-option" data-lang="es" onclick="switchLanguage('es')"><span class="lang-flag">🇪🇸</span><span>Español</span></div>
+                    </div>
+                </div>
+                <a href="index.html" class="logo-link"><span class="logo-text" data-i18n="home.title">全球供应链智能匹配平台</span></a>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                <a href="orders.html" class="nav-link active" data-i18n="nav.orders">订单管理</a>
+                <a href="certification.html" class="nav-link" data-i18n="nav.certification">资质认证</a>
+                <a href="messages.html" class="nav-link" data-i18n="nav.messages">消息中心</a>
+                <a href="help.html" class="nav-link" data-i18n="nav.customerService">客服中心</a>
+            </nav>
+            <div class="header-right">
+                <a href="user-center.html" class="user-link"><span class="user-avatar-sm">A</span><span>admin</span></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== L1: 订单列表 ==================== -->
+    <div class="page-view active" id="view-list">
+        <div class="page-banner">
+            <h1 data-i18n="orders.title">订单管理</h1>
+            <p data-i18n="orders.subtitle">全流程订单跟踪与管理，掌控每一笔交易</p>
+        </div>
+
+        <section class="orders-section">
+            <div class="stats-row">
+                <div class="stat-box active" onclick="filterByStatus('all')" id="stat-all"><div class="num" id="count-all">0</div><div class="label" data-i18n="orders.totalOrders">总订单</div></div>
+                <div class="stat-box" onclick="filterByStatus('pending')" id="stat-pending"><div class="num" id="count-pending">0</div><div class="label">待付款</div></div>
+                <div class="stat-box" onclick="filterByStatus('processing')" id="stat-processing"><div class="num" id="count-processing">0</div><div class="label">处理中</div></div>
+                <div class="stat-box" onclick="filterByStatus('completed')" id="stat-completed"><div class="num" id="count-completed">0</div><div class="label">已完成</div></div>
+            </div>
+
+            <div class="orders-tabs">
+                <button class="tab-btn active" data-i18n="orders.tabAll" data-tab-status="all">全部订单 <span class="badge" id="badge-all">0</span></button>
+                <button class="tab-btn" data-i18n="orders.tabPending" data-tab-status="pending">待付款 <span class="badge" id="badge-pending">0</span></button>
+                <button class="tab-btn" data-i18n="orders.tabProcessing" data-tab-status="processing">处理中 <span class="badge" id="badge-processing">0</span></button>
+                <button class="tab-btn" data-i18n="orders.tabProduction" data-tab-status="production">生产中 <span class="badge" id="badge-production">0</span></button>
+                <button class="tab-btn" data-i18n="orders.tabShipped" data-tab-status="shipped">已发货 <span class="badge" id="badge-shipped">0</span></button>
+                <button class="tab-btn" data-i18n="orders.tabCompleted" data-tab-status="completed">已完成 <span class="badge" id="badge-completed">0</span></button>
+            </div>
+
+            <div class="orders-toolbar">
+                <div class="search-filter-group">
+                    <input type="text" class="search-input-lg" placeholder="搜索订单编号、供应商..." data-i18n="orders.searchPlaceholder">
+                    <select class="filter-dropdown">
+                        <option value="" data-i18n="orders.filterTime">下单时间</option>
+                        <option value="7">最近7天</option>
+                        <option value="30">最近30天</option>
+                        <option value="90">最近90天</option>
+                    </select>
+                </div>
+                <div><button class="btn-primary-sm" data-i18n="orders.exportBtn">导出订单</button></div>
+            </div>
+
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead><tr>
+                        <th data-i18n="orders.thOrderId">订单编号</th>
+                        <th data-i18n="orders.thSupplier">供应商</th>
+                        <th data-i18n="orders.thProduct">产品信息</th>
+                        <th data-i18n="orders.thQty">数量</th>
+                        <th data-i18n="orders.thAmount">金额</th>
+                        <th data-i18n="orders.thStatus">状态</th>
+                        <th data-i18n="orders.thTime">下单时间</th>
+                        <th data-i18n="orders.thAction">操作</th>
+                    </tr></thead>
+                    <tbody id="orders-tbody">
+                    </tbody>
+                </table>
+                <div id="orders-empty" style="text-align:center;padding:60px 20px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" style="width:64px;height:64px;margin-bottom:16px;opacity:.5;"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"></path><rect x="9" y="3" width="6" height="4" rx="1"></rect><path d="M9 14l2 2 4-4"></path></svg>
+                    <div style="font-size:15px;color:var(--text-muted);margin-bottom:8px;">暂无订单数据</div>
+                    <div style="font-size:13px;color:var(--text-muted);opacity:.7;">您的订单将在这里显示</div>
+                </div>
+            </div>
+
+            <div class="pagination" id="orders-pagination" style="display:none;">
+                <button class="page-btn" id="page-prev" disabled>上一页</button>
+                <span class="page-numbers" id="page-numbers">
+                </span>
+                <button class="page-btn" id="page-next">下一页</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L2: 订单详情（由JS动态填充） ==================== -->
+    <div class="page-view" id="view-detail">
+        <section class="orders-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">订单管理</a><span class="sep">/</span><span>订单详情</span></div>
+            <button class="btn-back-sm" onclick="showView('view-list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> 返回</button>
+            <div style="text-align:center;padding:60px 20px;color:var(--text-muted);">加载中...</div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 物流跟踪（暂无数据） ==================== -->
+    <div class="page-view" id="view-track">
+        <section class="orders-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">订单管理</a><span class="sep">/</span><a onclick="showView('view-detail')">订单详情</a><span class="sep">/</span><span>物流跟踪</span></div>
+            <button class="btn-back-sm" onclick="showView('view-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> 返回</button>
+            <div class="detail-card">
+                <div class="detail-card-header"><span class="detail-card-title">物流信息</span></div>
+                <div style="text-align:center;padding:40px 20px;color:var(--text-muted);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" style="width:48px;height:48px;margin-bottom:12px;opacity:.5;"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                    <div style="font-size:14px;">暂无物流信息</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 确认收货（暂无数据） ==================== -->
+    <div class="page-view" id="view-confirm">
+        <section class="orders-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">订单管理</a><span class="sep">/</span><a onclick="showView('view-detail')">订单详情</a><span class="sep">/</span><span>确认收货</span></div>
+            <button class="btn-back-sm" onclick="showView('view-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> 返回</button>
+            <div class="detail-card">
+                <div style="text-align:center;padding:40px 20px;color:var(--text-muted);">暂无待确认收货的订单</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 生产监控（暂无数据） ==================== -->
+    <div class="page-view" id="view-monitor">
+        <section class="orders-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">订单管理</a><span class="sep">/</span><a onclick="showView('view-detail')">订单详情</a><span class="sep">/</span><span>生产监控</span></div>
+            <button class="btn-back-sm" onclick="showView('view-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> 返回</button>
+            <div class="detail-card">
+                <div style="text-align:center;padding:40px 20px;color:var(--text-muted);">暂无生产监控数据</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L4: 监控上传详情（暂无数据） ==================== -->
+    <div class="page-view" id="view-monitor-upload">
+        <section class="orders-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">订单管理</a><span class="sep">/</span><a onclick="showView('view-detail')">订单详情</a><span class="sep">/</span><a onclick="showView('view-monitor')">生产监控</a><span class="sep">/</span><span>上传详情</span></div>
+            <button class="btn-back-sm" onclick="showView('view-monitor')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> 返回</button>
+            <div class="detail-card">
+                <div style="text-align:center;padding:40px 20px;color:var(--text-muted);">暂无上传记录</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L3: 合同查看（暂无数据） ==================== -->
+    <div class="page-view" id="view-contract">
+        <section class="orders-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">订单管理</a><span class="sep">/</span><a onclick="showView('view-detail')">订单详情</a><span class="sep">/</span><span>合同详情</span></div>
+            <button class="btn-back-sm" onclick="showView('view-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> 返回</button>
+            <div class="detail-card">
+                <div style="text-align:center;padding:40px 20px;color:var(--text-muted);">暂无合同信息</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L2: 付款页面（暂无数据） ==================== -->
+    <div class="page-view" id="view-pay">
+        <section class="orders-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">订单管理</a><span class="sep">/</span><span>订单付款</span></div>
+            <button class="btn-back-sm" onclick="showView('view-list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> 返回</button>
+            <div class="detail-card">
+                <div style="text-align:center;padding:40px 20px;color:var(--text-muted);">暂无待付款订单</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L2: 订单评价（暂无数据） ==================== -->
+    <div class="page-view" id="view-review">
+        <section class="orders-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">订单管理</a><span class="sep">/</span><span>订单评价</span></div>
+            <button class="btn-back-sm" onclick="showView('view-list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> 返回</button>
+            <div class="detail-card">
+                <div style="text-align:center;padding:40px 20px;color:var(--text-muted);">暂无可评价的订单</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==================== L5: 评价详情（暂无数据） ==================== -->
+    <div class="page-view" id="view-review-detail">
+        <section class="orders-section" style="padding-top:100px;">
+            <div class="view-breadcrumb"><a onclick="showView('view-list')">订单管理</a><span class="sep">/</span><span>评价详情</span></div>
+            <button class="btn-back-sm" onclick="showView('view-list')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> 返回</button>
+            <div class="detail-card">
+                <div style="text-align:center;padding:40px 20px;color:var(--text-muted);">暂无评价详情</div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-copyright"><p data-i18n="footer.copyright">&copy; 2026 全球供应链智能匹配平台 | 版权所有</p></div>
+        <nav class="footer-nav">
+            <a href="help.html" data-i18n="footer.help">帮助中心</a>
+            <a href="service.html" data-i18n="footer.service">客服中心</a>
+            <a href="about.html" data-i18n="footer.about">关于我们</a>
+            <a href="privacy.html" data-i18n="footer.privacy">隐私政策</a>
+            <a href="terms.html" data-i18n="footer.terms">服务条款</a>
+        </nav>
+        <div style="text-align:center;padding:8px 0;font-size:12px;"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow noopener" style="color:#888;text-decoration:none;">粤ICP备2026015135号-2</a></div>
+    </footer>
+
+    <!-- 平台客服互动按钮 -->
+    <div class="platform-chat-btn" onclick="toggleChatModal()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"></path><path d="M7 9h2v2H7zm4 0h2v2h-2zm4 0h2v2h-2z"></path></svg>
+        <span class="badge">0</span>
+    </div>
+
+    <!-- 平台客服互动弹窗 -->
+    <div class="chat-modal" id="chatModal">
+        <div class="chat-modal-header">
+            <h4><span class="online-dot"></span>平台客服中心</h4>
+            <button class="chat-modal-close" onclick="toggleChatModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg platform">
+                您好！我是易采贸易平台客服小易。目前平台处于试运营阶段，所有供应商信息均为虚拟展示数据。您的咨询和交互将由平台客服团队直接处理。有什么可以帮您的吗？
+                <span class="msg-time">10:30</span>
+            </div>
+        </div>
+        <div class="quick-replies">
+            <span class="quick-reply" onclick="sendQuickReply('订单问题咨询')">订单问题</span>
+            <span class="quick-reply" onclick="sendQuickReply('物流跟踪查询')">物流查询</span>
+            <span class="quick-reply" onclick="sendQuickReply('供应商入驻咨询')">供应商入驻</span>
+            <span class="quick-reply" onclick="sendQuickReply('平台功能咨询')">平台功能</span>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="输入您的问题..." onkeypress="if(event.key==='Enter')sendMessage()">
+            <button class="chat-send-btn" onclick="sendMessage()">发送</button>
+        </div>
+    </div>
+
+    <script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+<script src="auth-check.js"></script>
+    <script src="platform-scripts.js"></script>
+    <script>
+        var allOrders = [];
+        var currentPage = 0;
+        var pageSize = 10;
+        var totalPages = 0;
+        var currentFilter = 'all';
+        var selectedOrder = null;
+
+        // API base
+        var API_BASE = '/api';
+
+        function getAuthHeaders() {
+            var token = localStorage.getItem('accessToken');
+            return token ? { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+        }
+
+        function getCurrentUserId() {
+            try {
+                var user = JSON.parse(localStorage.getItem('currentUser'));
+                return user && user.id ? user.id : null;
+            } catch(e) { return null; }
+        }
+
+        // 状态映射
+        var statusMap = {
+            'PENDING': { css: 'status-pending', text: '待付款', filter: 'pending' },
+            'CONFIRMED': { css: 'status-processing', text: '已确认', filter: 'processing' },
+            'PAID': { css: 'status-processing', text: '已付款', filter: 'processing' },
+            'PRODUCTION': { css: 'status-in-production', text: '生产中', filter: 'production' },
+            'SHIPPED': { css: 'status-shipped', text: '已发货', filter: 'shipped' },
+            'RECEIVED': { css: 'status-completed', text: '已收货', filter: 'completed' },
+            'COMPLETED': { css: 'status-completed', text: '已完成', filter: 'completed' },
+            'CANCELLED': { css: 'status-pending', text: '已取消', filter: 'cancelled' }
+        };
+
+        function getStatusInfo(status) {
+            return statusMap[status] || { css: 'status-pending', text: status || '未知', filter: 'other' };
+        }
+
+        function formatAmount(amount) {
+            if (!amount && amount !== 0) return '¥0.00';
+            return '¥' + Number(amount).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            return dateStr.substring(0, 10);
+        }
+
+        // 加载订单数据
+        function loadOrders() {
+            var userId = getCurrentUserId();
+            if (!userId) {
+                showEmptyState();
+                return;
+            }
+            var url = API_BASE + '/orders/buyer/' + userId + '?page=' + currentPage + '&size=' + pageSize;
+            fetch(url, { headers: getAuthHeaders() })
+                .then(function(res) { return res.json(); })
+                .then(function(result) {
+                    var data = result.data || result;
+                    if (data && data.content) {
+                        allOrders = data.content;
+                        totalPages = data.totalPages || 1;
+                        currentPage = data.number || 0;
+                        renderOrders(allOrders);
+                        updateStats(allOrders, data.totalElements || allOrders.length);
+                        updatePagination();
+                    } else if (Array.isArray(data)) {
+                        allOrders = data;
+                        totalPages = 1;
+                        renderOrders(allOrders);
+                        updateStats(allOrders, allOrders.length);
+                    } else {
+                        allOrders = [];
+                        showEmptyState();
+                    }
+                })
+                .catch(function(err) {
+                    console.error('加载订单失败:', err);
+                    allOrders = [];
+                    showEmptyState();
+                });
+        }
+
+        // 渲染订单表格
+        function renderOrders(orders) {
+            var tbody = document.getElementById('orders-tbody');
+            var emptyDiv = document.getElementById('orders-empty');
+
+            if (!orders || orders.length === 0) {
+                tbody.innerHTML = '';
+                emptyDiv.style.display = '';
+                return;
+            }
+            emptyDiv.style.display = 'none';
+
+            var html = '';
+            orders.forEach(function(order) {
+                var st = getStatusInfo(order.status);
+                var filterStatus = st.filter;
+                var itemsText = '-';
+                var qtyText = '-';
+                if (order.items && order.items.length > 0) {
+                    var item = order.items[0];
+                    itemsText = item.productName || '-';
+                    if (order.items.length > 1) itemsText += ' 等' + order.items.length + '项';
+                    qtyText = item.quantity + (item.unit || '件');
+                } else if (order.remark) {
+                    itemsText = order.remark;
+                }
+
+                var actions = '<button class="btn-action" onclick="showOrderDetail(' + order.id + ')">详情</button>';
+                if (order.status === 'PENDING') {
+                    actions = '<button class="btn-action btn-pay" onclick="showOrderDetail(' + order.id + ')">去付款</button>';
+                } else if (order.status === 'SHIPPED') {
+                    actions += ' <button class="btn-action" onclick="showOrderDetail(' + order.id + ')">确认收货</button>';
+                } else if (order.status === 'COMPLETED' || order.status === 'RECEIVED') {
+                    actions += ' <button class="btn-action" onclick="showOrderDetail(' + order.id + ')">评价</button>';
+                }
+
+                html += '<tr data-status="' + filterStatus + '">'
+                    + '<td class="order-id">' + (order.orderNo || '-') + '</td>'
+                    + '<td><a class="supplier-link" onclick="showOrderDetail(' + order.id + ')">' + (order.supplierName || '供应商#' + (order.supplierId || '')) + '</a></td>'
+                    + '<td>' + itemsText + '</td>'
+                    + '<td>' + qtyText + '</td>'
+                    + '<td class="amount">' + formatAmount(order.totalAmount) + '</td>'
+                    + '<td><span class="status-badge ' + st.css + '">' + st.text + '</span></td>'
+                    + '<td>' + formatDate(order.createdAt) + '</td>'
+                    + '<td>' + actions + '</td>'
+                    + '</tr>';
+            });
+            tbody.innerHTML = html;
+
+            if (currentFilter !== 'all') {
+                filterTableByStatus(currentFilter);
+            }
+        }
+
+        function showEmptyState() {
+            document.getElementById('orders-tbody').innerHTML = '';
+            document.getElementById('orders-empty').style.display = '';
+            document.getElementById('orders-pagination').style.display = 'none';
+        }
+
+        // 更新统计数字
+        function updateStats(orders, total) {
+            var counts = { all: total || 0, pending: 0, processing: 0, production: 0, shipped: 0, completed: 0 };
+            orders.forEach(function(order) {
+                var st = getStatusInfo(order.status);
+                var f = st.filter;
+                if (counts[f] !== undefined) counts[f]++;
+            });
+            // 如果是分页数据，processing 统计框合并 processing+production+shipped
+            var processingTotal = counts.processing + counts.production + counts.shipped;
+
+            var el;
+            el = document.getElementById('count-all'); if (el) el.textContent = counts.all;
+            el = document.getElementById('count-pending'); if (el) el.textContent = counts.pending;
+            el = document.getElementById('count-processing'); if (el) el.textContent = processingTotal;
+            el = document.getElementById('count-completed'); if (el) el.textContent = counts.completed;
+
+            el = document.getElementById('badge-all'); if (el) el.textContent = counts.all;
+            el = document.getElementById('badge-pending'); if (el) el.textContent = counts.pending;
+            el = document.getElementById('badge-processing'); if (el) el.textContent = counts.processing;
+            el = document.getElementById('badge-production'); if (el) el.textContent = counts.production;
+            el = document.getElementById('badge-shipped'); if (el) el.textContent = counts.shipped;
+            el = document.getElementById('badge-completed'); if (el) el.textContent = counts.completed;
+        }
+
+        // 更新分页
+        function updatePagination() {
+            var pag = document.getElementById('orders-pagination');
+            if (totalPages <= 1) {
+                pag.style.display = 'none';
+                return;
+            }
+            pag.style.display = '';
+            var nums = document.getElementById('page-numbers');
+            var html = '';
+            for (var i = 0; i < totalPages; i++) {
+                html += '<button class="page-num' + (i === currentPage ? ' active' : '') + '" onclick="goToPage(' + i + ')">' + (i + 1) + '</button>';
+            }
+            nums.innerHTML = html;
+            document.getElementById('page-prev').disabled = currentPage === 0;
+            document.getElementById('page-next').disabled = currentPage >= totalPages - 1;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            loadOrders();
+        }
+
+        document.getElementById('page-prev').addEventListener('click', function() {
+            if (currentPage > 0) goToPage(currentPage - 1);
+        });
+        document.getElementById('page-next').addEventListener('click', function() {
+            if (currentPage < totalPages - 1) goToPage(currentPage + 1);
+        });
+
+        // 视图切换
+        function showView(viewId) {
+            document.querySelectorAll('.page-view').forEach(function(v) { v.classList.remove('active'); });
+            var target = document.getElementById(viewId);
+            if (target) target.classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // 查看订单详情
+        function showOrderDetail(orderId) {
+            fetch(API_BASE + '/orders/' + orderId, { headers: getAuthHeaders() })
+                .then(function(res) { return res.json(); })
+                .then(function(result) {
+                    var order = result.data || result;
+                    if (!order || !order.id) { alert('订单不存在'); return; }
+                    selectedOrder = order;
+                    renderOrderDetail(order);
+                    showView('view-detail');
+                })
+                .catch(function(err) {
+                    console.error('加载订单详情失败:', err);
+                    alert('加载订单详情失败');
+                });
+        }
+
+        // 渲染订单详情
+        function renderOrderDetail(order) {
+            var st = getStatusInfo(order.status);
+            var detailSection = document.getElementById('view-detail');
+            if (!detailSection) return;
+
+            // 进度节点
+            var steps = ['PENDING', 'CONFIRMED', 'PAID', 'PRODUCTION', 'SHIPPED', 'COMPLETED'];
+            var stepLabels = ['下单', '确认', '付款', '生产', '发货', '完成'];
+            var currentIdx = steps.indexOf(order.status);
+            if (currentIdx < 0) currentIdx = 0;
+
+            var progressHtml = '';
+            for (var i = 0; i < steps.length; i++) {
+                var dotClass = i < currentIdx ? 'done' : (i === currentIdx ? 'current' : 'pending');
+                var dotContent = i < currentIdx ? '&#10003;' : (i + 1);
+                progressHtml += '<div class="progress-node"><div class="progress-dot ' + dotClass + '">' + dotContent + '</div><div class="progress-label">' + stepLabels[i] + '</div></div>';
+                if (i < steps.length - 1) {
+                    progressHtml += '<div class="progress-line' + (i < currentIdx ? ' done' : '') + '"></div>';
+                }
+            }
+
+            // 产品信息
+            var productInfo = '-';
+            var qtyInfo = '-';
+            if (order.items && order.items.length > 0) {
+                var firstItem = order.items[0];
+                productInfo = firstItem.productName || '-';
+                if (order.items.length > 1) productInfo += ' 等' + order.items.length + '项';
+                qtyInfo = firstItem.quantity + (firstItem.unit || '件');
+            }
+
+            var paymentText = order.paymentMethod || '-';
+            if (order.paymentStatus === 'PAID') paymentText += '（已付款）';
+            else if (order.paymentStatus === 'UNPAID') paymentText += '（未付款）';
+
+            detailSection.innerHTML = '<section class="orders-section" style="padding-top:100px;">'
+                + '<div class="view-breadcrumb"><a onclick="showView(\'view-list\')">订单管理</a><span class="sep">/</span><span>订单详情</span></div>'
+                + '<button class="btn-back-sm" onclick="showView(\'view-list\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> 返回</button>'
+                + '<div class="detail-card"><div class="detail-card-header"><span class="detail-card-title">订单进度</span><span class="status-badge ' + st.css + '">' + st.text + '</span></div>'
+                + '<div class="progress-track">' + progressHtml + '</div></div>'
+                + '<div class="detail-card"><div class="detail-card-header"><span class="detail-card-title">基本信息</span></div>'
+                + '<div class="detail-grid">'
+                + '<div class="detail-row"><span class="detail-label">订单编号</span><span class="detail-val">' + (order.orderNo || '-') + '</span></div>'
+                + '<div class="detail-row"><span class="detail-label">下单时间</span><span class="detail-val">' + (order.createdAt || '-') + '</span></div>'
+                + '<div class="detail-row"><span class="detail-label">供应商</span><span class="detail-val" style="color:var(--primary-cyan);">' + (order.supplierName || '供应商#' + (order.supplierId || '')) + '</span></div>'
+                + '<div class="detail-row"><span class="detail-label">产品信息</span><span class="detail-val">' + productInfo + '</span></div>'
+                + '<div class="detail-row"><span class="detail-label">数量</span><span class="detail-val">' + qtyInfo + '</span></div>'
+                + '<div class="detail-row"><span class="detail-label">订单金额</span><span class="detail-val" style="font-size:18px;color:var(--primary-cyan);">' + formatAmount(order.totalAmount) + '</span></div>'
+                + '<div class="detail-row"><span class="detail-label">付款方式</span><span class="detail-val">' + paymentText + '</span></div>'
+                + '<div class="detail-row"><span class="detail-label">备注</span><span class="detail-val">' + (order.remark || '-') + '</span></div>'
+                + '</div></div>'
+                + '<div style="display:flex;gap:12px;flex-wrap:wrap;">'
+                + (order.trackingNumber ? '<button class="btn-primary-sm" onclick="alert(\'物流单号: ' + order.trackingNumber + '\\n物流公司: ' + (order.logisticsCompany || '-') + '\')">物流跟踪</button>' : '')
+                + '<button class="btn-primary-sm" style="background:var(--bg-card);color:var(--text-secondary);border:1px solid var(--border-color);">联系供应商</button>'
+                + '</div></section>';
+        }
+
+        // Tab 切换
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+                var status = this.getAttribute('data-tab-status') || 'all';
+                currentFilter = status;
+                filterTableByStatus(status);
+            });
+        });
+
+        // 统计卡片筛选
+        function filterByStatus(status) {
+            currentFilter = status;
+            document.querySelectorAll('.stat-box').forEach(function(box) { box.classList.remove('active'); });
+            var statBox = document.getElementById('stat-' + status);
+            if (statBox) statBox.classList.add('active');
+
+            document.querySelectorAll('.tab-btn').forEach(function(btn) {
+                btn.classList.remove('active');
+                var tabStatus = btn.getAttribute('data-tab-status');
+                if (tabStatus === status) btn.classList.add('active');
+            });
+            filterTableByStatus(status);
+        }
+
+        // 表格行过滤
+        function filterTableByStatus(status) {
+            var rows = document.querySelectorAll('#orders-tbody tr');
+            var visibleCount = 0;
+            rows.forEach(function(row) {
+                var rowStatus = row.getAttribute('data-status');
+                if (status === 'all') {
+                    row.style.display = '';
+                    visibleCount++;
+                } else if (status === 'processing') {
+                    var show = (rowStatus === 'processing' || rowStatus === 'production' || rowStatus === 'shipped');
+                    row.style.display = show ? '' : 'none';
+                    if (show) visibleCount++;
+                } else {
+                    var match = rowStatus === status;
+                    row.style.display = match ? '' : 'none';
+                    if (match) visibleCount++;
+                }
+            });
+            var emptyDiv = document.getElementById('orders-empty');
+            if (emptyDiv) emptyDiv.style.display = visibleCount === 0 ? '' : 'none';
+        }
+
+        // 平台客服弹窗
+        function toggleChatModal() {
+            var modal = document.getElementById('chatModal');
+            modal.classList.toggle('active');
+            if (modal.classList.contains('active')) {
+                var badge = document.querySelector('.platform-chat-btn .badge');
+                if (badge) badge.style.display = 'none';
+            }
+        }
+
+        function openSupplierChat(supplierName) {
+            toggleChatModal();
+            var chatMessages = document.getElementById('chatMessages');
+            var time = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
+            chatMessages.innerHTML += '<div class="chat-msg platform">' + (typeof t === 'function' ? t('orders.chat.demoNotice') : '您好，请问有什么可以帮您？') + '<span class="msg-time">' + time + '</span></div>';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendMessage() {
+            var input = document.getElementById('chatInput');
+            var message = input.value.trim();
+            if (!message) return;
+            var chatMessages = document.getElementById('chatMessages');
+            var time = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
+            chatMessages.innerHTML += '<div class="chat-msg user">' + message + '<span class="msg-time">' + time + '</span></div>';
+            input.value = '';
+            setTimeout(function() {
+                var replies = [
+                    typeof t === 'function' ? t('orders.chat.reply1') : '感谢您的咨询，我们会尽快处理。',
+                    typeof t === 'function' ? t('orders.chat.reply2') : '您的问题已收到，客服团队会在工作时间内回复您。',
+                    typeof t === 'function' ? t('orders.chat.reply3') : '请提供更多订单信息，以便我们更好地为您服务。',
+                    typeof t === 'function' ? t('orders.chat.reply4') : '如有紧急问题，请拨打客服热线。'
+                ];
+                var reply = replies[Math.floor(Math.random() * replies.length)];
+                var replyTime = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
+                chatMessages.innerHTML += '<div class="chat-msg platform">' + reply + '<span class="msg-time">' + replyTime + '</span></div>';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendQuickReply(text) {
+            document.getElementById('chatInput').value = text;
+            sendMessage();
+        }
+
+        // 页面加载时获取订单
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(loadOrders, 300);
+        });
+    </script>
+<script src="/js/ai-chat.js"></script>
+</body>
+</html>

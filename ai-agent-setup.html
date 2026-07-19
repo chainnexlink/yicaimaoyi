@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI智能体集成示例 - 易采贸易平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: #4a5568;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card h2 {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h2 i {
+            font-size: 1.8rem;
+        }
+        
+        .card p {
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+        
+        .features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        
+        .features li {
+            padding: 8px 0;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .features li:before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .btn-secondary:hover {
+            background: #cbd5e0;
+            box-shadow: 0 8px 20px rgba(203, 213, 224, 0.3);
+        }
+        
+        .demo-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-top: 40px;
+        }
+        
+        .demo-section h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2d3748;
+        }
+        
+        .demo-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .demo-action {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 200px;
+        }
+        
+        .demo-action:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+        
+        .demo-action i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .demo-action span {
+            font-weight: 500;
+            color: #4a5568;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-actions {
+                flex-direction: column;
+            }
+            
+            .demo-action {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI智能体集成示例</h1>
+            <p>将现有的AI聊天悬浮窗口升级为功能完整的智能体系统，支持项目功能调用</p>
+        </div>
+        
+        <div class="content">
+            <div class="card">
+                <h2><i>🚀</i> 快速集成</h2>
+                <p>只需两步即可将智能体集成到您的页面：</p>
+                <ul class="features">
+                    <li>引入CSS和JS文件</li>
+                    <li>智能体自动初始化</li>
+                    <li>无需修改现有代码</li>
+                    <li>向后兼容现有API</li>
+                </ul>
+                <div class="code-block">
+&lt;!-- 引入智能体 --&gt;
+&lt;link rel="stylesheet" href="css/ai-agent-enhanced.css"&gt;
+&lt;script src="js/ai-agent-enhanced.js"&gt;&lt;/script&gt;
+                </div>
+                <button class="btn" onclick="loadAgent()">立即加载智能体</button>
+            </div>
+            
+            <div class="card">
+                <h2><i>🔧</i> 功能特性</h2>
+                <p>智能体提供丰富的功能：</p>
+                <ul class="features">
+                    <li>工具调用系统</li>
+                    <li>上下文感知</li>
+                    <li>文件上传支持</li>
+                    <li>实时状态显示</li>
+                    <li>响应式设计</li>
+                    <li>暗色模式支持</li>
+                </ul>
+                <p>支持搜索产品、匹配工厂、创建竞拍、计算成本等功能。</p>
+                <button class="btn btn-secondary" onclick="showFeatures()">查看功能详情</button>
+            </div>
+            
+            <div class="card">
+                <h2><i>⚙️</i> 配置选项</h2>
+                <p>灵活的配置选项：</p>
+                <ul class="features">
+                    <li>自定义API端点</li>
+                    <li>调整超时时间</li>
+                    <li>文件大小限制</li>
+                    <li>工具启用/禁用</li>
+                    <li>会话管理</li>
+                    <li>主题定制</li>
+                </ul>
+                <div class="code-block">
+// 配置示例
+var AGENT_CONFIG = {
+    apiUrl: '/api/ai-agent/message',
+    timeout: 45000,
+    maxFiles: 5,
+    toolsEnabled: true
+};
+                </div>
+                <button class="btn btn-secondary" onclick="showConfig()">查看配置</button>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>🎯 功能演示</h2>
+            <p style="text-align: center; margin-bottom: 30px; color: #4a5568;">
+                点击下面的按钮体验智能体功能（需要先加载智能体）
+            </p>
+            <div class="demo-actions">
+                <div class="demo-action" onclick="demoSearch()">
+                    <i>🔍</i>
+                    <span>搜索产品</span>
+                </div>
+                <div class="demo-action" onclick="demoAuction()">
+                    <i>💰</i>
+                    <span>创建竞拍</span>
+                </div>
+                <div class="demo-action" onclick="demoCalculate()">
+                    <i>🧮</i>
+                    <span>计算成本</span>
+                </div>
+                <div class="demo-action" onclick="demoNavigate()">
+                    <i>🧭</i>
+                    <span>页面导航</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2024 易采贸易平台 - AI智能体增强版 v1.0.0</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                技术支持: tech@yicai-trade.com | 
+                <a href="ai-agent-integration.md" style="color: #667eea; text-decoration: none;">查看完整文档</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 加载智能体
+        function loadAgent() {
+            // 创建样式链接
+            const styleLink = document.createElement('link');
+            styleLink.rel = 'stylesheet';
+            styleLink.href = 'css/ai-agent-enhanced.css';
+            document.head.appendChild(styleLink);
+            
+            // 创建脚本标签
+            const script = document.createElement('script');
+            script.src = 'js/ai-agent-enhanced.js';
+            script.onload = function() {
+                alert('✅ AI智能体加载成功！\n\n右下角会出现悬浮按钮，点击即可打开智能体窗口。');
+            };
+            script.onerror = function() {
+                alert('❌ 加载智能体失败，请检查文件路径。\n\n确保以下文件存在：\n- css/ai-agent-enhanced.css\n- js/ai-agent-enhanced.js');
+            };
+            document.body.appendChild(script);
+        }
+        
+        // 演示功能
+        function demoSearch() {
+            if (typeof window.toggleAgentWindow !== 'function') {
+                alert('请先点击"立即加载智能体"按钮');
+                return;
+            }
+            
+            // 打开智能体窗口
+            window.toggleAgentWindow();
+            
+            // 模拟输入搜索
+            setTimeout(() => {
+                const input = document.getElementById('aiAgentInput');
+                if (input) {
+                    input.value = '帮我找陶瓷杯供应商';
+                    input.focus();
+                    
+                    // 模拟发送
+                    setTimeout(() => {
+                        const sendBtn = document.getElementById('aiAgentSendBtn');
+                        if (sendBtn) {
+                            sendBtn.click();
+                        }
+                    }, 500);
+                }
+            }, 300);
+        }
+        
+        function demoAuction() {
+            if (typeof window.toggleAgentWindow !== 'function') {
+                alert('请先点击"立即加载智能体"按钮');
+                return;
+            }
+            
+            window.toggleAgentWindow();
+            
+            setTimeout(() => {
+                const input = document.getElementById('aiAgentInput');
+                if (input) {
+                    input.value = '我想采购1000个不锈钢水壶，创建反向竞拍';
+                    input.focus();
+                    
+                    setTimeout(() => {
+                        const sendBtn = document.getElementById('aiAgentSendBtn');
+                        if (sendBtn) {
+                            sendBtn.click();
+                        }
+                    }, 500);
+                }
+            }, 300);
+        }
+        
+        function demoCalculate() {
+            if (typeof window.toggleAgentWindow !== 'function') {
+                alert('请先点击"立即加载智能体"按钮');
+                return;
+            }
+            
+            window.toggleAgentWindow();
+            
+            setTimeout(() => {
+                const input = document.getElementById('aiAgentInput');
+                if (input) {
+                    input.value = '计算5000个陶瓷杯运到美国的成本';
+                    input.focus();
+                    
+                    setTimeout(() => {
+                        const sendBtn = document.getElementById('aiAgentSendBtn');
+                        if (sendBtn) {
+                            sendBtn.click();
+                        }
+                    }, 500);
+                }
+            }, 300);
+        }
+        
+        function demoNavigate() {
+            if (typeof window.toggleAgentWindow !== 'function') {
+                alert('请先点击"立即加载智能体"按钮');
+                return;
+            }
+            
+            window.toggleAgentWindow();
+            
+            setTimeout(() => {
+                const input = document.getElementById('aiAgentInput');
+                if (input) {
+                    input.value = '带我去智能匹配页面';
+                    input.focus();
+                    
+                    setTimeout(() => {
+                        const sendBtn = document.getElementById('aiAgentSendBtn');
+                        if (sendBtn) {
+                            sendBtn.click();
+                        }
+                    }, 500);
+                }
+            }, 300);
+        }
+        
+        // 显示功能详情
+        function showFeatures() {
+            const features = `
+🤖 AI智能体功能详情：
+
+🔧 工具调用系统
+• search_products - 搜索产品
+• match_factories - 匹配工厂
+• create_reverse_auction - 创建反向竞拍
+• calculate_cost - 计算成本
+• check_order_status - 检查订单状态
+• navigate_page - 页面导航
+• explain_feature - 功能解释
+
+📁 文件处理
+• 支持图片上传 (PNG, JPEG, GIF, WebP, BMP)
+• 支持文档上传 (PDF, Word, Excel, PPT, TXT, CSV)
+• 最大文件大小: 10MB
+• 最多同时上传: 5个文件
+
+🎨 用户界面
+• 现代化的悬浮按钮
+• 可折叠工具面板
+• 实时打字指示器
+• 响应式设计
+• 暗色模式支持
+
+🔄 上下文感知
+• 根据当前页面提供相关帮助
+• 记忆会话历史
+• 智能推荐下一步操作
+            `;
+            alert(features);
+        }
+        
+        // 显示配置
+        function showConfig() {
+            const config = `
+⚙️ AI智能体配置选项：
+
+前端配置 (ai-agent-enhanced.js)
+• HTTP_API_URL - API地址 (默认: '/api/ai-chat/message')
+• AGENT_API_URL - 智能体API (默认: '/api/ai-agent/message')
+• RESPONSE_TIMEOUT - 响应超时 (默认: 45000ms)
+• MAX_FILE_SIZE - 最大文件大小 (默认: 10MB)
+• MAX_FILES - 最大文件数量 (默认: 5个)
+
+后端配置 (application.yml)
+• ai.agent.enabled - 启用智能体 (默认: true)
+• ai.agent.max-session-time - 会话超时 (默认: 30分钟)
+• ai.agent.max-history-length - 最大历史记录 (默认: 20条)
+• ai.agent.tools-enabled - 启用工具调用 (默认: true)
+• ai.agent.file-upload-enabled - 启用文件上传 (默认: true)
+
+自定义配置
+• 修改 css/ai-agent-enhanced.css 自定义样式
+• 扩展 AIAgentService.java 添加新工具
+• 更新工具定义注册新功能
+            `;
+            alert(config);
+        }
+    </script>
+</body>
+</html>

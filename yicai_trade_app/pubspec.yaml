@@ -1,0 +1,69 @@
+name: yicai_trade_app
+description: "易采贸易 - 全球供应链智能匹配平台"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # Routing
+  go_router: ^14.8.1
+
+  # Network
+  dio: ^5.7.0
+
+  # Storage
+  flutter_secure_storage: ^9.2.4
+  shared_preferences: ^2.3.5
+
+  # i18n
+  easy_localization: ^3.0.7
+
+  # UI
+  cupertino_icons: ^1.0.8
+  flutter_svg: ^2.0.17
+  cached_network_image: ^3.4.1
+  shimmer: ^3.0.0
+  lottie: ^3.3.1
+  smooth_page_indicator: ^1.2.0+3
+
+  # Image & Chart
+  image_picker: ^1.1.2
+  fl_chart: ^0.69.2
+
+  # WebSocket
+  web_socket_channel: ^3.0.1
+  stomp_dart_client: ^2.0.0
+
+  # Utils
+  logger: ^2.5.0
+  connectivity_plus: ^6.1.2
+  package_info_plus: ^8.3.0
+  url_launcher: ^6.3.1
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  riverpod_generator: ^2.6.3
+  build_runner: ^2.4.14
+  json_serializable: ^6.9.4
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/i18n/
+    - assets/images/
+    - assets/lottie/

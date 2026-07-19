@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title>编辑产品 - 供应商中心</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a1628 0%, #1a1a2e 50%, #0d1926 100%);
+            min-height: 100vh;
+            color: #fff;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0,229,204,0.2);
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .page-title span {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            margin-left: 15px;
+        }
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+        .btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #00E5CC, #00b8a3);
+            color: #0a1628;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,229,204,0.4);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        .form-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        .form-main {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .form-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-title svg {
+            width: 20px;
+            height: 20px;
+            color: #00E5CC;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 8px;
+        }
+        .form-label .required {
+            color: #ff6b6b;
+            margin-left: 4px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #00E5CC;
+            box-shadow: 0 0 0 3px rgba(0,229,204,0.1);
+        }
+        .form-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        textarea.form-input {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .form-select option {
+            background: #1a1a2e;
+        }
+        .image-upload-area {
+            border: 2px dashed rgba(0,229,204,0.3);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .image-upload-area:hover {
+            border-color: #00E5CC;
+            background: rgba(0,229,204,0.05);
+        }
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 15px;
+            color: #00E5CC;
+        }
+        .upload-text {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+        .upload-hint {
+            color: rgba(255,255,255,0.4);
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        .image-preview-list {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .image-preview-item {
+            position: relative;
+            aspect-ratio: 1;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .image-preview-item .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            background: rgba(255,0,0,0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .image-preview-item:hover .remove-btn {
+            opacity: 1;
+        }
+        .image-preview-item .main-tag {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 5px;
+            background: rgba(0,229,204,0.9);
+            color: #0a1628;
+            font-size: 12px;
+            text-align: center;
+        }
+        .form-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .status-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .status-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .status-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+        .status-option:hover {
+            background: rgba(0,229,204,0.1);
+        }
+        .status-option.active {
+            border-color: #00E5CC;
+            background: rgba(0,229,204,0.1);
+        }
+        .status-radio {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            position: relative;
+        }
+        .status-option.active .status-radio {
+            border-color: #00E5CC;
+        }
+        .status-option.active .status-radio::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: #00E5CC;
+            border-radius: 50%;
+        }
+        .status-label {
+            font-size: 14px;
+        }
+        .price-summary {
+            background: rgba(0,229,204,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .price-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            color: #00E5CC;
+        }
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .spec-table th,
+        .spec-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .spec-table th {
+            color: rgba(255,255,255,0.6);
+            font-weight: normal;
+            font-size: 13px;
+        }
+        .spec-table input {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 13px;
+        }
+        .add-spec-btn {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px dashed rgba(0,229,204,0.4);
+            border-radius: 8px;
+            color: #00E5CC;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        .add-spec-btn:hover {
+            background: rgba(0,229,204,0.1);
+            border-color: #00E5CC;
+        }
+        .tips-card {
+            background: rgba(255,193,7,0.1);
+            border: 1px solid rgba(255,193,7,0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .tips-title {
+            color: #ffc107;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tips-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .tips-list li {
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+            padding: 6px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+        .tips-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 6px;
+            height: 6px;
+            background: #ffc107;
+            border-radius: 50%;
+        }
+        @media (max-width: 992px) {
+            .form-container {
+                grid-template-columns: 1fr;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .image-preview-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 576px) {
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            .image-preview-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="javascript:history.back()" class="inline-back" title="返回">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                </a>
+                <a href="index.html" class="logo">易采供应链</a>
+            </div>
+            <div class="nav-right">
+                <a href="supplier-center.html" class="nav-link">供应商中心</a>
+                <a href="messages.html" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <div class="page-header">
+            <h1 class="page-title">编辑产品 <span>SKU: --</span></h1>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="location.href='supplier-product-manage.html'">取消</button>
+                <button class="btn btn-primary" onclick="saveProduct()">保存产品</button>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div class="form-main">
+                <!-- 基本信息 -->
+                <div class="form-card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        基本信息
+                    </h3>
+                    <div class="form-group">
+                        <label class="form-label">产品名称 <span class="required">*</span></label>
+                        <input type="text" class="form-input" value="--" placeholder="请输入产品名称">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">产品SKU <span class="required">*</span></label>
+                            <input type="text" class="form-input" value="" placeholder="请输入产品SKU">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">产品分类 <span class="required">*</span></label>
+                            <select class="form-select">
+                                <option value="">请选择分类</option>
+                                <option value="1" selected>电子元器件</option>
+                                <option value="2">机械设备</option>
+                                <option value="3">原材料</option>
+                                <option value="4">化工产品</option>
+                                <option value="5">纺织品</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">产品简介</label>
+                        <input type="text" class="form-input" value="工业级智能控制器，适用于自动化生产线" placeholder="一句话描述产品特点">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">产品详情</label>
+                        <textarea class="form-input" placeholder="请详细描述产品特点、用途、优势等">-- 是一款高性能工业级智能控制器，专为自动化生产线设计。
+
+主要特点：
+- 32位ARM Cortex-M4处理器
+- 支持多种工业通信协议（Modbus、CAN、EtherCAT）
+- 工作温度范围：-40°C 至 +85°C
+- IP67防护等级
+- 支持远程固件升级
+
+适用场景：
+- 智能制造生产线
+- 物流自动化系统
+- 能源管理系统</textarea>
+                    </div>
+                </div>
+
+                <!-- 产品图片 -->
+                <div class="form-card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        产品图片
+                    </h3>
+                    <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <div class="upload-text">点击或拖拽上传产品图片</div>
+                        <div class="upload-hint">支持 JPG、PNG 格式，单张不超过 5MB，最多上传 8 张</div>
+                        <input type="file" id="imageInput" hidden multiple accept="image/*">
+                    </div>
+                    <div class="image-preview-list">
+                        <div class="image-preview-item">
+                            <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#2d2d44);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);">图片1</div>
+                            <div class="main-tag">主图</div>
+                            <div class="remove-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="width:14px;height:14px;">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="image-preview-item">
+                            <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#2d2d44);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);">图片2</div>
+                            <div class="remove-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="width:14px;height:14px;">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="image-preview-item">
+                            <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1a2e,#2d2d44);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.5);">图片3</div>
+                            <div class="remove-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" style="width:14px;height:14px;">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 规格参数 -->
+                <div class="form-card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="8" y1="6" x2="21" y2="6"></line>
+                            <line x1="8" y1="12" x2="21" y2="12"></line>
+                            <line x1="8" y1="18" x2="21" y2="18"></line>
+                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                        </svg>
+                        规格参数
+                    </h3>
+                    <table class="spec-table">
+                        <thead>
+                            <tr>
+                                <th style="width:40%">参数名称</th>
+                                <th style="width:50%">参数值</th>
+                                <th style="width:10%">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" value="处理器"></td>
+                                <td><input type="text" value="ARM Cortex-M4"></td>
+                                <td><button style="background:transparent;border:none;color:#ff6b6b;cursor:pointer;">删除</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" value="工作电压"></td>
+                                <td><input type="text" value="DC 12-24V"></td>
+                                <td><button style="background:transparent;border:none;color:#ff6b6b;cursor:pointer;">删除</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" value="通信协议"></td>
+                                <td><input type="text" value="Modbus/CAN/EtherCAT"></td>
+                                <td><button style="background:transparent;border:none;color:#ff6b6b;cursor:pointer;">删除</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" value="工作温度"></td>
+                                <td><input type="text" value="-40°C ~ +85°C"></td>
+                                <td><button style="background:transparent;border:none;color:#ff6b6b;cursor:pointer;">删除</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" value="防护等级"></td>
+                                <td><input type="text" value="IP67"></td>
+                                <td><button style="background:transparent;border:none;color:#ff6b6b;cursor:pointer;">删除</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button class="add-spec-btn">+ 添加规格参数</button>
+                </div>
+
+                <!-- 价格库存 -->
+                <div class="form-card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        价格与库存
+                    </h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">销售单价 (元) <span class="required">*</span></label>
+                            <input type="number" class="form-input" value="800.00" placeholder="请输入销售单价">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">成本价 (元)</label>
+                            <input type="number" class="form-input" value="520.00" placeholder="请输入成本价">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">最小起订量</label>
+                            <input type="number" class="form-input" value="100" placeholder="请输入最小起订量">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">计量单位</label>
+                            <select class="form-select">
+                                <option value="件" selected>件</option>
+                                <option value="套">套</option>
+                                <option value="个">个</option>
+                                <option value="台">台</option>
+                                <option value="箱">箱</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">当前库存 <span class="required">*</span></label>
+                            <input type="number" class="form-input" value="5000" placeholder="请输入库存数量">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">库存预警值</label>
+                            <input type="number" class="form-input" value="500" placeholder="低于此值将预警">
+                        </div>
+                    </div>
+                    <div class="price-summary">
+                        <div class="price-row">
+                            <span>销售单价</span>
+                            <span>¥800.00</span>
+                        </div>
+                        <div class="price-row">
+                            <span>成本价</span>
+                            <span>--</span>
+                        </div>
+                        <div class="price-row">
+                            <span>预计毛利</span>
+                            <span>¥280.00 (35%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-sidebar">
+                <!-- 发布状态 -->
+                <div class="status-card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        发布状态
+                    </h3>
+                    <div class="status-options">
+                        <div class="status-option active" onclick="selectStatus(this)">
+                            <div class="status-radio"></div>
+                            <span class="status-label">立即上架</span>
+                        </div>
+                        <div class="status-option" onclick="selectStatus(this)">
+                            <div class="status-radio"></div>
+                            <span class="status-label">暂存草稿</span>
+                        </div>
+                        <div class="status-option" onclick="selectStatus(this)">
+                            <div class="status-radio"></div>
+                            <span class="status-label">定时上架</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 产品标签 -->
+                <div class="form-card">
+                    <h3 class="card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                            <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                        </svg>
+                        产品标签
+                    </h3>
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder="输入标签后按回车添加">
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                        <span style="padding:6px 12px;background:rgba(0,229,204,0.2);border-radius:20px;font-size:12px;display:flex;align-items:center;gap:6px;">
+                            工业控制 <span style="cursor:pointer;opacity:0.7;">×</span>
+                        </span>
+                        <span style="padding:6px 12px;background:rgba(0,229,204,0.2);border-radius:20px;font-size:12px;display:flex;align-items:center;gap:6px;">
+                            智能设备 <span style="cursor:pointer;opacity:0.7;">×</span>
+                        </span>
+                        <span style="padding:6px 12px;background:rgba(0,229,204,0.2);border-radius:20px;font-size:12px;display:flex;align-items:center;gap:6px;">
+                            自动化 <span style="cursor:pointer;opacity:0.7;">×</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 提示信息 -->
+                <div class="tips-card">
+                    <div class="tips-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        温馨提示
+                    </div>
+                    <ul class="tips-list">
+                        <li>产品名称建议包含品牌、型号等关键信息</li>
+                        <li>产品图片建议使用白底图，主图尺寸 800×800px</li>
+                        <li>详细的规格参数有助于提高产品曝光率</li>
+                        <li>合理的价格设置可提升成交转化率</li>
+                    </ul>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                    <button class="btn btn-primary" style="width:100%;" onclick="saveProduct()">保存产品</button>
+                    <button class="btn btn-secondary" style="width:100%;" onclick="previewProduct()">预览产品</button>
+                    <button class="btn btn-secondary" style="width:100%;color:#ff6b6b;border-color:rgba(255,107,107,0.3);" onclick="deleteProduct()">删除产品</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+<script src="auth-check.js"></script>
+    <script>
+        function selectStatus(el) {
+            document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function saveProduct() {
+            alert('产品保存成功！');
+            location.href = 'supplier-product-manage.html';
+        }
+
+        function previewProduct() {
+            alert('预览功能开发中');
+        }
+
+        function deleteProduct() {
+            if (confirm('确定要删除此产品吗？删除后无法恢复。')) {
+                alert('产品已删除');
+                location.href = 'supplier-product-manage.html';
+            }
+        }
+    </script>
+<script src="/js/ai-chat.js"></script>
+</body>
+</html>
+</html>

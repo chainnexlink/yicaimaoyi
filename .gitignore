@@ -1,0 +1,81 @@
+# Vercel & deploy keys
+.vercel
+.vercel-tmp/
+.deploy-keys/
+
+# Build & temp
+*.log
+*.pid
+*.b64
+*.zip
+nul
+hs_err_pid*.log
+replay_pid*.log
+flutter-version.*
+
+# SSH private keys
+.yicai_github_deploy_*
+
+# Python scripts (dev tools)
+_*.py
+_*.json
+_*.txt
+_*.b64
+*.py
+fix_*.py
+gen_*.py
+check_*.py
+cleanup_*.py
+extract_*.py
+inject_*.py
+patch_*.py
+write_*.py
+
+# Temp JSON (i18n working files)
+*-i18n-keys.json
+all-missing-keys.json
+all-translations.json
+dict-part.json
+missing-keys.json
+missing-keys.txt
+missing_keys_full.txt
+remaining-missing.json
+remaining-translations.json
+trans-batch.json
+trans-dict.json
+
+# Temp text files
+*.txt
+!yicai-trade-backend/src/main/resources/**
+
+# Screenshots & temp images
+*.png
+*.jpg
+!yicai_trade_app/assets/**
+
+# Dev scripts backup
+_dev-scripts-backup/
+_deploy-package-*/
+.dart-pub-cache/
+.qoder/
+.agents/
+
+# Backend build output
+yicai-trade-backend/target/
+yicai-trade-backend/test_write*.txt
+yicai-trade-backend/*.txt
+
+# Node/JS temp
+test_node.txt
+node_modules/
+
+# PowerShell scripts (local tools)
+*.ps1
+
+# Batch files (local service control)
+*.bat
+
+# Temp misc
+fc.b64
+temp_*.txt
+part1_*.txt

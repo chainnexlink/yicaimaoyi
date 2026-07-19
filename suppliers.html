@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="suppliers.tgbtjgv">供应商库 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="javascript:history.back()" class="inline-back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    返回
+                </a>
+                <a href="index.html" class="logo-link"><span class="logo-text">全球供应链智能匹配平台</span></a>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+                <a href="certification.html" class="nav-link" data-i18n="nav.certification">资质认证</a>
+                <a href="messages.html" class="nav-link" data-i18n="nav.messages">消息中心</a>
+                <a href="help.html" class="nav-link" data-i18n="nav.customerService">客服中心</a>
+            </nav>
+            <div class="header-right">
+                <a href="user-center.html" class="user-link"><span class="user-avatar-sm">A</span><span>admin</span></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="page-banner">
+        <h1 data-i18n="suppliers.tafq812">供应商库</h1>
+        <p data-i18n="suppliers.tsl0zvy">全球优质供应商资源，一站式采购服务</p>
+    </div>
+
+    <!-- ==================== L1: 供应商库主页 ==================== -->
+    <div class="page-view active" id="view-list">
+    <section class="suppliers-section">
+        <div class="msg-tabs-bar" style="margin-bottom:24px;">
+            <button class="msg-tab-btn active">全部供应商</button>
+            <button class="msg-tab-btn" onclick="showView('view-my-suppliers')">我的供应商 <span class="badge">12</span></button>
+            <button class="msg-tab-btn" onclick="showView('view-favorites')">收藏夹 <span class="badge">8</span></button>
+            <button class="msg-tab-btn" onclick="showView('view-blacklist')">黑名单</button>
+            <button class="msg-tab-btn" onclick="showView('view-category-manage')">分类管理</button>
+        </div>
+        <div class="suppliers-toolbar">
+            <div class="search-filter-group">
+                <input type="text" class="search-input-lg" placeholder="搜索供应商名称、产品类型...">
+                <select class="filter-dropdown"><option value="">全部类型</option><option value="electronics">电子元器件</option><option value="machinery">机械设备</option><option value="logistics">物流服务</option><option value="materials">原材料</option></select>
+                <select class="filter-dropdown"><option value="">全部地区</option><option value="south">华南地区</option><option value="east">华东地区</option><option value="north">华北地区</option><option value="west">西部地区</option></select>
+                <select class="filter-dropdown"><option value="">评分排序</option><option value="rating-desc">评分从高到低</option><option value="rating-asc">评分从低到高</option><option value="orders-desc">订单量从多到少</option></select>
+            </div>
+            <div class="view-toggle">
+                <button class="view-btn active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg></button>
+                <button class="view-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+            </div>
+        </div>
+        <div class="suppliers-grid">
+            <div class="supplier-manage-card">
+                <div class="supplier-header"><div class="supplier-avatar-sm"><span data-i18n="suppliers.tlpt">深</span></div><div class="supplier-info"><h4><a href="javascript:void(0)" onclick="showView('view-supplier-detail')">深圳华创智能科技有限公司</a></h4><span class="supplier-category">电子元器件 | 智能设备</span></div></div>
+                <div class="supplier-tags" style="margin-bottom:16px;"><span class="tag tag-verified">已认证</span><span class="tag tag-excellent">履约优秀</span><span class="tag tag-iso">ISO9001</span></div>
+                <div class="supplier-stats"><div class="stat"><span class="stat-value">4.9</span><span class="stat-name">评分</span></div><div class="stat"><span class="stat-value">1,286</span><span class="stat-name">订单</span></div><div class="stat"><span class="stat-value">98%</span><span class="stat-name">履约率</span></div></div>
+                <div class="supplier-actions"><button class="btn-action" onclick="showView('view-send-inquiry')">发起询价</button><button class="btn-action" onclick="showView('view-supplier-detail')">查看详情</button></div>
+            </div>
+            <div class="supplier-manage-card">
+                <div class="supplier-header"><div class="supplier-avatar-sm"><span data-i18n="suppliers.tinz">广</span></div><div class="supplier-info"><h4><a href="javascript:void(0)" onclick="showView('view-supplier-detail')">广州顺达物流有限公司</a></h4><span class="supplier-category">物流服务 | 仓储服务</span></div></div>
+                <div class="supplier-tags" style="margin-bottom:16px;"><span class="tag tag-verified">已认证</span><span class="tag tag-excellent">履约优秀</span></div>
+                <div class="supplier-stats"><div class="stat"><span class="stat-value">4.9</span><span class="stat-name">评分</span></div><div class="stat"><span class="stat-value">2,458</span><span class="stat-name">订单</span></div><div class="stat"><span class="stat-value">99%</span><span class="stat-name">履约率</span></div></div>
+                <div class="supplier-actions"><button class="btn-action" onclick="showView('view-send-inquiry')">发起询价</button><button class="btn-action" onclick="showView('view-supplier-detail')">查看详情</button></div>
+            </div>
+            <div class="supplier-manage-card">
+                <div class="supplier-header"><div class="supplier-avatar-sm"><span data-i18n="suppliers.tkfh">杭</span></div><div class="supplier-info"><h4><a href="javascript:void(0)" onclick="showView('view-supplier-detail')">杭州数联电商服务有限公司</a></h4><span class="supplier-category">电商平台 | 数字营销</span></div></div>
+                <div class="supplier-tags" style="margin-bottom:16px;"><span class="tag tag-verified">已认证</span><span class="tag tag-rated">高评分</span></div>
+                <div class="supplier-stats"><div class="stat"><span class="stat-value">4.8</span><span class="stat-name">评分</span></div><div class="stat"><span class="stat-value">856</span><span class="stat-name">订单</span></div><div class="stat"><span class="stat-value">96%</span><span class="stat-name">履约率</span></div></div>
+                <div class="supplier-actions"><button class="btn-action" onclick="showView('view-send-inquiry')">发起询价</button><button class="btn-action" onclick="showView('view-supplier-detail')">查看详情</button></div>
+            </div>
+            <div class="supplier-manage-card">
+                <div class="supplier-header"><div class="supplier-avatar-sm"><span data-i18n="suppliers.tjdc">成</span></div><div class="supplier-info"><h4><a href="javascript:void(0)" onclick="showView('view-supplier-detail')">成都精工机械制造有限公司</a></h4><span class="supplier-category">机械配件 | 五金工具</span></div></div>
+                <div class="supplier-tags" style="margin-bottom:16px;"><span class="tag tag-verified">已认证</span><span class="tag tag-iso">ISO9001</span></div>
+                <div class="supplier-stats"><div class="stat"><span class="stat-value">4.7</span><span class="stat-name">评分</span></div><div class="stat"><span class="stat-value">1,024</span><span class="stat-name">订单</span></div><div class="stat"><span class="stat-value">95%</span><span class="stat-name">履约率</span></div></div>
+                <div class="supplier-actions"><button class="btn-action" onclick="showView('view-send-inquiry')">发起询价</button><button class="btn-action" onclick="showView('view-supplier-detail')">查看详情</button></div>
+            </div>
+            <div class="supplier-manage-card">
+                <div class="supplier-header"><div class="supplier-avatar-sm"><span data-i18n="suppliers.tfey">上</span></div><div class="supplier-info"><h4><a href="javascript:void(0)" onclick="showView('view-supplier-detail')">上海精密仪器</a></h4><span class="supplier-category">精密仪器 | 检测设备</span></div></div>
+                <div class="supplier-tags" style="margin-bottom:16px;"><span class="tag tag-verified">已认证</span><span class="tag tag-iso">ISO9001</span><span class="tag tag-iso">ISO14001</span></div>
+                <div class="supplier-stats"><div class="stat"><span class="stat-value">4.8</span><span class="stat-name">评分</span></div><div class="stat"><span class="stat-value">672</span><span class="stat-name">订单</span></div><div class="stat"><span class="stat-value">97%</span><span class="stat-name">履约率</span></div></div>
+                <div class="supplier-actions"><button class="btn-action" onclick="showView('view-send-inquiry')">发起询价</button><button class="btn-action" onclick="showView('view-supplier-detail')">查看详情</button></div>
+            </div>
+            <div class="supplier-manage-card">
+                <div class="supplier-header"><div class="supplier-avatar-sm"><span data-i18n="suppliers.tgev">北</span></div><div class="supplier-info"><h4><a href="javascript:void(0)" onclick="showView('view-supplier-detail')">北京创新科技</a></h4><span class="supplier-category">软件服务 | 系统集成</span></div></div>
+                <div class="supplier-tags" style="margin-bottom:16px;"><span class="tag tag-verified">已认证</span><span class="tag tag-rated">高评分</span></div>
+                <div class="supplier-stats"><div class="stat"><span class="stat-value">4.9</span><span class="stat-name">评分</span></div><div class="stat"><span class="stat-value">428</span><span class="stat-name">订单</span></div><div class="stat"><span class="stat-value">99%</span><span class="stat-name">履约率</span></div></div>
+                <div class="supplier-actions"><button class="btn-action" onclick="showView('view-send-inquiry')">发起询价</button><button class="btn-action" onclick="showView('view-supplier-detail')">查看详情</button></div>
+            </div>
+        </div>
+        <div class="pagination"><button class="page-btn" disabled>上一页</button><span class="page-numbers"><button class="page-num active">1</button><button class="page-num">2</button><button class="page-num">3</button><span>...</span><button class="page-num">25</button></span><button class="page-btn">下一页</button></div>
+    </section>
+    </div>
+
+    <!-- ==================== L2: 我的供应商 ==================== -->
+    <div class="page-view" id="view-my-suppliers">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><span data-i18n="suppliers.trgoa5i">我的供应商</span></div>
+        <button class="btn-back-sm" onclick="showView('view-list')">返回列表</button>
+        <h2 style="margin:16px 0;">我的供应商</h2>
+        <div class="dashboard-grid">
+            <div class="dashboard-card"><h4 data-i18n="suppliers.tg8xknb">合作供应商</h4><span style="font-size:32px;font-weight:700;color:var(--primary-cyan);">12</span><p style="font-size:13px;color:var(--text-muted);">活跃合作</p></div>
+            <div class="dashboard-card"><h4 data-i18n="suppliers.tdg1ruy">本月新增</h4><span style="font-size:32px;font-weight:700;color:var(--accent-green);">3</span><p style="font-size:13px;color:var(--text-muted);">新合作</p></div>
+            <div class="dashboard-card"><h4 data-i18n="suppliers.ta6z75o">累计交易额</h4><span style="font-size:32px;font-weight:700;color:#45B7D1;">¥258.6万</span><p style="font-size:13px;color:var(--text-muted);">历史累计</p></div>
+            <div class="dashboard-card"><h4 data-i18n="suppliers.tcabbhy">平均评分</h4><span style="font-size:32px;font-weight:700;color:#FFD93D;">4.7</span><p style="font-size:13px;color:var(--text-muted);">合作供应商</p></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="suppliers.tccym22">合作供应商列表</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="suppliers.tc4b9p">供应商</th><th data-i18n="suppliers.tf3kq">品类</th><th data-i18n="suppliers.taxok9p">合作时长</th><th data-i18n="suppliers.tc0vbi">交易额</th><th data-i18n="suppliers.to81u">评分</th><th data-i18n="suppliers.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="suppliers.tc0el10">深圳华创智能科技有限公司</td><td data-i18n="suppliers.tr2vu6i">电子元器件</td><td data-i18n="suppliers.t1aav9">18个月</td><td data-i18n="suppliers.t7yhlsy">¥72.3万</td><td><span style="color:#FFD93D;">&#9733;</span> 4.9</td><td><button class="btn-action" onclick="showView('view-cooperation-detail')">详情</button></td></tr>
+                    <tr><td data-i18n="suppliers.t76fsz2">广州顺达物流有限公司</td><td data-i18n="suppliers.tevztik">物流服务</td><td data-i18n="suppliers.t1auw0">24个月</td><td data-i18n="suppliers.t7z3ye5">¥86.5万</td><td><span style="color:#FFD93D;">&#9733;</span> 4.9</td><td><button class="btn-action" onclick="showView('view-cooperation-detail')">详情</button></td></tr>
+                    <tr><td data-i18n="suppliers.t6m5btz">成都精工机械制造有限公司</td><td data-i18n="suppliers.tdgqt8f">机械配件</td><td data-i18n="suppliers.t1a6f3">12个月</td><td data-i18n="suppliers.t7wy20m">¥48.6万</td><td><span style="color:#FFD93D;">&#9733;</span> 4.7</td><td><button class="btn-action" onclick="showView('view-cooperation-detail')">详情</button></td></tr>
+                    <tr><td data-i18n="suppliers.tthlroz">杭州数联电商服务有限公司</td><td data-i18n="suppliers.td6m4rm">数字营销</td><td data-i18n="suppliers.tf0ie">8个月</td><td data-i18n="suppliers.t7wczb1">¥36.0万</td><td><span style="color:#FFD93D;">&#9733;</span> 4.8</td><td><button class="btn-action" onclick="showView('view-cooperation-detail')">详情</button></td></tr>
+                    <tr><td data-i18n="suppliers.ttvwywj">上海精密仪器</td><td data-i18n="suppliers.tg48ghy">精密仪器</td><td data-i18n="suppliers.tez10">6个月</td><td data-i18n="suppliers.t7v8r6i">¥15.2万</td><td><span style="color:#FFD93D;">&#9733;</span> 4.8</td><td><button class="btn-action" onclick="showView('view-cooperation-detail')">详情</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 合作详情 ==================== -->
+    <div class="page-view" id="view-cooperation-detail">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><a onclick="showView('view-my-suppliers')">我的供应商</a><span class="sep">/</span><span data-i18n="suppliers.taxuq5v">合作详情</span></div>
+        <button class="btn-back-sm" onclick="showView('view-my-suppliers')">返回列表</button>
+        <h2 style="margin:16px 0;">深圳华创智能科技有限公司 - 合作详情</h2>
+        <div class="detail-card">
+            <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">供应商名称</span><span class="detail-value">深圳华创智能科技有限公司</span></div>
+                <div class="detail-item"><span class="detail-label">合作开始</span><span class="detail-value">2024年8月</span></div>
+                <div class="detail-item"><span class="detail-label">合作时长</span><span class="detail-value">18个月</span></div>
+                <div class="detail-item"><span class="detail-label">累计交易额</span><span class="detail-value" style="color:var(--primary-cyan);font-weight:600;">¥72.3万</span></div>
+                <div class="detail-item"><span class="detail-label">累计订单</span><span class="detail-value">28单</span></div>
+                <div class="detail-item"><span class="detail-label">合作评分</span><span class="detail-value"><span style="color:#FFD93D;">&#9733;&#9733;&#9733;&#9733;&#9733;</span> 4.9</span></div>
+                <div class="detail-item"><span class="detail-label">准时交付率</span><span class="detail-value" style="color:var(--accent-green);">98.2%</span></div>
+                <div class="detail-item"><span class="detail-label">质量合格率</span><span class="detail-value" style="color:var(--accent-green);">99.5%</span></div>
+            </div>
+        </div>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr;margin-top:20px;">
+            <div class="dashboard-card">
+                <h4 data-i18n="suppliers.tacpjgj">交易趋势</h4>
+                <div style="display:flex;align-items:flex-end;gap:12px;height:140px;padding:16px 0;">
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:24px;height:40px;background:rgba(0,229,204,0.3);border-radius:4px;"></div><span style="font-size:10px;">9月</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:24px;height:55px;background:rgba(0,229,204,0.4);border-radius:4px;"></div><span style="font-size:10px;">10月</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:24px;height:70px;background:rgba(0,229,204,0.5);border-radius:4px;"></div><span style="font-size:10px;">11月</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:24px;height:60px;background:rgba(0,229,204,0.4);border-radius:4px;"></div><span style="font-size:10px;">12月</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:24px;height:85px;background:rgba(0,229,204,0.6);border-radius:4px;"></div><span style="font-size:10px;">1月</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;"><div style="width:24px;height:100px;background:var(--primary-cyan);border-radius:4px;"></div><span style="font-size:10px;">2月</span></div>
+                </div>
+            </div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-cooperation-orders')">
+                <h4 data-i18n="suppliers.tat7avy">最近订单 &rarr;</h4>
+                <div style="padding:12px 0;">
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);"><span style="font-size:13px;"></span><span style="font-size:13px;color:var(--primary-cyan);">¥156,000</span></div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);"><span style="font-size:13px;"></span><span style="font-size:13px;color:var(--primary-cyan);">¥89,500</span></div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;"><span style="font-size:13px;"></span><span style="font-size:13px;color:var(--primary-cyan);">¥124,800</span></div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:12px;">
+            <button class="btn-primary-sm" onclick="showView('view-send-inquiry')">发起询价</button>
+            <button class="btn-action" onclick="showView('view-cooperation-contract')">查看合同</button>
+            <button class="btn-action" onclick="showView('view-supplier-rate')">评价供应商</button>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L4: 合作订单历史 ==================== -->
+    <div class="page-view" id="view-cooperation-orders">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><a onclick="showView('view-my-suppliers')">我的供应商</a><span class="sep">/</span><a onclick="showView('view-cooperation-detail')">合作详情</a><span class="sep">/</span><span data-i18n="suppliers.thymrtr">订单历史</span></div>
+        <button class="btn-back-sm" onclick="showView('view-cooperation-detail')">返回详情</button>
+        <h2 style="margin:16px 0;">深圳华创智能科技有限公司 - 订单历史</h2>
+        <div class="dashboard-card">
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="suppliers.tkuwys">订单号</th><th data-i18n="suppliers.tdud6">产品</th><th data-i18n="suppliers.tpn1o">金额</th><th data-i18n="suppliers.ta72nl4">下单时间</th><th data-i18n="suppliers.tk1e3">状态</th></tr></thead>
+                <tbody>
+                    <tr><td></td><td data-i18n="suppliers.tz12oay">智能设备 Pro x 50</td><td>¥156,000</td><td>2026-02-15</td><td><span class="status-badge" style="background:rgba(0,229,204,0.15);color:var(--primary-cyan);">进行中</span></td></tr>
+                    <tr><td></td><td data-i18n="suppliers.t94ze5i">工业传感器 A200 x 50</td><td>¥89,500</td><td>2026-02-08</td><td><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已完成</span></td></tr>
+                    <tr><td></td><td data-i18n="suppliers.twonait">智能控制板 B500 x 70</td><td>¥124,800</td><td>2026-01-25</td><td><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已完成</span></td></tr>
+                    <tr><td></td><td data-i18n="suppliers.tvck0al">数据采集器 C120 x 40</td><td>¥56,000</td><td>2026-01-12</td><td><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已完成</span></td></tr>
+                    <tr><td>ORD-2025-1286</td><td data-i18n="suppliers.ttz43e">工业传感器 A200 x 100</td><td>¥175,000</td><td>2025-12-20</td><td><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已完成</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L4: 合作合同 ==================== -->
+    <div class="page-view" id="view-cooperation-contract">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><a onclick="showView('view-my-suppliers')">我的供应商</a><span class="sep">/</span><a onclick="showView('view-cooperation-detail')">合作详情</a><span class="sep">/</span><span data-i18n="suppliers.taygs5l">合同管理</span></div>
+        <button class="btn-back-sm" onclick="showView('view-cooperation-detail')">返回详情</button>
+        <h2 style="margin:16px 0;">合同管理</h2>
+        <div class="dashboard-card">
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="suppliers.tayh6zp">合同编号</th><th data-i18n="suppliers.taygrqs">合同类型</th><th data-i18n="suppliers.tg5ohq6">签订日期</th><th data-i18n="suppliers.tfl3fk">有效期</th><th data-i18n="suppliers.tk1e3">状态</th><th data-i18n="suppliers.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td>CTR-2024-0815</td><td data-i18n="suppliers.tdl2kq7">框架协议</td><td>2024-08-15</td><td data-i18n="suppliers.te7emz7">2024-08-15 至 2025-08-14</td><td><span class="status-badge" style="background:rgba(255,107,107,0.15);color:#FF6B6B;">已过期</span></td><td><button class="btn-action">查看</button></td></tr>
+                    <tr><td>CTR-2025-0812</td><td data-i18n="suppliers.tdl2kq7">框架协议</td><td>2025-08-12</td><td data-i18n="suppliers.tiskr1p">2025-08-12 至 2026-08-11</td><td><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">生效中</span></td><td><button class="btn-action">查看</button> <button class="btn-action">续签</button></td></tr>
+                    <tr><td>CTR-2026-0115</td><td data-i18n="suppliers.tiz09my">采购合同</td><td>2026-01-15</td><td data-i18n="suppliers.tby1ie">一次性</td><td><span class="status-badge" style="background:rgba(76,175,80,0.15);color:var(--accent-green);">已履行</span></td><td><button class="btn-action">查看</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L4: 评价供应商 ==================== -->
+    <div class="page-view" id="view-supplier-rate">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><a onclick="showView('view-my-suppliers')">我的供应商</a><span class="sep">/</span><a onclick="showView('view-cooperation-detail')">合作详情</a><span class="sep">/</span><span data-i18n="suppliers.to7g3">评价</span></div>
+        <button class="btn-back-sm" onclick="showView('view-cooperation-detail')">返回详情</button>
+        <h2 style="margin:16px 0;">评价供应商 - 深圳华创智能科技有限公司</h2>
+        <div class="dashboard-card">
+            <div style="padding:16px 0;">
+                <div style="margin-bottom:20px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:8px;">产品质量</label><div style="display:flex;gap:8px;"><button class="rating-btn">&#9733; 1</button><button class="rating-btn">&#9733; 2</button><button class="rating-btn">&#9733; 3</button><button class="rating-btn">&#9733; 4</button><button class="rating-btn active">&#9733; 5</button></div></div>
+                <div style="margin-bottom:20px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:8px;">交付时效</label><div style="display:flex;gap:8px;"><button class="rating-btn">&#9733; 1</button><button class="rating-btn">&#9733; 2</button><button class="rating-btn">&#9733; 3</button><button class="rating-btn">&#9733; 4</button><button class="rating-btn active">&#9733; 5</button></div></div>
+                <div style="margin-bottom:20px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:8px;">服务响应</label><div style="display:flex;gap:8px;"><button class="rating-btn">&#9733; 1</button><button class="rating-btn">&#9733; 2</button><button class="rating-btn">&#9733; 3</button><button class="rating-btn active">&#9733; 4</button><button class="rating-btn">&#9733; 5</button></div></div>
+                <div style="margin-bottom:20px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:8px;">价格竞争力</label><div style="display:flex;gap:8px;"><button class="rating-btn">&#9733; 1</button><button class="rating-btn">&#9733; 2</button><button class="rating-btn">&#9733; 3</button><button class="rating-btn active">&#9733; 4</button><button class="rating-btn">&#9733; 5</button></div></div>
+                <div style="margin-bottom:20px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:8px;">评价内容</label><textarea rows="4" placeholder="请输入您对该供应商的评价" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;resize:vertical;box-sizing:border-box;"></textarea></div>
+                <div style="display:flex;gap:12px;"><button class="btn-primary-sm">提交评价</button><button class="btn-action" onclick="showView('view-cooperation-detail')">取消</button></div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L2: 收藏夹 ==================== -->
+    <div class="page-view" id="view-favorites">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><span data-i18n="suppliers.tfgxkw">收藏夹</span></div>
+        <button class="btn-back-sm" onclick="showView('view-list')">返回列表</button>
+        <h2 style="margin:16px 0;">收藏的供应商</h2>
+        <div class="dashboard-card">
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="suppliers.tc4b9p">供应商</th><th data-i18n="suppliers.tf3kq">品类</th><th data-i18n="suppliers.to81u">评分</th><th data-i18n="suppliers.tdbnwlz">收藏时间</th><th data-i18n="suppliers.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="suppliers.tc0el10">深圳华创智能科技有限公司</td><td data-i18n="suppliers.tr2vu6i">电子元器件</td><td><span style="color:#FFD93D;">&#9733;</span> 4.9</td><td>2026-02-10</td><td><button class="btn-action" onclick="showView('view-supplier-detail')">详情</button> <button class="btn-primary-sm" style="padding:4px 12px;font-size:12px;">询价</button> <button class="btn-action" style="color:#FF6B6B;">取消收藏</button></td></tr>
+                    <tr><td data-i18n="suppliers.t76fsz2">广州顺达物流有限公司</td><td data-i18n="suppliers.tevztik">物流服务</td><td><span style="color:#FFD93D;">&#9733;</span> 4.9</td><td>2026-02-08</td><td><button class="btn-action" onclick="showView('view-supplier-detail')">详情</button> <button class="btn-primary-sm" style="padding:4px 12px;font-size:12px;">询价</button> <button class="btn-action" style="color:#FF6B6B;">取消收藏</button></td></tr>
+                    <tr><td data-i18n="suppliers.tj51wmx">北京创新科技</td><td data-i18n="suppliers.tifcbmj">软件服务</td><td><span style="color:#FFD93D;">&#9733;</span> 4.9</td><td>2026-02-05</td><td><button class="btn-action" onclick="showView('view-supplier-detail')">详情</button> <button class="btn-primary-sm" style="padding:4px 12px;font-size:12px;">询价</button> <button class="btn-action" style="color:#FF6B6B;">取消收藏</button></td></tr>
+                    <tr><td data-i18n="suppliers.ttvwywj">上海精密仪器</td><td data-i18n="suppliers.tg48ghy">精密仪器</td><td><span style="color:#FFD93D;">&#9733;</span> 4.8</td><td>2026-01-28</td><td><button class="btn-action" onclick="showView('view-supplier-detail')">详情</button> <button class="btn-primary-sm" style="padding:4px 12px;font-size:12px;">询价</button> <button class="btn-action" style="color:#FF6B6B;">取消收藏</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L2: 黑名单 ==================== -->
+    <div class="page-view" id="view-blacklist">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><span data-i18n="suppliers.tno6t5">黑名单</span></div>
+        <button class="btn-back-sm" onclick="showView('view-list')">返回列表</button>
+        <h2 style="margin:16px 0;">黑名单管理</h2>
+        <div class="dashboard-card">
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="suppliers.tc4b9p">供应商</th><th data-i18n="suppliers.tf3kq">品类</th><th data-i18n="suppliers.td47s5l">拉黑原因</th><th data-i18n="suppliers.td4b8x2">拉黑时间</th><th data-i18n="suppliers.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="suppliers.tlk0v63">XX不良供应商</td><td data-i18n="suppliers.tcr294">原材料</td><td data-i18n="suppliers.t1v2jvx">产品质量问题严重</td><td>2025-12-15</td><td><button class="btn-action" onclick="showView('view-blacklist-detail')">详情</button> <button class="btn-action">移出黑名单</button></td></tr>
+                    <tr><td data-i18n="suppliers.t7zn7xm">YY问题公司</td><td data-i18n="suppliers.tevztik">物流服务</td><td data-i18n="suppliers.t8hz5k4">多次延迟交付</td><td>2025-11-20</td><td><button class="btn-action" onclick="showView('view-blacklist-detail')">详情</button> <button class="btn-action">移出黑名单</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top:20px;">
+            <button class="btn-primary-sm" onclick="showView('view-add-blacklist')">添加黑名单</button>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 黑名单详情 ==================== -->
+    <div class="page-view" id="view-blacklist-detail">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><a onclick="showView('view-blacklist')">黑名单</a><span class="sep">/</span><span data-i18n="suppliers.tobrz">详情</span></div>
+        <button class="btn-back-sm" onclick="showView('view-blacklist')">返回黑名单</button>
+        <h2 style="margin:16px 0;">黑名单详情</h2>
+        <div class="detail-card">
+            <div class="detail-grid">
+                <div class="detail-item"><span class="detail-label">供应商名称</span><span class="detail-value">XX不良供应商</span></div>
+                <div class="detail-item"><span class="detail-label">品类</span><span class="detail-value">原材料</span></div>
+                <div class="detail-item"><span class="detail-label">拉黑时间</span><span class="detail-value">2025-12-15</span></div>
+                <div class="detail-item"><span class="detail-label">操作人</span><span class="detail-value">admin</span></div>
+                <div class="detail-item" style="grid-column:1/-1;"><span class="detail-label">拉黑原因</span><span class="detail-value">产品质量问题严重，多批次货物存在缺陷，退货率超过30%，沟通态度恶劣</span></div>
+            </div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="suppliers.tjjsr67">问题记录</h4>
+            <div style="padding:16px 0;">
+                <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:#FF6B6B;"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">2025-12-10</div><div class="timeline-text">第三批货物质检不合格，退货处理</div></div></div>
+                <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:#FF6B6B;"></div><div class="timeline-line"></div></div><div class="timeline-content"><div class="timeline-time">2025-11-25</div><div class="timeline-text">第二批货物质量问题，协商赔偿</div></div></div>
+                <div class="timeline-item"><div class="timeline-dot-wrap"><div class="timeline-dot" style="background:#FFD93D;"></div></div><div class="timeline-content"><div class="timeline-time">2025-11-05</div><div class="timeline-text">首批货物存在轻微瑕疵，要求换货</div></div></div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 添加黑名单 ==================== -->
+    <div class="page-view" id="view-add-blacklist">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><a onclick="showView('view-blacklist')">黑名单</a><span class="sep">/</span><span data-i18n="suppliers.tj5s5">添加</span></div>
+        <button class="btn-back-sm" onclick="showView('view-blacklist')">返回黑名单</button>
+        <h2 style="margin:16px 0;">添加黑名单</h2>
+        <div class="dashboard-card">
+            <div style="padding:16px 0;">
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">选择供应商</label><select style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;"><option data-i18n="suppliers.t3lv8ui">请选择供应商</option><option data-i18n="suppliers.tafppec">供应商A</option><option data-i18n="suppliers.tafpped">供应商B</option><option data-i18n="suppliers.tafppee">供应商C</option></select></div>
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">拉黑原因</label><textarea rows="4" placeholder="请详细说明拉黑原因" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;resize:vertical;box-sizing:border-box;"></textarea></div>
+                <div style="display:flex;gap:12px;"><button class="btn-primary-sm">确认添加</button><button class="btn-action" onclick="showView('view-blacklist')">取消</button></div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L2: 分类管理 ==================== -->
+    <div class="page-view" id="view-category-manage">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><span data-i18n="suppliers.tav9sai">分类管理</span></div>
+        <button class="btn-back-sm" onclick="showView('view-list')">返回列表</button>
+        <h2 style="margin:16px 0;">供应商分类管理</h2>
+        <div class="dashboard-grid" style="grid-template-columns:repeat(4,1fr);">
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-category-suppliers')"><h4 data-i18n="suppliers.tr2vu6i">电子元器件</h4><span style="font-size:28px;font-weight:700;color:var(--primary-cyan);">3</span><p style="font-size:13px;color:var(--text-muted);">家供应商</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-category-suppliers')"><h4 data-i18n="suppliers.tevztik">物流服务</h4><span style="font-size:28px;font-weight:700;color:#45B7D1;">2</span><p style="font-size:13px;color:var(--text-muted);">家供应商</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-category-suppliers')"><h4 data-i18n="suppliers.tdgqt8f">机械配件</h4><span style="font-size:28px;font-weight:700;color:#FFD93D;">4</span><p style="font-size:13px;color:var(--text-muted);">家供应商</p></div>
+            <div class="dashboard-card" style="cursor:pointer;" onclick="showView('view-category-suppliers')"><h4 data-i18n="suppliers.tifcbmj">软件服务</h4><span style="font-size:28px;font-weight:700;color:#FF6B6B;">2</span><p style="font-size:13px;color:var(--text-muted);">家供应商</p></div>
+        </div>
+        <div class="dashboard-card" style="margin-top:20px;">
+            <h4 data-i18n="suppliers.tav2tye">分类列表</h4>
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="suppliers.tav333s">分类名称</th><th data-i18n="suppliers.tafq9dv">供应商数</th><th data-i18n="suppliers.ta6z75o">累计交易额</th><th data-i18n="suppliers.tcabbhy">平均评分</th><th data-i18n="suppliers.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="suppliers.tr2vu6i">电子元器件</td><td data-i18n="suppliers.tjc3">3家</td><td data-i18n="suppliers.t7znqwx">¥96.2万</td><td>4.87</td><td><button class="btn-action" onclick="showView('view-category-suppliers')">查看</button> <button class="btn-action" onclick="showView('view-edit-category')">编辑</button></td></tr>
+                    <tr><td data-i18n="suppliers.tevztik">物流服务</td><td data-i18n="suppliers.tjb8">2家</td><td data-i18n="suppliers.t7xz3a3">¥64.7万</td><td>4.90</td><td><button class="btn-action" onclick="showView('view-category-suppliers')">查看</button> <button class="btn-action" onclick="showView('view-edit-category')">编辑</button></td></tr>
+                    <tr><td data-i18n="suppliers.tdgqt8f">机械配件</td><td data-i18n="suppliers.tjcy">4家</td><td data-i18n="suppliers.t7xddr0">¥51.8万</td><td>4.65</td><td><button class="btn-action" onclick="showView('view-category-suppliers')">查看</button> <button class="btn-action" onclick="showView('view-edit-category')">编辑</button></td></tr>
+                    <tr><td data-i18n="suppliers.tifcbmj">软件服务</td><td data-i18n="suppliers.tjb8">2家</td><td data-i18n="suppliers.t7vugt1">¥28.5万</td><td>4.85</td><td><button class="btn-action" onclick="showView('view-category-suppliers')">查看</button> <button class="btn-action" onclick="showView('view-edit-category')">编辑</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top:20px;"><button class="btn-primary-sm" onclick="showView('view-add-category')">新建分类</button></div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 分类供应商 ==================== -->
+    <div class="page-view" id="view-category-suppliers">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><a onclick="showView('view-category-manage')">分类管理</a><span class="sep">/</span><span data-i18n="suppliers.tr2vu6i">电子元器件</span></div>
+        <button class="btn-back-sm" onclick="showView('view-category-manage')">返回分类</button>
+        <h2 style="margin:16px 0;">电子元器件 - 供应商列表</h2>
+        <div class="dashboard-card">
+            <table class="data-table" style="width:100%;margin-top:12px;">
+                <thead><tr><th data-i18n="suppliers.tc4b9p">供应商</th><th data-i18n="suppliers.to81u">评分</th><th data-i18n="suppliers.tkv0f1">订单数</th><th data-i18n="suppliers.tc0vbi">交易额</th><th data-i18n="suppliers.thkxb">操作</th></tr></thead>
+                <tbody>
+                    <tr><td data-i18n="suppliers.tc0el10">深圳华创智能科技有限公司</td><td><span style="color:#FFD93D;">&#9733;</span> 4.9</td><td>28</td><td data-i18n="suppliers.t7yhlsy">¥72.3万</td><td><button class="btn-action" onclick="showView('view-supplier-detail')">详情</button></td></tr>
+                    <tr><td data-i18n="suppliers.ttvwywj">上海精密仪器</td><td><span style="color:#FFD93D;">&#9733;</span> 4.8</td><td>12</td><td data-i18n="suppliers.t7v8r6i">¥15.2万</td><td><button class="btn-action" onclick="showView('view-supplier-detail')">详情</button></td></tr>
+                    <tr><td data-i18n="suppliers.tj51wmx">北京创新科技</td><td><span style="color:#FFD93D;">&#9733;</span> 4.9</td><td>8</td><td data-i18n="suppliers.t2jr80b">¥8.7万</td><td><button class="btn-action" onclick="showView('view-supplier-detail')">详情</button></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 编辑/添加分类 ==================== -->
+    <div class="page-view" id="view-edit-category">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><a onclick="showView('view-category-manage')">分类管理</a><span class="sep">/</span><span data-i18n="suppliers.tgmhewg">编辑分类</span></div>
+        <button class="btn-back-sm" onclick="showView('view-category-manage')">返回分类</button>
+        <h2 style="margin:16px 0;">编辑分类</h2>
+        <div class="dashboard-card">
+            <div style="padding:16px 0;">
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">分类名称</label><input type="text" value="电子元器件" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;box-sizing:border-box;"></div>
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">分类描述</label><textarea rows="3" placeholder="请输入分类描述" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;resize:vertical;box-sizing:border-box;">包括传感器、控制板、采集器等电子产品类别</textarea></div>
+                <div style="display:flex;gap:12px;"><button class="btn-primary-sm">保存修改</button><button class="btn-action" onclick="showView('view-category-manage')">取消</button></div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L3: 添加分类 ==================== -->
+    <div class="page-view" id="view-add-category">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><a onclick="showView('view-category-manage')">分类管理</a><span class="sep">/</span><span data-i18n="suppliers.td81iin">新建分类</span></div>
+        <button class="btn-back-sm" onclick="showView('view-category-manage')">返回分类</button>
+        <h2 style="margin:16px 0;">新建分类</h2>
+        <div class="dashboard-card">
+            <div style="padding:16px 0;">
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">分类名称</label><input type="text" placeholder="请输入分类名称" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;box-sizing:border-box;"></div>
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">分类描述</label><textarea rows="3" placeholder="请输入分类描述" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;resize:vertical;box-sizing:border-box;"></textarea></div>
+                <div style="display:flex;gap:12px;"><button class="btn-primary-sm">创建分类</button><button class="btn-action" onclick="showView('view-category-manage')">取消</button></div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L2: 供应商详情 ==================== -->
+    <div class="page-view" id="view-supplier-detail">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><span data-i18n="suppliers.tvlr4b8">供应商详情</span></div>
+        <button class="btn-back-sm" onclick="showView('view-list')">返回列表</button>
+        <h2 style="margin:16px 0;">深圳华创智能科技有限公司</h2>
+        <div class="dashboard-grid" style="grid-template-columns:2fr 1fr;">
+            <div class="detail-card">
+                <div class="detail-grid">
+                    <div class="detail-item"><span class="detail-label">公司全称</span><span class="detail-value">深圳华创智能科技有限公司</span></div>
+                    <div class="detail-item"><span class="detail-label">主营业务</span><span class="detail-value">电子元器件、智能设备、IT产品</span></div>
+                    <div class="detail-item"><span class="detail-label">所在地区</span><span class="detail-value">广东省深圳市南山区</span></div>
+                    <div class="detail-item"><span class="detail-label">成立时间</span><span class="detail-value">2015年</span></div>
+                    <div class="detail-item"><span class="detail-label">员工规模</span><span class="detail-value">200-500人</span></div>
+                    <div class="detail-item"><span class="detail-label">注册资本</span><span class="detail-value">5000万元</span></div>
+                    <div class="detail-item"><span class="detail-label">资质认证</span><span class="detail-value">ISO9001、ISO14001、平台认证</span></div>
+                    <div class="detail-item"><span class="detail-label">联系方式</span><span class="detail-value">0755-8888xxxx</span></div>
+                </div>
+            </div>
+            <div class="dashboard-card" style="text-align:center;">
+                <div style="width:80px;height:80px;background:var(--primary-cyan);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;font-weight:600;">深</div>
+                <div style="margin-bottom:8px;"><span style="color:#FFD93D;">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span style="margin-left:8px;font-weight:600;">4.9</span></div>
+                <p style="font-size:13px;color:var(--text-muted);">累计成交 1,286 单</p>
+                <p style="font-size:13px;color:var(--text-muted);margin-top:4px;">履约率 98%</p>
+            </div>
+        </div>
+        <div class="dashboard-grid" style="grid-template-columns:1fr 1fr;margin-top:20px;">
+            <div class="dashboard-card">
+                <h4 data-i18n="suppliers.taeydac">主营产品</h4>
+                <div style="padding:12px 0;">
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);"><span data-i18n="suppliers.tmr00df">工业传感器 A200</span><span style="color:var(--primary-cyan);">¥1,800/件</span></div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-color);"><span data-i18n="suppliers.terx4ey">智能控制板 B500</span><span style="color:var(--primary-cyan);">¥1,800/件</span></div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;"><span data-i18n="suppliers.ttk7k4f">数据采集器 C120</span><span style="color:var(--primary-cyan);">¥1,400/件</span></div>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <h4 data-i18n="suppliers.tf70pvm">用户评价</h4>
+                <div style="padding:12px 0;">
+                    <div class="msg-card" style="padding:8px 12px;margin-bottom:8px;font-size:13px;">"产品质量很好，发货速度快" - 用户A</div>
+                    <div class="msg-card" style="padding:8px 12px;margin-bottom:8px;font-size:13px;">"技术支持到位，售后响应及时" - 用户B</div>
+                    <div class="msg-card" style="padding:8px 12px;font-size:13px;">"合作多次，非常满意" - 用户C</div>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:12px;">
+            <button class="btn-primary-sm" onclick="showView('view-send-inquiry')">发起询价</button>
+            <button class="btn-action">收藏供应商</button>
+            <button class="btn-action">加入对比</button>
+        </div>
+    </section>
+    </div>
+
+    <!-- ==================== L2: 发起询价 ==================== -->
+    <div class="page-view" id="view-send-inquiry">
+    <section class="dashboard-section">
+        <div class="view-breadcrumb"><a onclick="showView('view-list')">供应商库</a><span class="sep">/</span><span data-i18n="suppliers.tb5yzkr">发起询价</span></div>
+        <button class="btn-back-sm" onclick="showView('view-list')">返回列表</button>
+        <h2 style="margin:16px 0;">发起询价</h2>
+        <div class="dashboard-card">
+            <div style="padding:16px 0;">
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">询价供应商</label><input type="text" value="深圳华创智能科技有限公司" readonly style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-muted);font-size:14px;box-sizing:border-box;"></div>
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">产品名称 <span style="color:#FF6B6B;">*</span></label><input type="text" placeholder="请输入需要询价的产品" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;box-sizing:border-box;"></div>
+                <div style="margin-bottom:16px;display:flex;gap:16px;"><div style="flex:1;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">采购数量 <span style="color:#FF6B6B;">*</span></label><input type="number" placeholder="数量" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;box-sizing:border-box;"></div><div style="flex:1;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">期望交付日期</label><input type="date" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;box-sizing:border-box;"></div></div>
+                <div style="margin-bottom:16px;"><label style="display:block;font-size:14px;color:var(--text-secondary);margin-bottom:6px;">详细需求描述</label><textarea rows="4" placeholder="请详细描述您的采购需求" style="width:100%;padding:10px 12px;background:var(--bg-darker);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);font-size:14px;resize:vertical;box-sizing:border-box;"></textarea></div>
+                <div style="display:flex;gap:12px;"><button class="btn-primary-sm">提交询价</button><button class="btn-action" onclick="showView('view-list')">取消</button></div>
+            </div>
+        </div>
+    </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-copyright"><p data-i18n="footer.copyright">&copy; 2026 全球供应链智能匹配平台 | 版权所有</p></div>
+        <nav class="footer-nav"><a href="#">帮助中心</a><a href="#">客服中心</a><a href="#">关于我们</a><a href="#">隐私政策</a><a href="#">服务条款</a></nav>
+        <div style="text-align:center;padding:8px 0;font-size:12px;"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow noopener" style="color:#888;text-decoration:none;">粤ICP备2026015135号-2</a></div>
+    </footer>
+<script src="auth-check.js"></script>
+    <script src="platform-scripts.js"></script>
+    <script>
+    function showView(viewId) {
+        document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+        const target = document.getElementById(viewId);
+        if (target) { target.classList.add('active'); window.scrollTo(0, 0); }
+    }
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+</body>
+</html>

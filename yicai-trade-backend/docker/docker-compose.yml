@@ -1,0 +1,134 @@
+services:
+  yicai-mysql:
+    image: mysql:8.4
+    container_name: yicai-trade-mysql
+    environment:
+      MYSQL_DATABASE: ${DB_NAME:-yicai_trade}
+      MYSQL_USER: ${DB_USERNAME:-yicai_app}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --max-connections=80
+      - --innodb-buffer-pool-size=384M
+      - --slow-query-log=1
+      - --long-query-time=2
+    expose:
+      - "3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql-flyway-grant.sql:/docker-entrypoint-initdb.d/001-flyway-grant.sql:ro
+    networks:
+      - yicai-network
+    restart: unless-stopped
+    mem_limit: 900m
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$MYSQL_ROOT_PASSWORD mysqladmin ping -h 127.0.0.1 -uroot --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  yicai-redis:
+    image: redis:7-alpine
+    container_name: yicai-trade-redis
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    command: ["sh", "-c", "exec redis-server --appendonly yes --requirepass \"$$REDIS_PASSWORD\" --maxmemory 192mb --maxmemory-policy allkeys-lru"]
+    expose:
+      - "6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - yicai-network
+    restart: unless-stopped
+    mem_limit: 256m
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  yicai-backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.runtime
+    container_name: yicai-trade-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      JAVA_TOOL_OPTIONS: -Xms256m -Xmx1024m -XX:MaxMetaspaceSize=256m -XX:+UseG1GC
+      DB_HOST: yicai-mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-yicai_trade}
+      DB_USERNAME: ${DB_USERNAME:-yicai_app}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USE_SSL: "false"
+      REDIS_HOST: yicai-redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      EMAIL_ENABLED: ${EMAIL_ENABLED:-false}
+      MANAGEMENT_HEALTH_MAIL_ENABLED: "false"
+      SMS_ENABLED: ${SMS_ENABLED:-false}
+      WECHAT_ENABLED: ${WECHAT_ENABLED:-false}
+      DOUBAO_VISION_KEY: ${DOUBAO_VISION_KEY:-}
+      DOUBAO_TEXT_KEY: ${DOUBAO_TEXT_KEY:-}
+      ZHIPU_KEY: ${ZHIPU_KEY:-}
+      DEEPSEEK_KEY: ${DEEPSEEK_KEY:-}
+      LOGISTICS_APP_CODE: ${LOGISTICS_APP_CODE:-}
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - app-logs:/var/log/yicai-trade
+      - app-uploads:/app/uploads
+    depends_on:
+      yicai-mysql:
+        condition: service_healthy
+      yicai-redis:
+        condition: service_healthy
+    networks:
+      - yicai-network
+    restart: unless-stopped
+    mem_limit: 1400m
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+  yicai-caddy:
+    image: caddy:2-alpine
+    container_name: yicai-trade-caddy
+    environment:
+      API_DOMAIN: ${API_DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      yicai-backend:
+        condition: service_healthy
+    networks:
+      - yicai-network
+    restart: unless-stopped
+    mem_limit: 192m
+
+volumes:
+  mysql-data:
+  redis-data:
+  app-logs:
+  app-uploads:
+  caddy-data:
+  caddy-config:
+
+networks:
+  yicai-network:
+    driver: bridge

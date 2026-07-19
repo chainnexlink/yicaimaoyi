@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="prodDetail.tbg23y5">生产进度详情 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .production-detail-page {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            padding-bottom: 40px;
+        }
+
+        /* 生产头部 */
+        .production-header {
+            background: linear-gradient(135deg, rgba(0, 229, 204, 0.15) 0%, rgba(0, 229, 204, 0.02) 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 32px 24px;
+        }
+
+        .production-header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .production-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .production-title h1 {
+            font-size: 24px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .production-order-info {
+            display: flex;
+            gap: 24px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .production-order-info span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .production-order-info a {
+            color: var(--primary-cyan);
+            text-decoration: none;
+        }
+
+        .production-status-badge {
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            background: rgba(255, 193, 7, 0.15);
+            color: #FFC107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .production-status-badge.completed {
+            background: rgba(0, 229, 204, 0.15);
+            color: var(--primary-cyan);
+            border: 1px solid rgba(0, 229, 204, 0.3);
+        }
+
+        /* 总进度条 */
+        .overall-progress {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .overall-progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .overall-progress-header h3 {
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .overall-progress-header span {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-cyan);
+        }
+
+        .progress-bar-outer {
+            height: 12px;
+            background: var(--bg-darker);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-bar-inner {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-cyan) 0%, #00B8A9 100%);
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* 主内容区 */
+        .production-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
+        }
+
+        /* 生产阶段卡片 */
+        .stages-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stage-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stage-card.active {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 20px rgba(0, 229, 204, 0.15);
+        }
+
+        .stage-card.completed {
+            border-color: rgba(0, 229, 204, 0.3);
+        }
+
+        .stage-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: var(--bg-darker);
+            cursor: pointer;
+        }
+
+        .stage-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stage-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .stage-card.active .stage-number {
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+            background: rgba(0, 229, 204, 0.1);
+        }
+
+        .stage-card.completed .stage-number {
+            border-color: var(--primary-cyan);
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+        }
+
+        .stage-card.completed .stage-number::after {
+            content: "✓";
+        }
+
+        .stage-card.completed .stage-number span {
+            display: none;
+        }
+
+        .stage-info h3 {
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .stage-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .stage-status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .stage-status-badge.completed {
+            background: rgba(0, 229, 204, 0.15);
+            color: var(--primary-cyan);
+        }
+
+        .stage-status-badge.in-progress {
+            background: rgba(255, 193, 7, 0.15);
+            color: #FFC107;
+        }
+
+        .stage-status-badge.pending {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+        }
+
+        .stage-body {
+            padding: 20px;
+            display: none;
+        }
+
+        .stage-card.expanded .stage-body {
+            display: block;
+        }
+
+        .stage-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            background: var(--bg-darker);
+            padding: 14px;
+            border-radius: 8px;
+        }
+
+        .detail-item label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .detail-item span {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* 进度更新记录 */
+        .stage-updates {
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+        }
+
+        .stage-updates h4 {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .update-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .update-item:last-child {
+            border-bottom: none;
+        }
+
+        .update-time {
+            min-width: 100px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .update-content {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .update-user {
+            font-size: 12px;
+            color: var(--primary-cyan);
+        }
+
+        /* 证据图片 */
+        .evidence-section {
+            margin-top: 16px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+        }
+
+        .evidence-section h4 {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .evidence-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .evidence-item {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--bg-darker);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .evidence-item:hover {
+            transform: scale(1.05);
+        }
+
+        .evidence-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 阶段操作 */
+        .stage-actions {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-confirm-stage {
+            padding: 10px 24px;
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-confirm-stage:hover {
+            background: #00B8A9;
+            transform: translateY(-2px);
+        }
+
+        .btn-confirm-stage:disabled {
+            background: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-report-issue {
+            padding: 10px 24px;
+            background: transparent;
+            color: #FF6B6B;
+            border: 1px solid #FF6B6B;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-report-issue:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        /* 右侧边栏 */
+        .production-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+        }
+
+        .sidebar-card h3 {
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* 供应商信息 */
+        .supplier-info {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .supplier-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary-cyan), #00B8A9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .supplier-details h4 {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .supplier-details p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .supplier-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .contact-item svg {
+            width: 16px;
+            height: 16px;
+            color: var(--primary-cyan);
+        }
+
+        .btn-contact-supplier {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--primary-cyan);
+            color: var(--primary-cyan);
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-contact-supplier:hover {
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+        }
+
+        /* 时间线 */
+        .timeline-card .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: var(--border-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -18px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+        }
+
+        .timeline-item.completed::before {
+            border-color: var(--primary-cyan);
+            background: var(--primary-cyan);
+        }
+
+        .timeline-item.current::before {
+            border-color: #FFC107;
+            background: #FFC107;
+            box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2);
+        }
+
+        .timeline-date {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .timeline-title {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* 相关订单 */
+        .related-order {
+            background: var(--bg-darker);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .related-order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .related-order-id {
+            font-size: 14px;
+            color: var(--primary-cyan);
+            font-weight: 500;
+        }
+
+        .related-order-status {
+            font-size: 12px;
+            padding: 4px 10px;
+            background: rgba(255, 193, 7, 0.15);
+            color: #FFC107;
+            border-radius: 12px;
+        }
+
+        .related-order-info {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .related-order-info p {
+            margin-bottom: 6px;
+        }
+
+        .btn-view-order {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view-order:hover {
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+
+        /* 操作按钮 */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            padding: 14px;
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #00B8A9;
+        }
+
+        .btn-secondary {
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+
+        /* 确认弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 480px;
+            width: 90%;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(0, 229, 204, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .modal-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--primary-cyan);
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .modal-header p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .modal-body {
+            background: var(--bg-darker);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .confirm-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .confirm-item:last-child {
+            border-bottom: none;
+        }
+
+        .confirm-item label {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .confirm-item span {
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px;
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            resize: none;
+            margin-bottom: 24px;
+        }
+
+        .modal-textarea:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--text-secondary);
+        }
+
+        .btn-submit {
+            background: var(--primary-cyan);
+            border: none;
+            color: var(--bg-dark);
+        }
+
+        .btn-submit:hover {
+            background: #00B8A9;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .production-content {
+                grid-template-columns: 1fr;
+            }
+
+            .production-sidebar {
+                order: -1;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .production-header-top {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .production-order-info {
+                flex-wrap: wrap;
+            }
+
+            .stage-details {
+                grid-template-columns: 1fr;
+            }
+
+            .evidence-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .production-sidebar {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="javascript:history.back()" class="inline-back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                返回
+            </a>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">G</span>
+                <span data-i18n="prodDetail.t9tyf6h">全球供应链平台</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="smart-match.html">智能匹配</a>
+                <a href="suppliers.html">供应商库</a>
+                <a href="orders.html">订单管理</a>
+                <a href="production-monitor.html" class="active">生产监控</a>
+            </div>
+            <div class="nav-actions">
+                <a href="messages.html" class="nav-icon" title="消息">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span class="badge">3</span>
+                </a>
+                <a href="user-center.html" class="nav-icon" title="个人中心">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="production-detail-page">
+        <!-- 生产头部 -->
+        <div class="production-header">
+            <div class="production-header-inner">
+                <div class="production-header-top">
+                    <div class="production-title">
+                        <h1 data-i18n="prodDetail.tvxncg9">生产进度监控</h1>
+                        <div class="production-order-info">
+                            <span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                                    <path d="M8 21h8M12 17v4"></path>
+                                </svg>
+                                生产单号：--
+                            </span>
+                            <span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                关联订单：<a href="order-detail.html"></a>
+                            </span>
+                            <span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                预计完成：--
+                            </span>
+                        </div>
+                    </div>
+                    <div class="production-status-badge">生产中</div>
+                </div>
+
+                <!-- 总进度 -->
+                <div class="overall-progress">
+                    <div class="overall-progress-header">
+                        <h3 data-i18n="prodDetail.tch9bc3">总体进度</h3>
+                        <span>0%</span>
+                    </div>
+                    <div class="progress-bar-outer">
+                        <div class="progress-bar-inner" style="width: 60%;"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span data-i18n="prodDetail.tn8vyr4">已完成 3/5 阶段</span>
+                        <span data-i18n="prodDetail.t87ri17">剩余预计 5 天</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="production-content">
+            <!-- 生产阶段 -->
+            <div class="stages-section">
+                <!-- 阶段1：材料准备 -->
+                <div class="stage-card completed expanded">
+                    <div class="stage-header" onclick="toggleStage(this)">
+                        <div class="stage-header-left">
+                            <div class="stage-number"><span>1</span></div>
+                            <div class="stage-info">
+                                <h3 data-i18n="prodDetail.tdgdte2">材料准备</h3>
+                                <p data-i18n="prodDetail.tj0or8a">原材料采购、入库检验、备料</p>
+                            </div>
+                        </div>
+                        <span class="stage-status-badge completed">已完成</span>
+                    </div>
+                    <div class="stage-body">
+                        <div class="stage-details">
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.tcd0k3t">开始时间</label>
+                                <span>--</span>
+                            </div>
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.tbyjphe">完成时间</label>
+                                <span>--</span>
+                            </div>
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.tlckeu">负责人</label>
+                                <span>--</span>
+                            </div>
+                        </div>
+
+                        <div class="stage-updates">
+                            <h4 data-i18n="prodDetail.tdf1fj5">更新记录</h4>
+                            <div class="update-item">
+                                <div class="update-time">02-17 15:30</div>
+                                <div class="update-content">材料准备完成，所有原材料已入库并通过质检</div>
+                                <div class="update-user">--</div>
+                            </div>
+                            <div class="update-item">
+                                <div class="update-time">02-16 14:00</div>
+                                <div class="update-content">电子元器件到货，正在进行入库检验</div>
+                                <div class="update-user">李质检</div>
+                            </div>
+                            <div class="update-item">
+                                <div class="update-time">02-16 09:00</div>
+                                <div class="update-content">开始材料准备阶段，已下达采购订单</div>
+                                <div class="update-user">系统</div>
+                            </div>
+                        </div>
+
+                        <div class="evidence-section">
+                            <h4 data-i18n="prodDetail.tf3qbbw">生产凭证</h4>
+                            <div class="evidence-grid">
+                                <div class="evidence-item">
+                                    <span data-i18n="prodDetail.tcdqh3">入库单</span>
+                                </div>
+                                <div class="evidence-item">
+                                    <span data-i18n="prodDetail.ti8rb31">质检报告</span>
+                                </div>
+                                <div class="evidence-item">
+                                    <span data-i18n="prodDetail.tdgil89">材料清单</span>
+                                </div>
+                                <div class="evidence-item">
+                                    <span>+</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stage-actions">
+                            <button class="btn-confirm-stage" disabled>已确认</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 阶段2：零件加工 -->
+                <div class="stage-card completed">
+                    <div class="stage-header" onclick="toggleStage(this)">
+                        <div class="stage-header-left">
+                            <div class="stage-number"><span>2</span></div>
+                            <div class="stage-info">
+                                <h3 data-i18n="prodDetail.tjdfchx">零件加工</h3>
+                                <p data-i18n="prodDetail.t51krba">零部件加工、模具制造、半成品生产</p>
+                            </div>
+                        </div>
+                        <span class="stage-status-badge completed">已完成</span>
+                    </div>
+                    <div class="stage-body">
+                        <div class="stage-details">
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.tcd0k3t">开始时间</label>
+                                <span>--</span>
+                            </div>
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.tbyjphe">完成时间</label>
+                                <span>--</span>
+                            </div>
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.tlckeu">负责人</label>
+                                <span data-i18n="prodDetail.tqqlafb">王车间主任</span>
+                            </div>
+                        </div>
+
+                        <div class="stage-updates">
+                            <h4 data-i18n="prodDetail.tdf1fj5">更新记录</h4>
+                            <div class="update-item">
+                                <div class="update-time">02-19 18:00</div>
+                                <div class="update-content">所有零件加工完成，共完成 256 件零部件</div>
+                                <div class="update-user">王车间主任</div>
+                            </div>
+                            <div class="update-item">
+                                <div class="update-time">02-18 12:00</div>
+                                <div class="update-content">核心零件加工进度 80%，预计按时完成</div>
+                                <div class="update-user">王车间主任</div>
+                            </div>
+                        </div>
+
+                        <div class="evidence-section">
+                            <h4 data-i18n="prodDetail.tf3qbbw">生产凭证</h4>
+                            <div class="evidence-grid">
+                                <div class="evidence-item">
+                                    <span data-i18n="prodDetail.tatlgh6">加工记录</span>
+                                </div>
+                                <div class="evidence-item">
+                                    <span data-i18n="prodDetail.tjdjy5s">零件清单</span>
+                                </div>
+                                <div class="evidence-item">
+                                    <span>+</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stage-actions">
+                            <button class="btn-confirm-stage" disabled>已确认</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 阶段3：产品组装 -->
+                <div class="stage-card active expanded">
+                    <div class="stage-header" onclick="toggleStage(this)">
+                        <div class="stage-header-left">
+                            <div class="stage-number"><span>3</span></div>
+                            <div class="stage-info">
+                                <h3 data-i18n="prodDetail.taa5wqj">产品组装</h3>
+                                <p data-i18n="prodDetail.tn2m5ll">零部件组装、整机装配、功能调试</p>
+                            </div>
+                        </div>
+                        <span class="stage-status-badge in-progress">进行中</span>
+                    </div>
+                    <div class="stage-body">
+                        <div class="stage-details">
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.tcd0k3t">开始时间</label>
+                                <span>--</span>
+                            </div>
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.tjtex5t">预计完成</label>
+                                <span>--</span>
+                            </div>
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.tcdkvet">当前进度</label>
+                                <span style="color: var(--primary-cyan);">0%</span>
+                            </div>
+                        </div>
+
+                        <div class="stage-updates">
+                            <h4 data-i18n="prodDetail.tdf1fj5">更新记录</h4>
+                            <div class="update-item">
+                                <div class="update-time">02-21 14:30</div>
+                                <div class="update-content">第一批产品组装完成，正在进行功能调试</div>
+                                <div class="update-user">赵组长</div>
+                            </div>
+                            <div class="update-item">
+                                <div class="update-time">02-20 16:00</div>
+                                <div class="update-content">组装流水线启动，预计明天完成主体组装</div>
+                                <div class="update-user">赵组长</div>
+                            </div>
+                            <div class="update-item">
+                                <div class="update-time">02-20 09:00</div>
+                                <div class="update-content">开始产品组装阶段</div>
+                                <div class="update-user">系统</div>
+                            </div>
+                        </div>
+
+                        <div class="evidence-section">
+                            <h4 data-i18n="prodDetail.tf3qbbw">生产凭证</h4>
+                            <div class="evidence-grid">
+                                <div class="evidence-item">
+                                    <span data-i18n="prodDetail.tgkav3a">组装记录</span>
+                                </div>
+                                <div class="evidence-item">
+                                    <span data-i18n="prodDetail.ti8p7g7">调试报告</span>
+                                </div>
+                                <div class="evidence-item">
+                                    <span>+</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stage-actions">
+                            <button class="btn-confirm-stage" onclick="openConfirmModal(3, '产品组装')">确认本阶段</button>
+                            <button class="btn-report-issue" onclick="openIssueModal()">反馈问题</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 阶段4：质量检验 -->
+                <div class="stage-card">
+                    <div class="stage-header" onclick="toggleStage(this)">
+                        <div class="stage-header-left">
+                            <div class="stage-number"><span>4</span></div>
+                            <div class="stage-info">
+                                <h3 data-i18n="prodDetail.tiet8dv">质量检验</h3>
+                                <p data-i18n="prodDetail.t50r9r4">成品检测、性能测试、品质认证</p>
+                            </div>
+                        </div>
+                        <span class="stage-status-badge pending">待开始</span>
+                    </div>
+                    <div class="stage-body">
+                        <div class="stage-details">
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.thyhgrg">计划开始</label>
+                                <span>--</span>
+                            </div>
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.thygx91">计划完成</label>
+                                <span>--</span>
+                            </div>
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.tlckeu">负责人</label>
+                                <span data-i18n="prodDetail.td3pkx">品质部</span>
+                            </div>
+                        </div>
+
+                        <div class="stage-actions">
+                            <button class="btn-confirm-stage" disabled>等待前序完成</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 阶段5：包装发货 -->
+                <div class="stage-card">
+                    <div class="stage-header" onclick="toggleStage(this)">
+                        <div class="stage-header-left">
+                            <div class="stage-number"><span>5</span></div>
+                            <div class="stage-info">
+                                <h3 data-i18n="prodDetail.tb1erx2">包装发货</h3>
+                                <p data-i18n="prodDetail.tniv2jf">产品包装、物流安排、发货确认</p>
+                            </div>
+                        </div>
+                        <span class="stage-status-badge pending">待开始</span>
+                    </div>
+                    <div class="stage-body">
+                        <div class="stage-details">
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.thyhgrg">计划开始</label>
+                                <span>--</span>
+                            </div>
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.thygx91">计划完成</label>
+                                <span>--</span>
+                            </div>
+                            <div class="detail-item">
+                                <label data-i18n="prodDetail.tlckeu">负责人</label>
+                                <span data-i18n="prodDetail.thansg">物流部</span>
+                            </div>
+                        </div>
+
+                        <div class="stage-actions">
+                            <button class="btn-confirm-stage" disabled>等待前序完成</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧边栏 -->
+            <div class="production-sidebar">
+                <!-- 供应商信息 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="prodDetail.tvm1bwl">供应商信息</h3>
+                    <div class="supplier-info">
+                        <div class="supplier-avatar">深</div>
+                        <div class="supplier-details">
+                            <h4 data-i18n="prodDetail.tvkrwa4">深圳精密科技有限公司</h4>
+                            <p data-i18n="prodDetail.t466nbt">认证供应商 | 电子制造</p>
+                        </div>
+                    </div>
+                    <div class="supplier-contact">
+                        <div class="contact-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span data-i18n="prodDetail.twx5kea">联系人：李经理</span>
+                        </div>
+                        <div class="contact-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                            <span>--</span>
+                        </div>
+                    </div>
+                    <button class="btn-contact-supplier" onclick="location.href='chat.html'">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle; margin-right: 6px;">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        联系供应商
+                    </button>
+                </div>
+
+                <!-- 生产时间线 -->
+                <div class="sidebar-card timeline-card">
+                    <h3 data-i18n="prodDetail.tsx4jvr">生产时间线</h3>
+                    <div class="timeline">
+                        <div class="timeline-item completed">
+                            <div class="timeline-date">02-17 15:30</div>
+                            <div class="timeline-title">材料准备完成</div>
+                        </div>
+                        <div class="timeline-item completed">
+                            <div class="timeline-date">02-19 18:00</div>
+                            <div class="timeline-title">零件加工完成</div>
+                        </div>
+                        <div class="timeline-item current">
+                            <div class="timeline-date">进行中</div>
+                            <div class="timeline-title">产品组装 (65%)</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">计划 02-24</div>
+                            <div class="timeline-title">质量检验</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">计划 02-25</div>
+                            <div class="timeline-title">包装发货</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 关联订单 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="prodDetail.tatar5g">关联订单</h3>
+                    <div class="related-order">
+                        <div class="related-order-header">
+                            <span class="related-order-id"></span>
+                            <span class="related-order-status">生产中</span>
+                        </div>
+                        <div class="related-order-info">
+                            <p data-i18n="prodDetail.t7g9981">产品：智能控制模块 x100</p>
+                            <p data-i18n="prodDetail.td85rds">金额：--.00</p>
+                            <p data-i18n="prodDetail.trd7krw">交付日期：--</p>
+                        </div>
+                        <button class="btn-view-order" onclick="location.href='order-detail.html'">查看订单详情</button>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="prodDetail.tcil0yj">快捷操作</h3>
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="location.href='contract-detail.html'">查看合同</button>
+                        <button class="btn-secondary" onclick="exportReport()">导出生产报告</button>
+                        <button class="btn-secondary" onclick="location.href='chat.html'">沟通记录</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认弹窗 -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+                <h3 data-i18n="prodDetail.twaj44f">确认生产阶段完成</h3>
+                <p data-i18n="prodDetail.te4rcor">请确认当前生产阶段已完成并通过验收</p>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-item">
+                    <label data-i18n="prodDetail.tcdm0wp">当前阶段</label>
+                    <span id="confirmStageName">产品组装</span>
+                </div>
+                <div class="confirm-item">
+                    <label data-i18n="prodDetail.tbyjphe">完成时间</label>
+                    <span id="confirmTime">--</span>
+                </div>
+                <div class="confirm-item">
+                    <label data-i18n="prodDetail.tib7gk">确认人</label>
+                    <span data-i18n="prodDetail.t6spobm">--（采购方）</span>
+                </div>
+            </div>
+            <textarea class="modal-textarea" placeholder="请输入确认备注（选填）..."></textarea>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeConfirmModal()">取消</button>
+                <button class="btn-submit" onclick="submitConfirm()">确认完成</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 问题反馈弹窗 -->
+    <div class="modal-overlay" id="issueModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon" style="background: rgba(255, 107, 107, 0.15);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <h3 data-i18n="prodDetail.tnuino3">反馈生产问题</h3>
+                <p data-i18n="prodDetail.teppws2">请描述您发现的问题，我们将尽快处理</p>
+            </div>
+            <textarea class="modal-textarea" placeholder="请详细描述问题..." style="min-height: 120px;"></textarea>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeIssueModal()">取消</button>
+                <button class="btn-submit" style="background: #FF6B6B;" onclick="submitIssue()">提交问题</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 切换阶段展开/收起
+        function toggleStage(header) {
+            const card = header.parentElement;
+            card.classList.toggle('expanded');
+        }
+
+        // 打开确认弹窗
+        function openConfirmModal(stageNum, stageName) {
+            document.getElementById('confirmStageName').textContent = stageName;
+            document.getElementById('confirmTime').textContent = new Date().toLocaleString('zh-CN');
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        // 关闭确认弹窗
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+
+        // 提交确认
+        function submitConfirm() {
+            alert('阶段确认成功！');
+            closeConfirmModal();
+            // 更新UI状态
+            const activeCard = document.querySelector('.stage-card.active');
+            if (activeCard) {
+                activeCard.classList.remove('active');
+                activeCard.classList.add('completed');
+                activeCard.querySelector('.stage-status-badge').textContent = '已完成';
+                activeCard.querySelector('.stage-status-badge').className = 'stage-status-badge completed';
+                activeCard.querySelector('.btn-confirm-stage').textContent = '已确认';
+                activeCard.querySelector('.btn-confirm-stage').disabled = true;
+                
+                // 激活下一阶段
+                const nextCard = activeCard.nextElementSibling;
+                if (nextCard && nextCard.classList.contains('stage-card')) {
+                    nextCard.classList.add('active');
+                    nextCard.querySelector('.stage-status-badge').textContent = '进行中';
+                    nextCard.querySelector('.stage-status-badge').className = 'stage-status-badge in-progress';
+                }
+            }
+        }
+
+        // 打开问题反馈弹窗
+        function openIssueModal() {
+            document.getElementById('issueModal').classList.add('show');
+        }
+
+        // 关闭问题反馈弹窗
+        function closeIssueModal() {
+            document.getElementById('issueModal').classList.remove('show');
+        }
+
+        // 提交问题
+        function submitIssue() {
+            alert('问题已提交，我们将尽快处理！');
+            closeIssueModal();
+        }
+
+        // 导出报告
+        function exportReport() {
+            alert('生产报告已生成，正在下载...');
+        }
+
+        // 点击弹窗外部关闭
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('show');
+                }
+            });
+        });
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+<script src="auth-check.js"></script>
+</body>
+</html>
+</html>

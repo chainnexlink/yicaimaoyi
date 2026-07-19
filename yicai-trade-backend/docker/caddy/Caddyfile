@@ -1,0 +1,41 @@
+{
+    email {$ACME_EMAIL:}
+    servers {
+        protocols h1 h2
+    }
+}
+
+{$API_DOMAIN:api.chainnexlink.com} {
+    encode zstd gzip
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    handle /healthz {
+        rewrite * /actuator/health
+        reverse_proxy yicai-backend:8081
+    }
+
+    handle /actuator/* {
+        respond 404
+    }
+
+    handle {
+        reverse_proxy yicai-backend:8081 {
+            transport http {
+                dial_timeout 10s
+                response_header_timeout 180s
+            }
+        }
+    }
+
+    log {
+        output stdout
+        format json
+    }
+}

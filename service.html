@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="service.t7jsmi4">客服中心 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="javascript:history.back()" class="inline-back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    返回
+                </a>
+                <a href="index.html" class="logo-link" style="color: var(--primary-cyan); font-size: 18px; font-weight: 700; text-decoration: none;">
+                    全球供应链智能匹配平台
+                </a>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+                <a href="certification.html" class="nav-link" data-i18n="nav.certification">资质认证</a>
+                <a href="messages.html" class="nav-link" data-i18n="nav.messages">消息中心</a>
+                <a href="user-center.html" class="nav-link">个人中心</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 页面横幅 -->
+    <div class="page-banner">
+        <h1 data-i18n="service.tbzjpr5">客服中心</h1>
+        <p data-i18n="service.t4zvs1k">专业客服团队，7×24小时为您服务</p>
+    </div>
+
+    <!-- 主内容 -->
+    <main class="page-content">
+        <div class="content-container">
+            <!-- 联系方式 -->
+            <div class="service-contact-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 data-i18n="service.tbir8n6">在线客服</h3>
+                    <p data-i18n="service.tvo6oxj">即时沟通，快速响应</p>
+                    <button class="btn-primary" onclick="openChat()">立即咨询</button>
+                    <span class="service-status online">在线</span>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                    <h3 data-i18n="service.tfd4kqb">账户经理</h3>
+                    <p data-i18n="service.t3yzjfo">项目确认后提供一对一业务联系</p>
+                    <a href="publish-demand.html" class="btn-outline">提交需求</a>
+                    <span class="service-time">联系方式以订单或合同为准</span>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                    <h3 data-i18n="service.tikzs8q">订单邮件支持</h3>
+                    <p data-i18n="service.t7nz1q">请使用订单或销售合同列明的业务邮箱</p>
+                    <a href="orders.html" class="btn-outline">查看订单</a>
+                    <span class="service-time">保留订单号便于核验</span>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
+                    <h3 data-i18n="service.tc84ii9">帮助中心</h3>
+                    <p data-i18n="service.t1p37b1">常见问题自助解答</p>
+                    <a href="help.html" class="btn-outline">查看帮助</a>
+                    <span class="service-time">随时可用</span>
+                </div>
+            </div>
+
+            <!-- 在线咨询表单 -->
+            <div class="inquiry-form-section">
+                <h2 data-i18n="service.tcx5ez2">提交咨询</h2>
+                <p data-i18n="service.tlx9d31">填写以下表单，我们会尽快与您联系</p>
+                
+                <form class="inquiry-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-i18n="service.tcoobjq">您的姓名 <span class="required">*</span></label>
+                            <input type="text" placeholder="请输入您的姓名">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="service.tgpkj3j">联系电话 <span class="required">*</span></label>
+                            <input type="tel" placeholder="请输入联系电话">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label data-i18n="service.tf69pdq">电子邮箱</label>
+                            <input type="email" placeholder="请输入电子邮箱">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="service.tb9hctm">咨询类型 <span class="required">*</span></label>
+                            <select>
+                                <option value="">请选择咨询类型</option>
+                                <option value="account">账户问题</option>
+                                <option value="order">订单问题</option>
+                                <option value="supplier">供应商入驻</option>
+                                <option value="payment">支付问题</option>
+                                <option value="other">其他问题</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="service.tb9a2ku">咨询内容 <span class="required">*</span></label>
+                        <textarea placeholder="请详细描述您的问题或需求..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">提交咨询</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 服务承诺 -->
+            <div class="service-promise">
+                <h2 data-i18n="service.tdci4y7">服务承诺</h2>
+                <div class="promise-grid">
+                    <div class="promise-item">
+                        <div class="promise-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <h4 data-i18n="service.tcp1uyj">快速响应</h4>
+                        <p data-i18n="service.to2j5np">在线客服平均响应时间 < 30秒</p>
+                    </div>
+                    <div class="promise-item">
+                        <div class="promise-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <h4 data-i18n="service.ta6m5bs">专业解答</h4>
+                        <p data-i18n="service.twtsv14">专业客服团队，一次解决问题</p>
+                    </div>
+                    <div class="promise-item">
+                        <div class="promise-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </div>
+                        <h4 data-i18n="service.tah9p2l">信息安全</h4>
+                        <p data-i18n="service.tbclx7d">严格保护您的隐私信息</p>
+                    </div>
+                    <div class="promise-item">
+                        <div class="promise-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </div>
+                        <h4 data-i18n="service.tee2pt9">满意保障</h4>
+                        <p data-i18n="service.tqhh2nc">不满意可随时反馈改进</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-copyright">
+            <p data-i18n="footer.copyright">&copy; 2026 全球供应链智能匹配平台 | 版权所有</p>
+        </div>
+        <nav class="footer-nav">
+            <a href="help.html" data-i18n="footer.help">帮助中心</a>
+            <a href="service.html" data-i18n="footer.service">客服中心</a>
+            <a href="about.html" data-i18n="footer.about">关于我们</a>
+            <a href="privacy.html" data-i18n="footer.privacy">隐私政策</a>
+            <a href="terms.html" data-i18n="footer.terms">服务条款</a>
+        </nav>
+        <div style="text-align:center;padding:8px 0;font-size:12px;"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow noopener" style="color:#888;text-decoration:none;">粤ICP备2026015135号-2</a></div>
+    </footer>
+
+    <script src="platform-scripts.js"></script>
+    <script>
+        function openChat() {
+            window.location.href = 'chat.html';
+        }
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+</body>
+</html>

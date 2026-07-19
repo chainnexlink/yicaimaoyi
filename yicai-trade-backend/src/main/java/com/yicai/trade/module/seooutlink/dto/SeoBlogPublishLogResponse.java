@@ -1,0 +1,30 @@
+package com.yicai.trade.module.seooutlink.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class SeoBlogPublishLogResponse {
+    private Long id;
+    private Long bindingId;
+    private Long supplierId;
+    private String platform;
+    private Long productId;
+    private String productName;
+    private String keyword;
+    private String productUrl;
+    private String articleTitle;
+    private String articleContent;
+    private String publishUrl;
+    private String status;
+    private String errorMessage;
+    private LocalDateTime publishedAt;
+    private LocalDateTime createdAt;
+}

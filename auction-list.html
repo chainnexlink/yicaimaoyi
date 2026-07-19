@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="auctionList.te0xbof">智能采购反向竞价 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .auction-list-page {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            padding-top: 80px;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, rgba(0, 229, 204, 0.1) 0%, transparent 100%);
+            padding: 40px 20px;
+            border-bottom: 1px solid var(--border-color);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .page-header h1 {
+            font-size: 32px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        .page-actions {
+            margin-top: 20px;
+        }
+        
+        .auction-list-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(0, 229, 204, 0.1);
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+        
+        .auction-list-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        
+        .loading-more {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 40px;
+        }
+        
+        .pagination button {
+            padding: 10px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+        
+        .pagination button.active {
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+            border-color: var(--primary-cyan);
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 1024px) {
+            .auction-list-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .auction-list-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="index.html" class="back-link" style="color:var(--primary-cyan);text-decoration:none;display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:20px;">←</span> 返回首页
+                </a>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                <a href="auction-list.html" class="nav-link active">智能采购反向竞价</a>
+                <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+            </nav>
+            <div class="header-right">
+                <button class="btn-login" id="loginBtn" onclick="window.location.href='login.html'">登录/注册</button>
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <div class="user-menu-trigger">
+                        <span class="user-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="8" r="4"></circle>
+                                <path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path>
+                            </svg>
+                        </span>
+                        <span class="user-name">admin</span>
+                    </div>
+                    <div class="user-dropdown">
+                        <a href="user-center.html" class="dropdown-item">个人中心</a>
+                        <a href="login.html" class="dropdown-item logout-item" id="logoutBtn" data-i18n="common.logout">退出登录</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="auction-list-page">
+        <div class="page-header">
+            <h1 data-i18n="auctionList.tr0btyi">智能采购反向竞价</h1>
+            <p data-i18n="auctionList.tomcr6b">实时竞价，价低者得，透明高效的采购新方式</p>
+            <div class="page-actions">
+                <a href="auction-create.html" class="btn-primary">发起反向竞价</a>
+            </div>
+        </div>
+        
+        <div class="auction-list-container">
+            <div class="filter-bar">
+                <button class="filter-btn active" data-status="all">全部</button>
+                <button class="filter-btn" data-status="SIGNUP">报名中</button>
+                <button class="filter-btn" data-status="ACTIVE">竞价中</button>
+                <button class="filter-btn" data-status="CONFIRMING">待确认</button>
+                <button class="filter-btn" data-status="PENDING">即将开始</button>
+                <button class="filter-btn" data-status="ENDED">已结束</button>
+            </div>
+            
+            <div class="auction-list-grid" id="auctionListGrid">
+                <div class="loading-more" style="grid-column:1/-1;">
+                    <div class="spinner" style="width:40px;height:40px;border:3px solid var(--border-color);border-top-color:var(--primary-cyan);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
+                    <p data-i18n="auctionList.t27k1ha">加载中...</p>
+                </div>
+            </div>
+            
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+
+    <script src="auth-check.js"></script>
+    <script src="auction-demo-data.js?v=20260715a"></script>
+    <script>
+        const API_BASE = (() => {
+            const port = window.location.port;
+            if (!port || port === '80' || port === '443' || port === '8081') return '/api/v1/auction';
+            return 'http://' + window.location.hostname + ':8081/api/v1/auction';
+        })();
+        let currentPage = 0;
+        let totalPages = 1;
+        let currentFilter = 'all';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAuctions();
+            initFilters();
+        });
+        
+        function initFilters() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.status;
+                    currentPage = 0;
+                    loadAuctions();
+                });
+            });
+        }
+        
+        async function loadAuctions() {
+            const grid = document.getElementById('auctionListGrid');
+            grid.innerHTML = `
+                <div class="loading-more" style="grid-column:1/-1;">
+                    <div class="spinner" style="width:40px;height:40px;border:3px solid var(--border-color);border-top-color:var(--primary-cyan);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px;"></div>
+                    <p data-i18n="auctionList.t27k1ha">加载中...</p>
+                </div>
+            `;
+            
+            try {
+                const statusParam = currentFilter === 'all' ? '' : `&status=${encodeURIComponent(currentFilter)}`;
+                const response = await fetch(`${API_BASE}/list?page=${currentPage}&size=9${statusParam}`);
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    let auctions = result.data.content || [];
+                    totalPages = result.data.totalPages || 1;
+                    
+                    if (auctions.length > 0) {
+                        renderAuctions(auctions, false);
+                    } else if ((result.data.totalElements || 0) === 0) {
+                        loadDemoAuctions();
+                        return;
+                    } else {
+                        renderAuctionMessage('暂无符合条件的反拍项目');
+                    }
+                    
+                    renderPagination();
+                    return;
+                }
+            } catch (error) {
+                console.error('加载反拍列表失败:', error);
+            }
+
+            loadDemoAuctions();
+        }
+
+        function renderAuctionMessage(message) {
+            totalPages = 1;
+            document.getElementById('auctionListGrid').innerHTML = `
+                <div class="auction-empty" style="grid-column:1/-1;">
+                    <p style="color:var(--text-muted);">${escapeHtml(message)}</p>
+                </div>`;
+            renderPagination();
+        }
+        
+        function loadDemoAuctions() {
+            let auctions = window.YICAI_AUCTION_DEMO ? window.YICAI_AUCTION_DEMO.getAuctions() : [];
+            if (currentFilter !== 'all') auctions = auctions.filter(a => matchesStatus(a.status, currentFilter));
+            totalPages = 1;
+            if (auctions.length > 0) {
+                renderAuctions(auctions, true);
+            } else {
+                const grid = document.getElementById('auctionListGrid');
+                grid.innerHTML = `
+                    <div class="auction-empty" style="grid-column:1/-1;">
+                        <p style="color:var(--text-muted);">演示场景中暂无${currentFilter === 'all' ? '' : getStatusText(currentFilter)}反拍</p>
+                    </div>
+                `;
+            }
+            renderPagination();
+        }
+        
+        function matchesStatus(status, filter) {
+            if (filter === 'ENDED') return ['ENDED', 'CONFIRMED', 'DELIVERING', 'COMPLETED', 'FAILED'].includes(status);
+            return status === filter;
+        }
+        
+        function renderAuctions(auctions, isDemo) {
+            const grid = document.getElementById('auctionListGrid');
+            const notice = isDemo ? `<div style="grid-column:1/-1;padding:14px 16px;border:1px solid rgba(0,229,204,.35);background:rgba(0,229,204,.08);border-radius:10px;color:var(--text-secondary);line-height:1.7;"><strong style="color:var(--primary-cyan);">交互演示数据</strong>：以下项目用于体验跨境电子反拍流程，并非真实在售订单或成交业绩。价格均按卡片所示币种、贸易条款和规格口径比较。</div>` : '';
+            grid.innerHTML = notice + auctions.map(a => `
+                <a href="${escapeHtml(a.demo && window.YICAI_AUCTION_DEMO ? window.YICAI_AUCTION_DEMO.detailUrl(a) : `auction-detail.html?id=${encodeURIComponent(String(a.id || ''))}`)}" class="auction-card">
+                    <span class="auction-status ${safeCssClass(a.status)}">${escapeHtml(a.statusText || getStatusText(a.status))}</span>
+                    ${a.demo ? '<span style="display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:rgba(139,92,246,.18);color:#c4b5fd;font-size:11px;font-weight:700;">DEMO</span>' : ''}
+                    <h3 class="auction-title">${escapeHtml(a.productName)}</h3>
+                    <p class="auction-company">采购主体: ${escapeHtml(a.buyerCompany || '易采贸易')}</p>
+                    
+                    <div class="auction-info">
+                        <div class="auction-info-item">
+                            <span class="auction-info-label">采购数量</span>
+                            <span class="auction-info-value">${escapeHtml(String(a.quantity == null ? '-' : a.quantity))} ${escapeHtml(a.unit || '件')}</span>
+                        </div>
+                        <div class="auction-info-item">
+                            <span class="auction-info-label">起拍价</span>
+                            <span class="auction-info-value price">${formatMoney(a.startingPrice, a.currency)}</span>
+                        </div>
+                        <div class="auction-info-item">
+                            <span class="auction-info-label">当前最低价</span>
+                            <span class="auction-info-value price">${formatMoney(a.currentLowestPrice, a.currency)}</span>
+                        </div>
+                        <div class="auction-info-item">
+                            <span class="auction-info-label">降价幅度</span>
+                            <span class="auction-info-value">≥${formatMoney(a.minDecrement, a.currency)}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="auction-timer">
+                        <span class="auction-timer-label">${
+                            a.status === 'ACTIVE' ? '距结束' :
+                            a.status === 'SIGNUP' ? '距报名截止' :
+                            a.status === 'PENDING' ? '距开始' :
+                            a.status === 'CONFIRMING' ? '待确认' :
+                            '已结束'
+                        }</span>
+                        <span class="auction-timer-value">${['ENDED','COMPLETED','FAILED','VOIDED','CANCELLED','CONFIRMED'].includes(a.status) ? '-' : formatCountdown(a.remainingSeconds)}</span>
+                    </div>
+                    
+                    <div class="auction-stats">
+                        <div class="auction-stat">
+                            <span class="auction-stat-value">${a.bidCount || 0}</span>
+                            <span class="auction-stat-label">出价次数</span>
+                        </div>
+                        <div class="auction-stat">
+                            <span class="auction-stat-value">${a.participantCount || 0}</span>
+                            <span class="auction-stat-label">参与供应商</span>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+        }
+        
+        function renderPagination() {
+            const pagination = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            let html = `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>上一页</button>`;
+            
+            for (let i = 0; i < totalPages; i++) {
+                html += `<button onclick="goToPage(${i})" class="${i === currentPage ? 'active' : ''}">${i + 1}</button>`;
+            }
+            
+            html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>下一页</button>`;
+            
+            pagination.innerHTML = html;
+        }
+        
+        function goToPage(page) {
+            if (page >= 0 && page < totalPages) {
+                currentPage = page;
+                loadAuctions();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        
+        function getStatusText(status) {
+            const map = { ACTIVE: '进行中的', PENDING: '即将开始的', ENDED: '已结束的' };
+            return map[status] || '';
+        }
+        
+        function formatPrice(price) {
+            if (!price) return '0.00';
+            return parseFloat(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+        
+        function formatCountdown(seconds) {
+            if (!seconds || seconds <= 0) return '已结束';
+            const days = Math.floor(seconds / 86400);
+            const hours = Math.floor((seconds % 86400) / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            if (days > 0) return `${days}天 ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatMoney(price, currency) {
+            if (window.YICAI_AUCTION_DEMO) return window.YICAI_AUCTION_DEMO.money(price, currency || 'CNY');
+            return `${currency || 'CNY'} ${formatPrice(price)}`;
+        }
+
+        function safeCssClass(value) {
+            return String(value || '').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+        }
+    </script>
+    
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+</body>
+</html>

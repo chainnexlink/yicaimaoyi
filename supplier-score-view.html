@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title>评分与勋章 - 供应商中心</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a1628 0%, #1a1a2e 50%, #0d1926 100%);
+            min-height: 100vh;
+            color: #fff;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .page-desc {
+            color: rgba(255,255,255,0.6);
+            font-size: 15px;
+        }
+        /* 总览卡片 */
+        .overview-card {
+            background: linear-gradient(135deg, rgba(0,229,204,0.15), rgba(0,184,163,0.05));
+            border: 1px solid rgba(0,229,204,0.3);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+        .total-score {
+            text-align: center;
+        }
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: conic-gradient(#00E5CC 0deg, #00E5CC 302deg, rgba(255,255,255,0.1) 302deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            position: relative;
+        }
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            background: #0a1628;
+            border-radius: 50%;
+        }
+        .score-value {
+            position: relative;
+            z-index: 1;
+            font-size: 48px;
+            font-weight: 700;
+            color: #00E5CC;
+        }
+        .score-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+        .badge-showcase {
+            text-align: center;
+        }
+        .current-badge {
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .badge-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, #ffd700, #ffb800);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(255,215,0,0.4);
+            animation: glow 3s ease-in-out infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 10px 40px rgba(255,215,0,0.4); }
+            50% { box-shadow: 0 10px 60px rgba(255,215,0,0.6); }
+        }
+        .badge-icon svg {
+            width: 50px;
+            height: 50px;
+            color: #0a1628;
+        }
+        .badge-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+        .badge-desc {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+        .next-badge {
+            text-align: center;
+        }
+        .next-badge-title {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 15px;
+        }
+        .next-badge-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 12px;
+            background: linear-gradient(135deg, rgba(185,242,255,0.3), rgba(185,242,255,0.1));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed rgba(185,242,255,0.4);
+        }
+        .next-badge-icon svg {
+            width: 35px;
+            height: 35px;
+            color: rgba(185,242,255,0.6);
+        }
+        .next-badge-name {
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 8px;
+        }
+        .progress-to-next {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+        .progress-to-next span {
+            color: #00E5CC;
+            font-weight: 600;
+        }
+        /* 勋章等级说明 */
+        .badges-section {
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title svg {
+            width: 24px;
+            height: 24px;
+            color: #00E5CC;
+        }
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        .badge-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px 20px;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+            position: relative;
+        }
+        .badge-card.earned {
+            border-color: rgba(0,229,204,0.3);
+        }
+        .badge-card.current {
+            border-color: #ffd700;
+            background: rgba(255,215,0,0.05);
+        }
+        .badge-card .badge-tier-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .badge-card.bronze .badge-tier-icon {
+            background: linear-gradient(135deg, #cd7f32, #8b4513);
+        }
+        .badge-card.silver .badge-tier-icon {
+            background: linear-gradient(135deg, #c0c0c0, #a8a8a8);
+        }
+        .badge-card.gold .badge-tier-icon {
+            background: linear-gradient(135deg, #ffd700, #ffb800);
+        }
+        .badge-card.platinum .badge-tier-icon {
+            background: linear-gradient(135deg, #b9f2ff, #88d8e8);
+        }
+        .badge-card .badge-tier-icon svg {
+            width: 35px;
+            height: 35px;
+            color: #0a1628;
+        }
+        .badge-card:not(.earned) .badge-tier-icon {
+            opacity: 0.4;
+            filter: grayscale(100%);
+        }
+        .badge-card .tier-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .badge-card.bronze .tier-name { color: #cd7f32; }
+        .badge-card.silver .tier-name { color: #c0c0c0; }
+        .badge-card.gold .tier-name { color: #ffd700; }
+        .badge-card.platinum .tier-name { color: #b9f2ff; }
+        .badge-card:not(.earned) .tier-name { color: rgba(255,255,255,0.4); }
+        .badge-card .tier-requirement {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 10px;
+        }
+        .badge-card .tier-benefit {
+            font-size: 12px;
+            color: #00E5CC;
+            padding: 6px 12px;
+            background: rgba(0,229,204,0.1);
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .badge-card:not(.earned) .tier-benefit {
+            color: rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.05);
+        }
+        .badge-card .earned-check {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 24px;
+            height: 24px;
+            background: #00E5CC;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .badge-card .earned-check svg {
+            width: 14px;
+            height: 14px;
+            color: #0a1628;
+        }
+        /* 订单评分列表 */
+        .orders-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .orders-filter {
+            display: flex;
+            gap: 10px;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(0,229,204,0.1);
+            border-color: #00E5CC;
+            color: #00E5CC;
+        }
+        .order-score-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .order-score-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .order-score-item:hover {
+            background: rgba(0,229,204,0.05);
+        }
+        .order-info {
+            flex: 1;
+        }
+        .order-info .order-id {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .order-info .order-meta {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+        .order-score-display {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .score-bar-container {
+            width: 200px;
+        }
+        .score-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+        .score-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+        .score-bar-fill.excellent { background: linear-gradient(90deg, #00E5CC, #00b8a3); }
+        .score-bar-fill.good { background: linear-gradient(90deg, #ffd700, #ffb800); }
+        .score-bar-fill.normal { background: linear-gradient(90deg, #17a2b8, #138496); }
+        .score-bar-fill.low { background: linear-gradient(90deg, #ff6b6b, #ee5a5a); }
+        .score-text {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            display: flex;
+            justify-content: space-between;
+        }
+        .order-score-value {
+            font-size: 28px;
+            font-weight: 700;
+            min-width: 70px;
+            text-align: right;
+        }
+        .order-score-value.excellent { color: #00E5CC; }
+        .order-score-value.good { color: #ffd700; }
+        .order-score-value.normal { color: #17a2b8; }
+        .order-score-value.low { color: #ff6b6b; }
+        .order-actions {
+            margin-left: 20px;
+        }
+        .view-btn {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .view-btn:hover {
+            background: rgba(0,229,204,0.2);
+            color: #00E5CC;
+        }
+        /* 匹配优先级说明 */
+        .priority-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .priority-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .priority-chart {
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+        }
+        .chart-title {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .chart-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .chart-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chart-bar-label {
+            width: 60px;
+            font-size: 13px;
+        }
+        .chart-bar {
+            flex: 1;
+            height: 24px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .chart-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .chart-bar-fill.platinum { background: linear-gradient(90deg, #b9f2ff, #88d8e8); color: #0a1628; }
+        .chart-bar-fill.gold { background: linear-gradient(90deg, #ffd700, #ffb800); color: #0a1628; }
+        .chart-bar-fill.silver { background: linear-gradient(90deg, #c0c0c0, #a8a8a8); color: #0a1628; }
+        .chart-bar-fill.bronze { background: linear-gradient(90deg, #cd7f32, #8b4513); color: #fff; }
+        .priority-benefits {
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+        }
+        .benefit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .benefit-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(0,229,204,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .benefit-icon svg {
+            width: 18px;
+            height: 18px;
+            color: #00E5CC;
+        }
+        .benefit-text h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .benefit-text p {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+        @media (max-width: 992px) {
+            .overview-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .badges-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .priority-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 576px) {
+            .badges-grid {
+                grid-template-columns: 1fr;
+            }
+            .order-score-item {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .score-bar-container {
+                width: 100%;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="javascript:history.back()" class="inline-back" title="返回">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                </a>
+                <a href="index.html" class="logo">易采供应链</a>
+            </div>
+            <div class="nav-right">
+                <a href="supplier-center.html" class="nav-link">供应商中心</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <div class="page-header">
+            <h1 class="page-title">评分与勋章</h1>
+            <p class="page-desc">通过优质的生产监控上传获取评分，解锁更高等级勋章，提升匹配优先级</p>
+        </div>
+
+        <!-- 总览 -->
+        <div class="overview-card">
+            <div class="total-score">
+                <div class="score-circle">
+                    <span class="score-value">838</span>
+                </div>
+                <div class="score-label">累计总得分</div>
+            </div>
+            <div class="badge-showcase">
+                <div class="current-badge">
+                    <div class="badge-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </div>
+                    <div class="badge-name">金牌供应商</div>
+                    <div class="badge-desc">您已获得金牌供应商称号，享受优先匹配权益</div>
+                </div>
+            </div>
+            <div class="next-badge">
+                <div class="next-badge-title">下一个目标</div>
+                <div class="next-badge-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="8" r="7"></circle>
+                        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                    </svg>
+                </div>
+                <div class="next-badge-name">铂金供应商</div>
+                <div class="progress-to-next">还需 <span>162 分</span> 即可解锁</div>
+            </div>
+        </div>
+
+        <!-- 勋章等级 -->
+        <div class="badges-section">
+            <h2 class="section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="8" r="7"></circle>
+                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                </svg>
+                勋章等级体系
+            </h2>
+            <div class="badges-grid">
+                <div class="badge-card bronze earned">
+                    <div class="earned-check">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <div class="badge-tier-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </div>
+                    <div class="tier-name">青铜供应商</div>
+                    <div class="tier-requirement">累计得分 200 分</div>
+                    <div class="tier-benefit">匹配权重 +10%</div>
+                </div>
+                <div class="badge-card silver earned">
+                    <div class="earned-check">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <div class="badge-tier-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </div>
+                    <div class="tier-name">白银供应商</div>
+                    <div class="tier-requirement">累计得分 500 分</div>
+                    <div class="tier-benefit">匹配权重 +25%</div>
+                </div>
+                <div class="badge-card gold earned current">
+                    <div class="earned-check">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <div class="badge-tier-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </div>
+                    <div class="tier-name">金牌供应商</div>
+                    <div class="tier-requirement">累计得分 800 分</div>
+                    <div class="tier-benefit">匹配权重 +50%</div>
+                </div>
+                <div class="badge-card platinum">
+                    <div class="badge-tier-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="8" r="7"></circle>
+                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                        </svg>
+                    </div>
+                    <div class="tier-name">铂金供应商</div>
+                    <div class="tier-requirement">累计得分 1000 分</div>
+                    <div class="tier-benefit">匹配权重 +100%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 订单评分列表 -->
+        <div class="orders-section">
+            <div class="orders-header">
+                <h2 class="section-title" style="margin-bottom:0;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    订单评分明细
+                </h2>
+                <div class="orders-filter">
+                    <button class="filter-btn active">全部</button>
+                    <button class="filter-btn">优秀</button>
+                    <button class="filter-btn">良好</button>
+                    <button class="filter-btn">待提升</button>
+                </div>
+            </div>
+            <div class="order-score-list">
+                <div class="order-score-item">
+                    <div class="order-info">
+                        <div class="order-id">OD202402140028 - --</div>
+                        <div class="order-meta">生产中 | 2024-02-14 至今 | --</div>
+                    </div>
+                    <div class="order-score-display">
+                        <div class="score-bar-container">
+                            <div class="score-bar">
+                                <div class="score-bar-fill good" style="width: 68%;"></div>
+                            </div>
+                            <div class="score-text">
+                                <span>图片: 40张</span>
+                                <span>视频: 14个</span>
+                            </div>
+                        </div>
+                        <div class="order-score-value good">68</div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="view-btn" onclick="location.href='supplier-order-detail.html'">查看详情</button>
+                    </div>
+                </div>
+                <div class="order-score-item">
+                    <div class="order-info">
+                        <div class="order-id">OD202402100089 - --</div>
+                        <div class="order-meta">已完成 | 2024-02-10 ~ 2024-02-14 | --</div>
+                    </div>
+                    <div class="order-score-display">
+                        <div class="score-bar-container">
+                            <div class="score-bar">
+                                <div class="score-bar-fill excellent" style="width: 92%;"></div>
+                            </div>
+                            <div class="score-text">
+                                <span>图片: 58张</span>
+                                <span>视频: 17个</span>
+                            </div>
+                        </div>
+                        <div class="order-score-value excellent">92</div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="view-btn" onclick="location.href='supplier-order-detail.html'">查看详情</button>
+                    </div>
+                </div>
+                <div class="order-score-item">
+                    <div class="order-info">
+                        <div class="order-id">OD202401280056 - --</div>
+                        <div class="order-meta">已完成 | 2024-01-28 ~ 2024-02-08 | --</div>
+                    </div>
+                    <div class="order-score-display">
+                        <div class="score-bar-container">
+                            <div class="score-bar">
+                                <div class="score-bar-fill excellent" style="width: 88%;"></div>
+                            </div>
+                            <div class="score-text">
+                                <span>图片: 52张</span>
+                                <span>视频: 18个</span>
+                            </div>
+                        </div>
+                        <div class="order-score-value excellent">88</div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="view-btn" onclick="location.href='supplier-order-detail.html'">查看详情</button>
+                    </div>
+                </div>
+                <div class="order-score-item">
+                    <div class="order-info">
+                        <div class="order-id">OD202401150033 - 深圳市星辰科技有限公司</div>
+                        <div class="order-meta">已完成 | 2024-01-15 ~ 2024-01-26 | --</div>
+                    </div>
+                    <div class="order-score-display">
+                        <div class="score-bar-container">
+                            <div class="score-bar">
+                                <div class="score-bar-fill normal" style="width: 75%;"></div>
+                            </div>
+                            <div class="score-text">
+                                <span>图片: 45张</span>
+                                <span>视频: 15个</span>
+                            </div>
+                        </div>
+                        <div class="order-score-value normal">75</div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="view-btn" onclick="location.href='supplier-order-detail.html'">查看详情</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 匹配优先级 -->
+        <div class="priority-section">
+            <h2 class="section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                勋章与匹配优先级
+            </h2>
+            <div class="priority-content">
+                <div class="priority-chart">
+                    <div class="chart-title">各等级匹配权重对比</div>
+                    <div class="chart-bars">
+                        <div class="chart-bar-item">
+                            <span class="chart-bar-label" style="color:#b9f2ff;">铂金</span>
+                            <div class="chart-bar">
+                                <div class="chart-bar-fill platinum" style="width: 100%;">+100%</div>
+                            </div>
+                        </div>
+                        <div class="chart-bar-item">
+                            <span class="chart-bar-label" style="color:#ffd700;">金牌</span>
+                            <div class="chart-bar">
+                                <div class="chart-bar-fill gold" style="width: 75%;">+50%</div>
+                            </div>
+                        </div>
+                        <div class="chart-bar-item">
+                            <span class="chart-bar-label" style="color:#c0c0c0;">白银</span>
+                            <div class="chart-bar">
+                                <div class="chart-bar-fill silver" style="width: 50%;">+25%</div>
+                            </div>
+                        </div>
+                        <div class="chart-bar-item">
+                            <span class="chart-bar-label" style="color:#cd7f32;">青铜</span>
+                            <div class="chart-bar">
+                                <div class="chart-bar-fill bronze" style="width: 30%;">+10%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="priority-benefits">
+                    <div class="chart-title">高等级勋章权益</div>
+                    <div class="benefit-list">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <path d="m21 21-4.35-4.35"></path>
+                                </svg>
+                            </div>
+                            <div class="benefit-text">
+                                <h4>搜索排名优先</h4>
+                                <p>在买家搜索结果中获得更靠前的展示位置</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                            </div>
+                            <div class="benefit-text">
+                                <h4>智能匹配优先</h4>
+                                <p>在平台智能匹配推荐时获得更高的曝光机会</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                                    <line x1="9" y1="21" x2="9" y2="9"></line>
+                                </svg>
+                            </div>
+                            <div class="benefit-text">
+                                <h4>首页推荐展示</h4>
+                                <p>有机会出现在平台首页优质供应商推荐位</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                            </div>
+                            <div class="benefit-text">
+                                <h4>信誉认证标识</h4>
+                                <p>获得平台官方信誉认证标识，增强买家信任</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+<script src="auth-check.js"></script>
+    <script>
+        // 筛选按钮
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+<script src="/js/ai-chat.js"></script>
+</body>
+</html>
+</html>

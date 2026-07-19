@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="orderDetail.te9w6ot">订单详情 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .order-detail-page {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            padding-bottom: 40px;
+        }
+
+        /* 订单头部 */
+        .order-header {
+            background: linear-gradient(135deg, rgba(0, 229, 204, 0.1) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 32px 24px;
+        }
+
+        .order-header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .order-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .order-title h1 {
+            font-size: 28px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .order-id {
+            font-size: 16px;
+            color: var(--primary-cyan);
+        }
+
+        .order-status-badge {
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .order-status-badge.producing {
+            background: rgba(69, 183, 209, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .order-status-badge.shipped {
+            background: rgba(78, 205, 196, 0.15);
+            color: var(--accent-green);
+        }
+
+        .order-status-badge.pending {
+            background: rgba(255, 217, 61, 0.15);
+            color: var(--accent-yellow);
+        }
+
+        /* 订单进度 */
+        .order-progress {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .order-progress::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 60px;
+            right: 60px;
+            height: 4px;
+            background: var(--border-color);
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--bg-card);
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+        }
+
+        .progress-step.completed .progress-icon {
+            background: var(--primary-cyan);
+            border-color: var(--primary-cyan);
+        }
+
+        .progress-step.completed .progress-icon svg {
+            color: #000;
+        }
+
+        .progress-step.active .progress-icon {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 0 6px rgba(0, 229, 204, 0.2);
+        }
+
+        .progress-step.active .progress-icon svg {
+            color: var(--primary-cyan);
+        }
+
+        .progress-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .progress-step.completed .progress-label,
+        .progress-step.active .progress-label {
+            color: var(--text-primary);
+        }
+
+        .progress-time {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* 主内容区 */
+        .order-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 32px;
+        }
+
+        .order-main {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .order-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            font-size: 16px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header h2 svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary-cyan);
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* 供应商信息 */
+        .supplier-info-row {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .supplier-avatar-lg {
+            width: 72px;
+            height: 72px;
+            background: rgba(0, 229, 204, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--primary-cyan);
+        }
+
+        .supplier-details {
+            flex: 1;
+        }
+
+        .supplier-details h3 {
+            font-size: 18px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .supplier-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .supplier-meta span {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .supplier-badges {
+            display: flex;
+            gap: 8px;
+        }
+
+        .supplier-badges .badge {
+            padding: 4px 10px;
+            background: rgba(0, 229, 204, 0.1);
+            color: var(--primary-cyan);
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .supplier-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-sm svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-primary-sm {
+            background: var(--primary-cyan);
+            border: none;
+            color: #000;
+        }
+
+        .btn-primary-sm:hover {
+            background: var(--primary-cyan-light);
+        }
+
+        .btn-outline-sm {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline-sm:hover {
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+
+        /* 商品列表 */
+        .product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .product-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-darker);
+            border-radius: 10px;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-info h4 {
+            font-size: 15px;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .product-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .product-specs {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .product-price {
+            text-align: right;
+        }
+
+        .product-price .unit-price {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .product-price .total-price {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-cyan);
+        }
+
+        /* 订单金额 */
+        .order-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px;
+            background: var(--bg-darker);
+            border-radius: 10px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .summary-row .label {
+            color: var(--text-muted);
+        }
+
+        .summary-row .value {
+            color: var(--text-primary);
+        }
+
+        .summary-row.total {
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+            font-size: 16px;
+        }
+
+        .summary-row.total .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-cyan);
+        }
+
+        /* 生产进度 */
+        .production-progress {
+            padding: 20px;
+            background: var(--bg-darker);
+            border-radius: 10px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .progress-header h4 {
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+
+        .progress-percentage {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-cyan);
+        }
+
+        .progress-bar-lg {
+            height: 12px;
+            background: var(--bg-card);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .progress-fill-lg {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-cyan) 0%, var(--primary-cyan-light) 100%);
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-stages {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .stage-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stage-item .stage-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--border-color);
+            border-radius: 50%;
+            margin: 0 auto 8px;
+        }
+
+        .stage-item.completed .stage-dot {
+            background: var(--primary-cyan);
+        }
+
+        .stage-item.active .stage-dot {
+            background: var(--accent-yellow);
+            box-shadow: 0 0 0 4px rgba(255, 217, 61, 0.3);
+        }
+
+        .stage-item .stage-name {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .stage-item.completed .stage-name,
+        .stage-item.active .stage-name {
+            color: var(--text-primary);
+        }
+
+        /* 物流信息 */
+        .logistics-timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .logistics-timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: var(--border-color);
+        }
+
+        .logistics-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .logistics-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .logistics-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 6px;
+            width: 14px;
+            height: 14px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+        }
+
+        .logistics-item:first-child::before {
+            background: var(--primary-cyan);
+            border-color: var(--primary-cyan);
+        }
+
+        .logistics-item h5 {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .logistics-item p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* 右侧边栏 */
+        .order-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sidebar-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .sidebar-card h3 {
+            font-size: 15px;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-card h3 svg {
+            width: 18px;
+            height: 18px;
+            color: var(--primary-cyan);
+        }
+
+        /* 操作按钮 */
+        .action-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-action-lg {
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-action-lg svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn-action-lg.primary {
+            background: var(--primary-cyan);
+            border: none;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .btn-action-lg.primary:hover {
+            background: var(--primary-cyan-light);
+        }
+
+        .btn-action-lg.secondary {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-action-lg.secondary:hover {
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+
+        .btn-action-lg.danger {
+            background: transparent;
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        .btn-action-lg.danger:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        /* 订单信息 */
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .info-item .label {
+            color: var(--text-muted);
+        }
+
+        .info-item .value {
+            color: var(--text-primary);
+        }
+
+        .info-item .value a {
+            color: var(--primary-cyan);
+            text-decoration: none;
+        }
+
+        .info-item .value a:hover {
+            text-decoration: underline;
+        }
+
+        /* 收货地址 */
+        .address-card {
+            padding: 16px;
+            background: var(--bg-darker);
+            border-radius: 10px;
+        }
+
+        .address-card h4 {
+            font-size: 15px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .address-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .address-card .contact {
+            margin-top: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 1024px) {
+            .order-container {
+                grid-template-columns: 1fr;
+            }
+
+            .order-progress {
+                overflow-x: auto;
+                padding-bottom: 16px;
+            }
+
+            .progress-step {
+                min-width: 100px;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <div class="order-detail-page">
+        <!-- 顶部导航 -->
+        <header class="header">
+            <div class="header-container">
+                <div class="header-left">
+                    <a href="javascript:history.back()" class="inline-back">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        返回
+                    </a>
+                    <a href="index.html" style="color: var(--primary-cyan); font-size: 18px; font-weight: 700; text-decoration: none;">
+                        全球供应链智能匹配平台
+                    </a>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                    <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+                    <a href="production-monitor.html" class="nav-link">生产监控</a>
+                    <a href="chat.html" class="nav-link">消息</a>
+                    <a href="user-center.html" class="nav-link">个人中心</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- 订单头部 -->
+        <div class="order-header">
+            <div class="order-header-inner">
+                <div class="order-header-top">
+                    <div class="order-title">
+                        <h1 data-i18n="orderDetail.tiz9pyx">采购订单</h1>
+                        <span class="order-id">订单号：</span>
+                    </div>
+                    <span class="order-status-badge producing">生产中</span>
+                </div>
+
+                <!-- 订单进度 -->
+                <div class="order-progress">
+                    <div class="progress-step completed">
+                        <div class="progress-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <span class="progress-label">订单确认</span>
+                        <span class="progress-time">02-15 10:30</span>
+                    </div>
+                    <div class="progress-step completed">
+                        <div class="progress-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <span class="progress-label">合同签署</span>
+                        <span class="progress-time">02-15 11:00</span>
+                    </div>
+                    <div class="progress-step completed">
+                        <div class="progress-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                        <span class="progress-label">付款完成</span>
+                        <span class="progress-time">02-15 14:00</span>
+                    </div>
+                    <div class="progress-step active">
+                        <div class="progress-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83"></path>
+                            </svg>
+                        </div>
+                        <span class="progress-label">生产中</span>
+                        <span class="progress-time">进行中...</span>
+                    </div>
+                    <div class="progress-step">
+                        <div class="progress-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="1" y="3" width="15" height="13"></rect>
+                                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                            </svg>
+                        </div>
+                        <span class="progress-label">发货</span>
+                        <span class="progress-time">待发货</span>
+                    </div>
+                    <div class="progress-step">
+                        <div class="progress-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8"></path>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            </svg>
+                        </div>
+                        <span class="progress-label">收货确认</span>
+                        <span class="progress-time">待收货</span>
+                    </div>
+                    <div class="progress-step">
+                        <div class="progress-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </div>
+                        <span class="progress-label">评价</span>
+                        <span class="progress-time">待评价</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-container">
+            <div class="order-main">
+                <!-- 供应商信息 -->
+                <div class="order-card">
+                    <div class="card-header">
+                        <h2>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            供应商信息
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="supplier-info-row">
+                            <div class="supplier-avatar-lg">深</div>
+                            <div class="supplier-details">
+                                <h3 data-i18n="orderDetail.t17yy4">--公司</h3>
+                                <div class="supplier-meta">
+                                    <span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                        深圳市南山区
+                                    </span>
+                                    <span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                        </svg>
+                                        履约评分 4.9
+                                    </span>
+                                </div>
+                                <div class="supplier-badges">
+                                    <span class="badge">已认证</span>
+                                    <span class="badge">优质供应商</span>
+                                    <span class="badge">ISO9001</span>
+                                </div>
+                            </div>
+                            <div class="supplier-actions">
+                                <button class="btn-sm btn-primary-sm" onclick="window.location.href='chat.html'">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                    </svg>
+                                    联系供应商
+                                </button>
+                                <button class="btn-sm btn-primary-sm" onclick="window.location.href='monitor-settings.html'" style="background:linear-gradient(135deg,#ffc107,#ff9800);">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    设置监控
+                                </button>
+                                <button class="btn-sm btn-outline-sm" onclick="window.location.href='supplier-detail.html'">
+                                    查看主页
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 商品信息 -->
+                <div class="order-card">
+                    <div class="card-header">
+                        <h2>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            </svg>
+                            商品信息
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="product-list">
+                            <div class="product-item">
+                                <div class="product-image">商品图</div>
+                                <div class="product-info">
+                                    <h4 data-i18n="orderDetail.twdwlmg">高精度电子元件A型</h4>
+                                    <p data-i18n="orderDetail.tv3k8i2">规格型号：--</p>
+                                    <div class="product-specs">
+                                        <span data-i18n="orderDetail.tddlsnm">数量：3,000 件</span>
+                                        <span data-i18n="orderDetail.tibwdhk">单价：--</span>
+                                    </div>
+                                </div>
+                                <div class="product-price">
+                                    <div class="unit-price">小计</div>
+                                    <div class="total-price">¥37,500.00</div>
+                                </div>
+                            </div>
+                            <div class="product-item">
+                                <div class="product-image">商品图</div>
+                                <div class="product-info">
+                                    <h4 data-i18n="orderDetail.t6vc9g3">工业级传感器模块</h4>
+                                    <p data-i18n="orderDetail.tv3k8i2">规格型号：--</p>
+                                    <div class="product-specs">
+                                        <span data-i18n="orderDetail.tfz6rsg">数量：1,000 件</span>
+                                        <span data-i18n="orderDetail.tibwdhk">单价：--</span>
+                                    </div>
+                                </div>
+                                <div class="product-price">
+                                    <div class="unit-price">小计</div>
+                                    <div class="total-price">--.00</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-summary">
+                            <div class="summary-row">
+                                <span class="label">商品总额</span>
+                                <span class="value">--.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="label">运费</span>
+                                <span class="value">¥0.00（卖家承担）</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="label">优惠</span>
+                                <span class="value">---.00</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span class="label">订单总额</span>
+                                <span class="value">--.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 生产进度 -->
+                <div class="order-card">
+                    <div class="card-header">
+                        <h2>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                            </svg>
+                            生产进度
+                        </h2>
+                        <a href="production-detail.html?id=" style="color: var(--primary-cyan); font-size: 14px; text-decoration: none;">查看详情 →</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="production-progress">
+                            <div class="progress-header">
+                                <h4 data-i18n="orderDetail.txuj8w6">当前进度：零件加工</h4>
+                                <span class="progress-percentage">60%</span>
+                            </div>
+                            <div class="progress-bar-lg">
+                                <div class="progress-fill-lg" style="width: 60%;"></div>
+                            </div>
+                            <div class="progress-stages">
+                                <div class="stage-item completed">
+                                    <div class="stage-dot"></div>
+                                    <span class="stage-name">备料</span>
+                                </div>
+                                <div class="stage-item completed">
+                                    <div class="stage-dot"></div>
+                                    <span class="stage-name">零件加工</span>
+                                </div>
+                                <div class="stage-item active">
+                                    <div class="stage-dot"></div>
+                                    <span class="stage-name">组装</span>
+                                </div>
+                                <div class="stage-item">
+                                    <div class="stage-dot"></div>
+                                    <span class="stage-name">质检</span>
+                                </div>
+                                <div class="stage-item">
+                                    <div class="stage-dot"></div>
+                                    <span class="stage-name">打包</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 物流信息 -->
+                <div class="order-card">
+                    <div class="card-header">
+                        <h2>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="1" y="3" width="15" height="13"></rect>
+                                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                            </svg>
+                            物流信息
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <p style="color: var(--text-muted); text-align: center; padding: 40px 0;">
+                            订单生产中，发货后将显示物流信息
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧边栏 -->
+            <div class="order-sidebar">
+                <!-- 操作按钮 -->
+                <div class="sidebar-card">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06"></path>
+                        </svg>
+                        订单操作
+                    </h3>
+                    <div class="action-grid">
+                        <button class="btn-action-lg primary" onclick="window.location.href='production-detail.html?id='">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            实时监控
+                        </button>
+                        <button class="btn-action-lg secondary" onclick="window.location.href='contract-detail.html'">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            </svg>
+                            查看合同
+                        </button>
+                        <button class="btn-action-lg secondary" onclick="window.location.href='chat.html'">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            联系供应商
+                        </button>
+                        <button class="btn-action-lg danger">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                            申请取消
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 订单信息 -->
+                <div class="sidebar-card">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        订单信息
+                    </h3>
+                    <div class="info-list">
+                        <div class="info-item">
+                            <span class="label">订单编号</span>
+                            <span class="value"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">下单时间</span>
+                            <span class="value">--</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">付款时间</span>
+                            <span class="value">--</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">预计交货</span>
+                            <span class="value">--</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">关联合同</span>
+                            <span class="value"><a href="contract-detail.html"></a></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">支付方式</span>
+                            <span class="value">银行转账</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 收货地址 -->
+                <div class="sidebar-card">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        收货地址
+                    </h3>
+                    <div class="address-card">
+                        <h4>--</h4>
+                        <p data-i18n="orderDetail.tihz9af">-- -- 仓库A区</p>
+                        <p class="contact">联系电话：--</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="platform-scripts.js"></script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+<script src="auth-check.js"></script>
+</body>
+</html>
+</html>

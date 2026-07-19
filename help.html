@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="help.t7jsmi4">客服中心 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .cs-page { min-height: 100vh; background: var(--bg-dark); }
+        .cs-banner { background: linear-gradient(135deg, rgba(0,229,204,0.12) 0%, rgba(108,92,231,0.08) 100%); border-bottom: 1px solid var(--border-color); padding: 50px 24px; text-align: center; max-width: 1400px; margin: 0 auto; }
+        .cs-banner h1 { font-size: 36px; color: var(--primary-cyan); margin-bottom: 12px; }
+        .cs-banner p { color: var(--text-secondary); font-size: 16px; }
+        .cs-tabs { display: flex; justify-content: center; gap: 0; margin-top: 28px; }
+        .cs-tab { padding: 10px 28px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.6); font-size: 14px; cursor: pointer; transition: all 0.25s; }
+        .cs-tab:first-child { border-radius: 8px 0 0 8px; }
+        .cs-tab:last-child { border-radius: 0 8px 8px 0; }
+        .cs-tab.active { background: rgba(0,229,204,0.15); border-color: var(--primary-cyan); color: var(--primary-cyan); }
+        .cs-tab:hover:not(.active) { background: rgba(255,255,255,0.1); color: #fff; }
+        .cs-content { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+        .cs-section { display: none; }
+        .cs-section.active { display: block; animation: fadeSlide 0.35s ease; }
+        @keyframes fadeSlide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 在线咨询模块 */
+        .cs-chat-grid { display: grid; grid-template-columns: 320px 1fr; gap: 0; height: 600px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; overflow: hidden; }
+        .cs-chat-sidebar { border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        .cs-chat-sidebar-header { padding: 16px; border-bottom: 1px solid var(--border-color); }
+        .cs-role-tabs { display: flex; gap: 0; }
+        .cs-role-tab { flex: 1; padding: 8px 0; text-align: center; font-size: 13px; color: rgba(255,255,255,0.5); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .cs-role-tab.active { color: var(--primary-cyan); border-bottom-color: var(--primary-cyan); }
+        .cs-contact-list { flex: 1; overflow-y: auto; }
+        .cs-contact { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; transition: background 0.15s; position: relative; }
+        .cs-contact:hover { background: rgba(0,229,204,0.05); }
+        .cs-contact.active { background: rgba(0,229,204,0.1); }
+        .cs-contact.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--primary-cyan); }
+        .cs-contact-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; flex-shrink: 0; position: relative; }
+        .cs-contact-avatar .online-dot { position: absolute; bottom: 1px; right: 1px; width: 10px; height: 10px; background: #28a745; border-radius: 50%; border: 2px solid var(--bg-card); }
+        .cs-contact-info { flex: 1; min-width: 0; }
+        .cs-contact-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cs-contact-msg { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cs-contact-meta { text-align: right; flex-shrink: 0; }
+        .cs-contact-time { font-size: 11px; color: rgba(255,255,255,0.3); }
+        .cs-unread { display: inline-block; min-width: 18px; height: 18px; line-height: 18px; text-align: center; background: #ff6b6b; color: #fff; font-size: 11px; border-radius: 10px; padding: 0 5px; margin-top: 4px; }
+        .cs-chat-main { display: flex; flex-direction: column; }
+        .cs-chat-header { padding: 14px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+        .cs-chat-header-info { display: flex; align-items: center; gap: 12px; }
+        .cs-chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+        .cs-msg { display: flex; gap: 10px; max-width: 75%; }
+        .cs-msg.sent { flex-direction: row-reverse; align-self: flex-end; }
+        .cs-msg-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+        .cs-msg-bubble { padding: 10px 16px; border-radius: 12px; font-size: 14px; line-height: 1.6; }
+        .cs-msg.received .cs-msg-bubble { background: var(--bg-darker); border-radius: 12px 12px 12px 0; }
+        .cs-msg.sent .cs-msg-bubble { background: var(--primary-cyan); color: #000; border-radius: 12px 12px 0 12px; }
+        .cs-msg-time { text-align: center; font-size: 12px; color: rgba(255,255,255,0.3); }
+        .cs-msg-system { text-align: center; padding: 6px 16px; background: rgba(255,255,255,0.05); border-radius: 20px; font-size: 12px; color: rgba(255,255,255,0.4); align-self: center; }
+        .cs-chat-context { padding: 8px 20px; background: rgba(0,229,204,0.06); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .cs-context-tag { background: rgba(0,229,204,0.2); color: var(--primary-cyan); padding: 2px 10px; border-radius: 4px; font-size: 12px; }
+        .cs-chat-input { padding: 12px 20px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; align-items: center; }
+        .cs-chat-input input { flex: 1; padding: 10px 16px; background: var(--bg-darker); border: 1px solid var(--border-color); border-radius: 8px; color: #fff; font-size: 14px; outline: none; }
+        .cs-chat-input input:focus { border-color: var(--primary-cyan); }
+        .cs-chat-input button { padding: 10px 24px; background: linear-gradient(135deg, #00E5CC, #00b8a3); border: none; border-radius: 8px; color: #0a1628; font-weight: 600; font-size: 14px; cursor: pointer; }
+        .cs-quick-actions { display: flex; gap: 6px; padding: 6px 20px; flex-wrap: wrap; }
+        .cs-quick-btn { padding: 4px 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; color: rgba(255,255,255,0.5); font-size: 12px; cursor: pointer; transition: all 0.2s; }
+        .cs-quick-btn:hover { background: rgba(0,229,204,0.1); border-color: rgba(0,229,204,0.3); color: var(--primary-cyan); }
+
+        /* 常见问题模块 */
+        .faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .faq-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 32px; text-align: center; cursor: pointer; transition: all 0.25s; }
+        .faq-card:hover { border-color: var(--primary-cyan); transform: translateY(-3px); }
+        .faq-card-icon { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; }
+        .faq-card h3 { font-size: 18px; margin-bottom: 10px; color: var(--text-primary); }
+        .faq-card p { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
+        .faq-card-link { color: var(--primary-cyan); font-size: 14px; text-decoration: none; }
+        .faq-detail-panel { display: none; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 32px; margin-top: 24px; }
+        .faq-detail-panel.active { display: block; animation: fadeSlide 0.3s ease; }
+        .faq-item { padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-item h4 { font-size: 15px; color: var(--primary-cyan); margin-bottom: 8px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+        .faq-item h4::after { content: '+'; font-size: 18px; color: rgba(255,255,255,0.3); }
+        .faq-item.open h4::after { content: '-'; }
+        .faq-item .faq-answer { display: none; font-size: 14px; color: var(--text-secondary); line-height: 1.8; padding-top: 8px; }
+        .faq-item.open .faq-answer { display: block; }
+
+        /* 联系我们模块 */
+        .contact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 32px; }
+        .contact-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 32px; text-align: center; transition: all 0.25s; }
+        .contact-card:hover { border-color: var(--primary-cyan); }
+        .contact-card-icon { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 28px; }
+        .contact-card h4 { font-size: 16px; margin-bottom: 8px; }
+        .contact-card p { font-size: 14px; color: var(--text-secondary); margin-bottom: 4px; }
+        .contact-card .highlight { color: var(--primary-cyan); font-weight: 600; }
+
+        /* 工单系统 */
+        .ticket-form { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 32px; margin-top: 32px; }
+        .ticket-form h3 { font-size: 18px; color: var(--primary-cyan); margin-bottom: 20px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 16px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 8px; }
+        .form-input { width: 100%; padding: 12px 16px; background: var(--bg-darker); border: 1px solid var(--border-color); border-radius: 8px; color: #fff; font-size: 14px; outline: none; }
+        .form-input:focus { border-color: var(--primary-cyan); }
+        .action-btn { padding: 10px 24px; border-radius: 8px; font-size: 14px; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px; }
+        .action-btn.primary { background: linear-gradient(135deg, #00E5CC, #00b8a3); color: #0a1628; font-weight: 600; }
+        .action-btn.secondary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; }
+
+        /* 工单列表 */
+        .ticket-list { margin-top: 24px; }
+        .ticket-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 20px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s; }
+        .ticket-item:hover { border-color: var(--primary-cyan); }
+        .ticket-info h4 { font-size: 15px; margin-bottom: 6px; }
+        .ticket-info p { font-size: 13px; color: rgba(255,255,255,0.4); }
+        .status-tag { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 12px; }
+        .status-tag.open { background: rgba(0,229,204,0.2); color: var(--primary-cyan); }
+        .status-tag.processing { background: rgba(255,193,7,0.2); color: #ffc107; }
+        .status-tag.closed { background: rgba(40,167,69,0.2); color: #28a745; }
+
+        /* Toast通知 */
+        .toast-container { position: fixed; top: 80px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { pointer-events: auto; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px 20px; display: flex; align-items: center; gap: 12px; min-width: 300px; max-width: 420px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: toastIn 0.35s ease; }
+        .toast.removing { animation: toastOut 0.35s ease forwards; }
+        .toast-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+        .toast-icon.success { background: rgba(40,167,69,0.2); color: #28a745; }
+        .toast-icon.info { background: rgba(0,229,204,0.2); color: var(--primary-cyan); }
+        .toast-icon.warning { background: rgba(255,193,7,0.2); color: #ffc107; }
+        .toast-body { flex: 1; }
+        .toast-title { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+        .toast-msg { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        .toast-close { background: none; border: none; color: rgba(255,255,255,0.3); cursor: pointer; font-size: 16px; padding: 4px; }
+        @keyframes toastIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(120%); opacity: 0; } }
+
+        /* L3: 工单详情 */
+        .ticket-detail-wrap { display:none; animation: fadeSlide 0.3s ease; }
+        .ticket-detail-wrap.active { display:block; }
+        .td-header { padding:24px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:14px; margin-bottom:20px; }
+        .td-header h2 { font-size:18px; margin-bottom:12px; }
+        .td-meta { display:flex; flex-wrap:wrap; gap:16px; font-size:13px; color:rgba(255,255,255,.5); }
+        .td-meta-item { display:flex; align-items:center; gap:6px; }
+        .td-timeline { padding:24px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:14px; margin-bottom:20px; }
+        .td-event { position:relative; padding-left:32px; padding-bottom:24px; }
+        .td-event::before { content:''; position:absolute; left:0; top:4px; width:14px; height:14px; border-radius:50%; border:2px solid rgba(255,255,255,.15); background:var(--bg-dark); z-index:1; }
+        .td-event.done::before { background:#28a745; border-color:#28a745; }
+        .td-event.current::before { background:var(--primary-cyan); border-color:var(--primary-cyan); }
+        .td-event.staff::before { background:#6c5ce7; border-color:#6c5ce7; }
+        .td-event::after { content:''; position:absolute; left:6px; top:20px; width:2px; height:calc(100% - 16px); background:rgba(255,255,255,.06); }
+        .td-event:last-child::after { display:none; }
+        .td-event-time { font-size:12px; color:rgba(255,255,255,.35); margin-bottom:4px; }
+        .td-event-title { font-size:14px; font-weight:500; margin-bottom:4px; }
+        .td-event-desc { font-size:13px; color:rgba(255,255,255,.5); line-height:1.7; }
+        .td-reply-form { padding:24px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:14px; }
+
+        /* L3: FAQ文章详情 */
+        .faq-article-panel { display:none; animation: fadeSlide 0.3s ease; }
+        .faq-article-panel.active { display:block; }
+        .faq-article { padding:32px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:14px; margin-bottom:24px; }
+        .faq-article h2 { font-size:20px; margin-bottom:16px; }
+        .faq-article-content { font-size:14px; color:var(--text-secondary); line-height:2; }
+        .faq-article-content h4 { color:var(--primary-cyan); margin:20px 0 10px; font-size:15px; }
+        .faq-article-content ul { padding-left:20px; margin:8px 0; }
+        .faq-article-content .tip-box { padding:14px 18px; background:rgba(0,229,204,.06); border:1px solid rgba(0,229,204,.15); border-radius:10px; margin:12px 0; font-size:13px; }
+        .faq-helpful { display:flex; align-items:center; gap:16px; padding:20px; background:rgba(255,255,255,.03); border-radius:10px; margin-top:24px; }
+        .faq-helpful-btn { padding:8px 20px; border-radius:8px; font-size:13px; cursor:pointer; transition:all .2s; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05); color:rgba(255,255,255,.6); }
+        .faq-helpful-btn:hover { border-color:var(--primary-cyan); color:var(--primary-cyan); }
+        .faq-helpful-btn.selected { background:rgba(0,229,204,.15); border-color:var(--primary-cyan); color:var(--primary-cyan); }
+        .faq-related { padding:24px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:14px; }
+        .faq-related h3 { font-size:15px; color:var(--primary-cyan); margin-bottom:16px; }
+        .faq-related-item { padding:12px 0; border-bottom:1px solid rgba(255,255,255,.06); cursor:pointer; font-size:14px; color:var(--text-secondary); transition:color .2s; }
+        .faq-related-item:hover { color:var(--primary-cyan); }
+        .faq-related-item:last-child { border-bottom:none; }
+
+        /* L3: 聊天评价 */
+        .chat-eval-modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.6); z-index:9998; align-items:center; justify-content:center; }
+        .chat-eval-modal.active { display:flex; }
+        .chat-eval-box { background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px; padding:32px; width:420px; max-width:90vw; animation:fadeSlide .3s ease; }
+        .chat-eval-stars { display:flex; gap:8px; justify-content:center; margin:16px 0; }
+        .chat-eval-star { font-size:32px; cursor:pointer; color:rgba(255,255,255,.12); transition:color .2s; }
+        .chat-eval-star.active { color:#ffd93d; }
+        .chat-eval-tags { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:12px 0; }
+        .chat-eval-tag { padding:6px 14px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); border-radius:20px; font-size:12px; color:rgba(255,255,255,.5); cursor:pointer; transition:all .2s; }
+        .chat-eval-tag.selected { background:rgba(0,229,204,.12); border-color:rgba(0,229,204,.3); color:var(--primary-cyan); }
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <div class="cs-page">
+        <!-- 顶部导航 -->
+        <header class="header">
+            <div class="header-container">
+                <div class="header-left">
+                    <a href="javascript:history.back()" class="inline-back">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        返回
+                    </a>
+                    <a href="index.html" class="logo-link" style="color: var(--primary-cyan); font-size: 18px; font-weight: 700; text-decoration: none;">
+                        全球供应链智能匹配平台
+                    </a>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                    <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                    <a href="orders.html" class="nav-link" data-i18n="nav.orders">订单管理</a>
+                    <a href="certification.html" class="nav-link" data-i18n="nav.certification">资质认证</a>
+                    <a href="messages.html" class="nav-link" data-i18n="nav.messages">消息中心</a>
+                    <a href="help.html" class="nav-link active" data-i18n="nav.customerService">客服中心</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- 页面横幅 -->
+        <div class="cs-banner">
+            <h1 data-i18n="help.tbzjpr5">客服中心</h1>
+            <p data-i18n="help.tfpjsiz">我们随时为您提供帮助，解决您在使用过程中遇到的问题</p>
+            <div class="cs-tabs">
+                <div class="cs-tab active" onclick="switchSection('chat')">在线咨询</div>
+                <div class="cs-tab" onclick="switchSection('faq')">常见问题</div>
+                <div class="cs-tab" onclick="switchSection('contact')">联系我们</div>
+            </div>
+        </div>
+
+        <!-- 主内容 -->
+        <div class="cs-content">
+
+            <!-- ==================== 在线咨询 ==================== -->
+            <div class="cs-section active" id="section-chat">
+                <div class="cs-chat-grid">
+                    <!-- 左侧联系人列表 -->
+                    <div class="cs-chat-sidebar">
+                        <div class="cs-chat-sidebar-header">
+                            <div class="cs-role-tabs">
+                                <div class="cs-role-tab active" onclick="switchRole('platform')">平台客服</div>
+                                <div class="cs-role-tab" onclick="switchRole('supplier')">供应商</div>
+                                <div class="cs-role-tab" onclick="switchRole('system')">系统通知</div>
+                            </div>
+                        </div>
+                        <div class="cs-contact-list" id="contactList">
+                            <!-- 平台客服 -->
+                            <div class="cs-contact active" data-role="platform" onclick="openChat('platform-general')">
+                                <div class="cs-contact-avatar" style="background:linear-gradient(135deg,#00E5CC,#00b8a3);color:#000;">
+                                    客
+                                    <span class="online-dot"></span>
+                                </div>
+                                <div class="cs-contact-info">
+                                    <div class="cs-contact-name">平台智能客服</div>
+                                    <div class="cs-contact-msg">您好！请问有什么可以帮您？</div>
+                                </div>
+                                <div class="cs-contact-meta">
+                                    <div class="cs-contact-time">在线</div>
+                                </div>
+                            </div>
+                            <div class="cs-contact" data-role="platform" onclick="openChat('platform-order')">
+                                <div class="cs-contact-avatar" style="background:rgba(108,92,231,0.3);color:#6c5ce7;">
+                                    订
+                                </div>
+                                <div class="cs-contact-info">
+                                    <div class="cs-contact-name">订单问题专员</div>
+                                    <div class="cs-contact-msg">专属处理订单相关问题</div>
+                                </div>
+                                <div class="cs-contact-meta">
+                                    <div class="cs-contact-time">在线</div>
+                                    <div class="cs-unread">2</div>
+                                </div>
+                            </div>
+                            <div class="cs-contact" data-role="platform" onclick="openChat('platform-cert')">
+                                <div class="cs-contact-avatar" style="background:rgba(255,193,7,0.3);color:#ffc107;">
+                                    认
+                                </div>
+                                <div class="cs-contact-info">
+                                    <div class="cs-contact-name">资质认证专员</div>
+                                    <div class="cs-contact-msg">认证审核及资质问题咨询</div>
+                                </div>
+                                <div class="cs-contact-meta">
+                                    <div class="cs-contact-time">在线</div>
+                                </div>
+                            </div>
+                            <div class="cs-contact" data-role="platform" onclick="openChat('platform-dispute')">
+                                <div class="cs-contact-avatar" style="background:rgba(255,107,107,0.3);color:#ff6b6b;">
+                                    纠
+                                </div>
+                                <div class="cs-contact-info">
+                                    <div class="cs-contact-name">纠纷调解专员</div>
+                                    <div class="cs-contact-msg">买卖双方纠纷协调处理</div>
+                                </div>
+                                <div class="cs-contact-meta">
+                                    <div class="cs-contact-time">在线</div>
+                                </div>
+                            </div>
+                            <!-- 供应商 -->
+                            <div class="cs-contact" data-role="supplier" style="display:none;" onclick="openChat('supplier-sz')">
+                                <div class="cs-contact-avatar" style="background:var(--primary-cyan);color:#000;">
+                                    深
+                                    <span class="online-dot"></span>
+                                </div>
+                                <div class="cs-contact-info">
+                                    <div class="cs-contact-name">--</div>
+                                    <div class="cs-contact-msg">订单已完成65%，预计3月交付</div>
+                                </div>
+                                <div class="cs-contact-meta">
+                                    <div class="cs-contact-time">10:35</div>
+                                    <div class="cs-unread">3</div>
+                                </div>
+                            </div>
+                            <div class="cs-contact" data-role="supplier" style="display:none;" onclick="openChat('supplier-gz')">
+                                <div class="cs-contact-avatar" style="background:#ffc107;color:#000;">
+                                    广
+                                </div>
+                                <div class="cs-contact-info">
+                                    <div class="cs-contact-name">--</div>
+                                    <div class="cs-contact-msg">货物已发出，预计明天送达</div>
+                                </div>
+                                <div class="cs-contact-meta">
+                                    <div class="cs-contact-time">昨天</div>
+                                </div>
+                            </div>
+                            <div class="cs-contact" data-role="supplier" style="display:none;" onclick="openChat('supplier-sh')">
+                                <div class="cs-contact-avatar" style="background:#00b894;color:#fff;">
+                                    上
+                                </div>
+                                <div class="cs-contact-info">
+                                    <div class="cs-contact-name">上海电子科技</div>
+                                    <div class="cs-contact-msg">报价单已发送，请查收</div>
+                                </div>
+                                <div class="cs-contact-meta">
+                                    <div class="cs-contact-time">2天前</div>
+                                </div>
+                            </div>
+                            <div class="cs-contact" data-role="supplier" style="display:none;" onclick="openChat('supplier-cd')">
+                                <div class="cs-contact-avatar" style="background:#6c5ce7;color:#fff;">
+                                    成
+                                </div>
+                                <div class="cs-contact-info">
+                                    <div class="cs-contact-name">--</div>
+                                    <div class="cs-contact-msg">样品已寄出，请注意查收</div>
+                                </div>
+                                <div class="cs-contact-meta">
+                                    <div class="cs-contact-time">3天前</div>
+                                </div>
+                            </div>
+                            <!-- 系统通知 -->
+                            <div class="cs-contact" data-role="system" style="display:none;" onclick="openChat('sys-order')">
+                                <div class="cs-contact-avatar" style="background:rgba(0,229,204,0.15);color:var(--primary-cyan);">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+                                </div>
+                                <div class="cs-contact-info">
+                                    <div class="cs-contact-name">订单通知</div>
+                                    <div class="cs-contact-msg">订单  生产进度更新</div>
+                                </div>
+                                <div class="cs-contact-meta">
+                                    <div class="cs-contact-time">11:20</div>
+                                    <div class="cs-unread">5</div>
+                                </div>
+                            </div>
+                            <div class="cs-contact" data-role="system" style="display:none;" onclick="openChat('sys-cert')">
+                                <div class="cs-contact-avatar" style="background:rgba(255,193,7,0.15);color:#ffc107;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                </div>
+                                <div class="cs-contact-info">
+                                    <div class="cs-contact-name">认证通知</div>
+                                    <div class="cs-contact-msg">进出口许可认证审核进度更新</div>
+                                </div>
+                                <div class="cs-contact-meta">
+                                    <div class="cs-contact-time">昨天</div>
+                                    <div class="cs-unread">1</div>
+                                </div>
+                            </div>
+                            <div class="cs-contact" data-role="system" style="display:none;" onclick="openChat('sys-alert')">
+                                <div class="cs-contact-avatar" style="background:rgba(255,107,107,0.15);color:#ff6b6b;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                </div>
+                                <div class="cs-contact-info">
+                                    <div class="cs-contact-name">预警通知</div>
+                                    <div class="cs-contact-msg">供应商延迟交货预警</div>
+                                </div>
+                                <div class="cs-contact-meta">
+                                    <div class="cs-contact-time">2天前</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧聊天区域 -->
+                    <div class="cs-chat-main">
+                        <div class="cs-chat-header">
+                            <div class="cs-chat-header-info">
+                                <div class="cs-contact-avatar" style="background:linear-gradient(135deg,#00E5CC,#00b8a3);color:#000;width:40px;height:40px;font-size:14px;">客</div>
+                                <div>
+                                    <div style="font-weight:500;" id="chatName">平台智能客服</div>
+                                    <div style="font-size:12px;color:#28a745;" id="chatStatus">● 在线</div>
+                                </div>
+                            </div>
+                            <div style="display:flex;gap:8px;">
+                                <button class="action-btn secondary" style="font-size:12px;padding:6px 14px;" onclick="endChatAndEval()">结束评价</button>
+                                <button class="action-btn secondary" style="font-size:12px;padding:6px 14px;" onclick="createTicket()">创建工单</button>
+                                <button class="action-btn secondary" style="font-size:12px;padding:6px 14px;" onclick="invitePlatform()">邀请平台介入</button>
+                            </div>
+                        </div>
+                        <div class="cs-chat-context">
+                            <span class="cs-context-tag" id="chatContextTag">智能客服</span>
+                            <span id="chatContextText">7x24小时在线，为您解答平台使用问题</span>
+                        </div>
+                        <div class="cs-chat-messages" id="chatMessages">
+                            <div class="cs-msg-time">今天 10:30</div>
+                            <div class="cs-msg-system">欢迎来到客服中心，智能客服为您服务</div>
+                            <div class="cs-msg received">
+                                <div class="cs-msg-avatar" style="background:linear-gradient(135deg,#00E5CC,#00b8a3);color:#000;">客</div>
+                                <div class="cs-msg-bubble">您好！欢迎来到全球供应链智能匹配平台客服中心。我是智能客服小易，请问有什么可以帮您的？<br><br>您可以咨询：<br>1. 订单/物流问题<br>2. 资质认证问题<br>3. 供应商合作问题<br>4. 账户/安全问题<br>5. 平台使用指南</div>
+                            </div>
+                        </div>
+                        <div class="cs-quick-actions">
+                            <button class="cs-quick-btn" onclick="quickSend('我想查询订单状态')">查询订单</button>
+                            <button class="cs-quick-btn" onclick="quickSend('我要申请资质认证')">申请认证</button>
+                            <button class="cs-quick-btn" onclick="quickSend('如何联系供应商？')">联系供应商</button>
+                            <button class="cs-quick-btn" onclick="quickSend('我要投诉供应商')">投诉建议</button>
+                            <button class="cs-quick-btn" onclick="quickSend('转人工客服')">转人工</button>
+                        </div>
+                        <div class="cs-chat-input">
+                            <input type="text" id="chatInput" placeholder="输入消息..." onkeypress="if(event.key==='Enter')sendChatMsg()">
+                            <button onclick="sendChatMsg()">发送</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 常见问题 ==================== -->
+            <div class="cs-section" id="section-faq">
+                <div class="faq-grid">
+                    <div class="faq-card" onclick="showFaqPanel('account')">
+                        <div class="faq-card-icon" style="background:rgba(0,229,204,0.15);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary-cyan)" stroke-width="2" style="width:32px;height:32px;"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+                        </div>
+                        <h3 data-i18n="help.t3mw4ee">账户与认证</h3>
+                        <p data-i18n="help.t2mpxok">注册登录、企业认证、安全设置等问题</p>
+                        <span class="faq-card-link">查看 8 个问题 →</span>
+                    </div>
+                    <div class="faq-card" onclick="showFaqPanel('order')">
+                        <div class="faq-card-icon" style="background:rgba(108,92,231,0.15);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#6c5ce7" stroke-width="2" style="width:32px;height:32px;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+                        </div>
+                        <h3 data-i18n="help.tbg3nme">订单与交易</h3>
+                        <p data-i18n="help.tj5hxbt">下单流程、支付方式、退款退货等问题</p>
+                        <span class="faq-card-link">查看 10 个问题 →</span>
+                    </div>
+                    <div class="faq-card" onclick="showFaqPanel('supplier')">
+                        <div class="faq-card-icon" style="background:rgba(255,193,7,0.15);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#ffc107" stroke-width="2" style="width:32px;height:32px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        </div>
+                        <h3 data-i18n="help.tvm0pun">供应商合作</h3>
+                        <p data-i18n="help.tuxks5b">入驻审核、产品管理、报价合作等问题</p>
+                        <span class="faq-card-link">查看 6 个问题 →</span>
+                    </div>
+                    <div class="faq-card" onclick="showFaqPanel('platform')">
+                        <div class="faq-card-icon" style="background:rgba(255,107,107,0.15);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2" style="width:32px;height:32px;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </div>
+                        <h3 data-i18n="help.tc9k8uz">平台功能</h3>
+                        <p data-i18n="help.tg34f4q">智能匹配、消息通知、数据分析等问题</p>
+                        <span class="faq-card-link">查看 8 个问题 →</span>
+                    </div>
+                </div>
+
+                <!-- FAQ详情面板 -->
+                <div class="faq-detail-panel" id="faq-account">
+                    <h3 style="color:var(--primary-cyan);margin-bottom:20px;">账户与认证</h3>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.tpg721y">如何注册平台账户？</h4>
+                        <div class="faq-answer">点击首页右上角"登录/注册"按钮，填写手机号、设置密码，完成验证码验证即可注册。企业用户需完成企业认证后才能使用全部功能。</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.tj6t42">采购商和供应商有什么区别？</h4>
+                        <div class="faq-answer">采购商（用户）可发布采购需求、接收报价、管理订单；供应商可发布产品、响应需求、管理生产。一个账户可以同时拥有两种角色，通过"个人中心"和"供应商中心"分别管理。</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.tvae00i">如何完成企业资质认证？</h4>
+                        <div class="faq-answer">进入"资质认证"页面，点击"申请认证"，按步骤填写企业基本信息、法人信息、上传营业执照等资质证书。提交后平台将在1-3个工作日内完成审核。认证通过后可享受优先匹配、信任徽章等权益。</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.t3gpzmo">供应商如何上传资质证书？</h4>
+                        <div class="faq-answer">供应商可在"供应商中心 → 个人信息 → 资质认证管理"中上传ISO、CE等行业认证证书。上传后平台会进行审核验证，通过后资质信息将展示在供应商主页，提高匹配权重和信任度。</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.t6684l0">认证过期了怎么办？</h4>
+                        <div class="faq-answer">认证到期前30天系统会发送提醒通知。您可以在"资质认证"页面找到对应认证，点击"续期"按钮重新上传最新的证书文件进行续期。供应商也可在供应商中心的认证管理中完成续期操作。</div>
+                    </div>
+                </div>
+
+                <div class="faq-detail-panel" id="faq-order">
+                    <h3 style="color:var(--primary-cyan);margin-bottom:20px;">订单与交易</h3>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.ts5uz5a">如何发布采购需求？</h4>
+                        <div class="faq-answer">在"个人中心 → 需求管理 → 发布需求"中填写需求标题、品类、数量、预算等信息后发布。平台会自动匹配合适的供应商并推送报价。</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.t7ufn31">订单产生纠纷怎么办？</h4>
+                        <div class="faq-answer">1. 首先通过消息中心与供应商直接沟通协商<br>2. 若协商不成，可在客服中心联系"纠纷调解专员"<br>3. 平台将在48小时内介入调解<br>4. 严重问题可提交工单，平台会安排专人跟进处理</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.t1sq3ws">如何查看订单的生产进度？</h4>
+                        <div class="faq-answer">进入"个人中心 → 我的订单"，点击对应订单的"生产进度"按钮即可查看。供应商会通过供应商中心的"监控上传"功能定期更新生产进度，确保您实时了解生产状态。</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.tm6lnwn">合同如何签署和管理？</h4>
+                        <div class="faq-answer">接受报价后系统自动生成电子合同。在"个人中心 → 合同管理 → 待签合同"中查看并签署。签署后可查看履约进度、申请变更或终止。</div>
+                    </div>
+                </div>
+
+                <div class="faq-detail-panel" id="faq-supplier">
+                    <h3 style="color:var(--primary-cyan);margin-bottom:20px;">供应商合作</h3>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.tqro7wz">如何申请成为供应商？</h4>
+                        <div class="faq-answer">在登录页面选择"供应商入驻"，填写企业信息、上传营业执照和相关资质证书，选择主营品类后提交申请。平台会在1-3个工作日内完成审核。审核通过后即可使用供应商中心管理产品和订单。</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.t9chl47">供应商如何提高匹配权重？</h4>
+                        <div class="faq-answer">1. 完善企业信息和产品资料<br>2. 上传完整的资质认证证书（ISO、CE等）<br>3. 保持较高的履约完成率<br>4. 积极响应采购需求和询盘<br>5. 获取好评提高信用评分</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.ttvkl6">供应商需要上传哪些资质？</h4>
+                        <div class="faq-answer">必需：营业执照。推荐上传：ISO9001质量管理认证、ISO14001环境管理认证、行业特种许可证、CE/UL等产品认证。更多资质认证可提高供应商信任度和匹配优先级。</div>
+                    </div>
+                </div>
+
+                <div class="faq-detail-panel" id="faq-platform">
+                    <h3 style="color:var(--primary-cyan);margin-bottom:20px;">平台功能</h3>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.t4tybs3">智能匹配是如何工作的？</h4>
+                        <div class="faq-answer">平台根据采购需求的品类、数量、预算、地域等维度，结合供应商的产品、资质、信用评分、履约率等数据，通过AI算法进行多维度匹配，推荐最适合的供应商。</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.tdtcu3r">消息通知有哪些类型？</h4>
+                        <div class="faq-answer">包括：订单状态通知、生产进度更新、物流信息、认证审核结果、报价提醒、合同待签通知、预警信息等。可在"消息中心"中统一查看和管理。</div>
+                    </div>
+                    <div class="faq-item" onclick="toggleFaq(this)">
+                        <h4 data-i18n="help.tt5e10j">三方沟通是如何进行的？</h4>
+                        <div class="faq-answer">平台支持采购商、供应商、平台客服三方实时沟通：<br>1. 采购商可在"个人中心"或"客服中心"直接联系供应商<br>2. 供应商可在"供应商中心"回复采购商消息<br>3. 任一方可在客服中心邀请平台介入协调<br>4. 平台客服可在纠纷中同时与双方沟通协调</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== 联系我们 ==================== -->
+            <div class="cs-section" id="section-contact">
+                <div class="contact-grid">
+                    <div class="contact-card">
+                        <div class="contact-card-icon" style="background:rgba(0,229,204,0.15);color:var(--primary-cyan);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.69 2.36a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.76.33 1.55.56 2.36.69A2 2 0 0 1 22 16.92z"/></svg>
+                        </div>
+                        <h4 data-i18n="help.tbzpsnx">客服热线</h4>
+                        <p class="highlight">400-888-8888</p>
+                        <p data-i18n="help.t2l0f09">工作日 9:00-18:00</p>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-card-icon" style="background:rgba(108,92,231,0.15);color:#6c5ce7;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <h4 data-i18n="help.tirjnat">邮箱支持</h4>
+                        <p class="highlight">support@yicai-trade.com</p>
+                        <p data-i18n="help.t4u74dx">24小时内回复</p>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-card-icon" style="background:rgba(255,193,7,0.15);color:#ffc107;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <h4 data-i18n="help.tamfh98">公司地址</h4>
+                        <p class="highlight">深圳市南山区科技园</p>
+                        <p data-i18n="help.t8f3axf">创新大厦 A座 18层</p>
+                    </div>
+                </div>
+
+                <!-- 工单系统 -->
+                <div class="ticket-form">
+                    <h3 data-i18n="help.tcx6odg">提交工单</h3>
+                    <p style="color:var(--text-secondary);font-size:14px;margin-bottom:24px;">如果在线客服无法解决您的问题，可以提交工单，我们将在24小时内处理</p>
+                    <div class="form-row">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label data-i18n="help.txeo15w">问题类型 *</label>
+                            <select class="form-input">
+                                <option data-i18n="help.thyyg0t">订单问题</option>
+                                <option data-i18n="help.td3ps4z">支付问题</option>
+                                <option data-i18n="help.tiesflt">资质认证</option>
+                                <option data-i18n="help.tvlxwtb">供应商投诉</option>
+                                <option data-i18n="help.ti7qcgg">账户安全</option>
+                                <option data-i18n="help.tayii7m">功能建议</option>
+                                <option data-i18n="help.teae8">其他</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label data-i18n="help.tlgrlmm">关联订单号（选填）</label>
+                            <input type="text" class="form-input" placeholder="如：">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="help.tv3bq91">问题标题 *</label>
+                        <input type="text" class="form-input" placeholder="请简要描述您的问题">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="help.tuiwh85">问题描述 *</label>
+                        <textarea class="form-input" rows="5" placeholder="请详细描述您遇到的问题，包括时间、操作步骤、错误信息等..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="help.t64omg9">上传截图（选填）</label>
+                        <div style="border:2px dashed var(--border-color);border-radius:8px;padding:30px;text-align:center;color:rgba(255,255,255,0.4);cursor:pointer;">
+                            点击或拖拽上传截图，最多5张
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:12px;">
+                        <button class="action-btn primary" onclick="submitTicket()">提交工单</button>
+                        <button class="action-btn secondary">保存草稿</button>
+                    </div>
+                </div>
+
+                <!-- 我的工单 -->
+                <div class="ticket-list" id="ticketListWrap">
+                    <h3 style="color:var(--primary-cyan);margin-bottom:16px;">我的工单</h3>
+                    <div class="ticket-item" onclick="showTicketDetail('')">
+                        <div class="ticket-info">
+                            <h4 data-i18n="help.t81ojjb"> - 订单  物流延迟</h4>
+                            <p data-i18n="help.tz9n9nd">提交于 2026-02-17 09:30 | 订单问题</p>
+                        </div>
+                        <span class="status-tag processing">处理中</span>
+                    </div>
+                    <div class="ticket-item" onclick="showTicketDetail('')">
+                        <div class="ticket-info">
+                            <h4 data-i18n="help.tfjhtdc"> - 资质认证审核进度咨询</h4>
+                            <p data-i18n="help.tkg7leu">提交于 2026-02-15 14:20 | 资质认证</p>
+                        </div>
+                        <span class="status-tag open">待回复</span>
+                    </div>
+                    <div class="ticket-item" onclick="showTicketDetail('')">
+                        <div class="ticket-info">
+                            <h4 data-i18n="help.t395lh5"> - 供应商产品质量问题投诉</h4>
+                            <p data-i18n="help.twkgaqo">提交于 2026-02-10 11:15 | 供应商投诉</p>
+                        </div>
+                        <span class="status-tag closed">已解决</span>
+                    </div>
+                </div>
+
+                <!-- ==================== L3: 工单详情 ==================== -->
+                <div class="ticket-detail-wrap" id="ticketDetailWrap">
+                    <button class="action-btn secondary" style="margin-bottom:20px;font-size:13px;" onclick="backToTicketList()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                        返回工单列表
+                    </button>
+
+                    <div class="td-header">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                            <div>
+                                <h2 id="tdTitle"> - 订单  物流延迟</h2>
+                                <div class="td-meta">
+                                    <span class="td-meta-item" id="tdType"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg> 订单问题</span>
+                                    <span class="td-meta-item" id="tdTime"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 2026-02-17 09:30</span>
+                                    <span class="td-meta-item" id="tdOrder"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg> </span>
+                                </div>
+                            </div>
+                            <span class="status-tag processing" id="tdStatus">处理中</span>
+                        </div>
+                    </div>
+
+                    <!-- 工单时间线 -->
+                    <div class="td-timeline">
+                        <h3 style="color:var(--primary-cyan);margin-bottom:20px;font-size:16px;">处理记录</h3>
+                        <div id="tdTimeline">
+                            <div class="td-event done">
+                                <div class="td-event-time">2026-02-17 09:30</div>
+                                <div class="td-event-title" style="color:#fff;">工单已创建</div>
+                                <div class="td-event-desc">问题描述：订单  原定2月15日交付，但物流显示仍在广州仓库，未发货。已联系供应商但未获有效回复。请平台协助跟进。</div>
+                            </div>
+                            <div class="td-event done">
+                                <div class="td-event-time">2026-02-17 09:35</div>
+                                <div class="td-event-title" style="color:var(--primary-cyan);">系统自动分配</div>
+                                <div class="td-event-desc">已分配至订单问题处理组 · 预计响应时间4小时内</div>
+                            </div>
+                            <div class="td-event staff">
+                                <div class="td-event-time">2026-02-17 11:20</div>
+                                <div class="td-event-title" style="color:#6c5ce7;">客服专员 -- 回复</div>
+                                <div class="td-event-desc">您好！已收到您的工单。经查询，订单  因广州仓库系统升级导致发货延迟。我们已联系供应商紧急安排发货。<br><br>处理方案：<br>1. 供应商将在24小时内完成发货<br>2. 升级为顺丰次日达，运费由供应商承担<br>3. 延迟期间按合同条款对供应商收取违约金<br><br>请您耐心等待，我们会持续跟进。</div>
+                            </div>
+                            <div class="td-event current">
+                                <div class="td-event-time">2026-02-17 16:45</div>
+                                <div class="td-event-title" style="color:#ffc107;">等待供应商发货确认</div>
+                                <div class="td-event-desc">已通知供应商限时发货，等待供应商确认发货单号。</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- L4: 工单回复表单 -->
+                    <div class="td-reply-form">
+                        <h3 style="color:var(--primary-cyan);margin-bottom:16px;font-size:16px;">追加回复</h3>
+                        <div class="form-group">
+                            <textarea class="form-input" rows="4" placeholder="请输入您的补充说明或问题..." id="ticketReplyInput"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size:13px;color:rgba(255,255,255,.5);">附件（选填）</label>
+                            <div style="border:1px dashed var(--border-color);border-radius:8px;padding:20px;text-align:center;color:rgba(255,255,255,.3);cursor:pointer;font-size:13px;">
+                                点击上传截图或文件
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:12px;justify-content:space-between;align-items:center;">
+                            <div style="display:flex;gap:12px;">
+                                <button class="action-btn primary" onclick="submitTicketReply()">发送回复</button>
+                                <button class="action-btn secondary" onclick="escalateTicket()">升级工单</button>
+                            </div>
+                            <button class="action-btn secondary" style="color:#28a745;border-color:rgba(40,167,69,.3);" onclick="closeTicket()">标记已解决</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== L3: FAQ文章详情面板 ==================== -->
+        <div class="faq-article-panel" id="faqArticlePanel">
+            <div class="cs-content">
+                <button class="action-btn secondary" style="margin-bottom:20px;font-size:13px;" onclick="backToFaq()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                    返回常见问题
+                </button>
+
+                <div class="faq-article">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                        <span style="padding:4px 12px;background:rgba(0,229,204,.12);border-radius:4px;font-size:12px;color:var(--primary-cyan);" id="faqArticleCat">账户与认证</span>
+                        <span style="font-size:12px;color:rgba(255,255,255,.35);">更新于 2026-02-10</span>
+                    </div>
+                    <h2 id="faqArticleTitle">如何完成企业资质认证？</h2>
+                    <div class="faq-article-content" id="faqArticleContent">
+                        <p data-i18n="help.t6txsei">企业资质认证是使用平台全部功能的前提。完成认证后可享受优先匹配、信任徽章等权益。</p>
+
+                        <h4 data-i18n="help.tarjw">一、认证入口</h4>
+                        <ul>
+                            <li data-i18n="help.t8706bw">方式1：首页导航栏 → 资质认证</li>
+                            <li data-i18n="help.tfiv2u3">方式2：个人中心 → 企业信息 → 去认证</li>
+                            <li data-i18n="help.t2d1pwy">方式3：供应商中心 → 资质认证管理</li>
+                        </ul>
+
+                        <h4 data-i18n="help.t4qde1b">二、认证步骤</h4>
+                        <p><strong data-i18n="help.t2j3281">第1步：填写企业基本信息</strong></p>
+                        <ul>
+                            <li data-i18n="help.tx4jsii">企业名称（需与营业执照一致）</li>
+                            <li data-i18n="help.t9xc3cu">统一社会信用代码</li>
+                            <li data-i18n="help.tddrim0">法定代表人姓名及身份证号</li>
+                            <li data-i18n="help.tv2txy5">企业注册地址、联系电话</li>
+                        </ul>
+
+                        <p><strong data-i18n="help.tctr7ty">第2步：上传资质证书</strong></p>
+                        <ul>
+                            <li data-i18n="help.t6ja95h">必需：营业执照扫描件（清晰彩色照片）</li>
+                            <li data-i18n="help.t2imus4">推荐：ISO9001质量管理认证</li>
+                            <li data-i18n="help.tsal6ww">推荐：行业特种经营许可证</li>
+                            <li data-i18n="help.tyz6dx5">推荐：产品认证（CE/UL/FDA等）</li>
+                        </ul>
+
+                        <div class="tip-box">
+                            <strong style="color:var(--primary-cyan);">提示：</strong>上传更多资质证书可以提高供应商匹配权重和平台信任度评分。
+                        </div>
+
+                        <p><strong data-i18n="help.t4u49lz">第3步：提交审核</strong></p>
+                        <p data-i18n="help.tlmelig">确认信息无误后点击"提交认证"，平台将在1-3个工作日内完成审核。审核过程中可在"资质认证"页面查看进度。</p>
+
+                        <h4 data-i18n="help.t1xaa4o">三、审核结果</h4>
+                        <ul>
+                            <li><strong style="color:#28a745;">通过</strong>：获得认证徽章，享受全平台功能</li>
+                            <li><strong style="color:#ffc107;">补充材料</strong>：按提示补充缺失材料后重新提交</li>
+                            <li><strong style="color:#ef4444;">驳回</strong>：查看驳回原因，修正后可重新申请</li>
+                        </ul>
+
+                        <div class="tip-box">
+                            <strong style="color:var(--primary-cyan);">常见问题：</strong>如果营业执照发生变更，请先在工商部门完成变更登记，再上传新的营业执照进行认证更新。
+                        </div>
+
+                        <h4 data-i18n="help.t7wz0dx">四、认证续期</h4>
+                        <p data-i18n="help.t45v3tt">认证到期前30天系统会自动发送提醒。在"资质认证"页面找到对应认证点击"续期"即可。供应商可在供应商中心的认证管理中统一管理所有认证续期。</p>
+                    </div>
+
+                    <!-- 有用反馈 -->
+                    <div class="faq-helpful">
+                        <span style="font-size:14px;color:rgba(255,255,255,.5);">这篇文章有帮助吗？</span>
+                        <button class="faq-helpful-btn" onclick="markHelpful(this, true)">&#128077; 有帮助</button>
+                        <button class="faq-helpful-btn" onclick="markHelpful(this, false)">&#128078; 没帮助</button>
+                        <span style="font-size:12px;color:rgba(255,255,255,.3);margin-left:auto;" id="helpfulCount">86人觉得有帮助</span>
+                    </div>
+                </div>
+
+                <!-- L4: 相关推荐 -->
+                <div class="faq-related">
+                    <h3 data-i18n="help.tfcuq05">相关问题</h3>
+                    <div class="faq-related-item" onclick="showFaqArticle('如何注册平台账户？','账户与认证')">如何注册平台账户？</div>
+                    <div class="faq-related-item" onclick="showFaqArticle('供应商如何上传资质证书？','账户与认证')">供应商如何上传资质证书？</div>
+                    <div class="faq-related-item" onclick="showFaqArticle('认证过期了怎么办？','账户与认证')">认证过期了怎么办？</div>
+                    <div class="faq-related-item" onclick="showFaqArticle('采购商和供应商有什么区别？','账户与认证')">采购商和供应商有什么区别？</div>
+                    <div class="faq-related-item" onclick="backToFaq()">查看全部问题 →</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== L3: 聊天服务评价弹窗 ==================== -->
+        <div class="chat-eval-modal" id="chatEvalModal">
+            <div class="chat-eval-box">
+                <h3 style="text-align:center;font-size:18px;margin-bottom:4px;">服务评价</h3>
+                <p style="text-align:center;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:16px;" id="evalTargetName">请对本次服务进行评价</p>
+                <div class="chat-eval-stars">
+                    <span class="chat-eval-star" onclick="setChatEvalStar(this)">&#9733;</span>
+                    <span class="chat-eval-star" onclick="setChatEvalStar(this)">&#9733;</span>
+                    <span class="chat-eval-star" onclick="setChatEvalStar(this)">&#9733;</span>
+                    <span class="chat-eval-star" onclick="setChatEvalStar(this)">&#9733;</span>
+                    <span class="chat-eval-star" onclick="setChatEvalStar(this)">&#9733;</span>
+                </div>
+                <div class="chat-eval-tags">
+                    <span class="chat-eval-tag" onclick="toggleEvalTag(this)">响应迅速</span>
+                    <span class="chat-eval-tag" onclick="toggleEvalTag(this)">专业耐心</span>
+                    <span class="chat-eval-tag" onclick="toggleEvalTag(this)">解决问题</span>
+                    <span class="chat-eval-tag" onclick="toggleEvalTag(this)">态度友好</span>
+                    <span class="chat-eval-tag" onclick="toggleEvalTag(this)">需要改进</span>
+                </div>
+                <div class="form-group" style="margin:12px 0;">
+                    <textarea class="form-input" rows="3" placeholder="补充评价（选填）..." style="font-size:13px;"></textarea>
+                </div>
+                <div style="display:flex;gap:12px;justify-content:center;">
+                    <button class="action-btn secondary" onclick="closeChatEval()">跳过</button>
+                    <button class="action-btn primary" onclick="submitChatEval()">提交评价</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="footer-copyright">
+                <p data-i18n="footer.copyright">&copy; 2026 全球供应链智能匹配平台 | 版权所有</p>
+            </div>
+            <nav class="footer-nav">
+                <a href="help.html">客服中心</a>
+                <a href="about.html">关于我们</a>
+                <a href="privacy.html">隐私政策</a>
+                <a href="terms.html">服务条款</a>
+            </nav>
+            <div style="text-align:center;padding:8px 0;font-size:12px;"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow noopener" style="color:#888;text-decoration:none;">粤ICP备2026015135号-2</a></div>
+        </footer>
+    </div>
+
+    <!-- Toast通知容器 -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ========== Toast通知 ==========
+        function showToast(title, msg, type='info', duration=3500) {
+            const container = document.getElementById('toastContainer');
+            const icons = { success:'✓', info:'ℹ', warning:'⚠', error:'✕' };
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<div class="toast-icon ${type}">${icons[type]}</div><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div><button class="toast-close" onclick="this.parentElement.classList.add('removing');setTimeout(()=>this.parentElement.remove(),350)">×</button>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.add('removing'); setTimeout(() => toast.remove(), 350); }, duration);
+        }
+
+        // ========== 顶部Tab切换 ==========
+        function switchSection(section) {
+            document.querySelectorAll('.cs-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.cs-section').forEach(s => s.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('section-' + section).classList.add('active');
+        }
+
+        // ========== 角色Tab切换 ==========
+        function switchRole(role) {
+            document.querySelectorAll('.cs-role-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.cs-contact').forEach(c => {
+                c.style.display = c.dataset.role === role ? 'flex' : 'none';
+                c.classList.remove('active');
+            });
+            // 自动选第一个
+            const first = document.querySelector(`.cs-contact[data-role="${role}"]`);
+            if (first) { first.classList.add('active'); first.click(); }
+        }
+
+        // ========== 聊天切换 ==========
+        const chatData = {
+            'platform-general': { name: '平台智能客服', avatar: '客', bg: 'linear-gradient(135deg,#00E5CC,#00b8a3)', color: '#000', tag: '智能客服', ctx: '7x24小时在线，为您解答平台使用问题', messages: [
+                { type: 'system', text: '欢迎来到客服中心，智能客服为您服务' },
+                { type: 'received', text: '您好！欢迎来到全球供应链智能匹配平台客服中心。我是智能客服小易，请问有什么可以帮您的？' }
+            ]},
+            'platform-order': { name: '订单问题专员', avatar: '订', bg: 'rgba(108,92,231,0.3)', color: '#6c5ce7', tag: '订单服务', ctx: '专属处理订单、支付、退款等问题', messages: [
+                { type: 'system', text: '订单问题专员已就绪' },
+                { type: 'received', text: '您好，我是订单问题专员。请提供您的订单编号，我来为您查看。' },
+                { type: 'sent', text: '你好，我想查询订单  的进度' },
+                { type: 'received', text: '好的，为您查询中...\n\n订单  当前状态：生产中\n供应商：--\n完成进度：65%\n预计交付：2026-03-01\n\n如需进一步了解，可以直接联系供应商或查看生产监控。' }
+            ]},
+            'platform-cert': { name: '资质认证专员', avatar: '认', bg: 'rgba(255,193,7,0.3)', color: '#ffc107', tag: '认证服务', ctx: '处理资质认证申请、审核、续期等问题', messages: [
+                { type: 'system', text: '资质认证专员已就绪' },
+                { type: 'received', text: '您好，我是资质认证专员。请问您需要咨询哪方面的认证问题？\n\n我可以帮您处理：\n1. 企业认证申请与审核\n2. 供应商资质上传指导\n3. 认证续期办理\n4. 认证状态查询' }
+            ]},
+            'platform-dispute': { name: '纠纷调解专员', avatar: '纠', bg: 'rgba(255,107,107,0.3)', color: '#ff6b6b', tag: '纠纷调解', ctx: '买卖双方纠纷协调处理', messages: [
+                { type: 'system', text: '纠纷调解专员已就绪' },
+                { type: 'received', text: '您好，我是纠纷调解专员。如果您与供应商之间产生了纠纷，请提供：\n\n1. 相关订单编号\n2. 纠纷描述\n3. 您的诉求\n\n我们会在48小时内介入调解，保障双方权益。' }
+            ]},
+            'supplier-sz': { name: '--', avatar: '深', bg: 'var(--primary-cyan)', color: '#000', tag: '订单沟通', ctx: '关于订单  - 智能设备50台', messages: [
+                { type: 'time', text: '2026-02-18' },
+                { type: 'sent', text: '您好，请问订单  的生产进度如何？' },
+                { type: 'received', text: '您好！订单目前正在组装调试阶段，已完成65%，预计2月20日完成质检，3月1日前发货。' },
+                { type: 'sent', text: '好的，谢谢！请问可以提供一下最新的质检报告吗？' },
+                { type: 'received', text: '当然可以，首批32台设备的质检报告已上传，请查收。所有参数均达标，合格率100%。' }
+            ]},
+            'supplier-gz': { name: '--', avatar: '广', bg: '#ffc107', color: '#000', tag: '物流服务', ctx: '仓储服务年度协议', messages: [
+                { type: 'received', text: '您好！您的货物已从广州仓发出，物流单号：SF2026021800123，预计明天下午送达。' },
+                { type: 'sent', text: '好的，收到。请确保包装完好。' },
+                { type: 'received', text: '放心，我们已做了加固包装和防潮处理。' }
+            ]},
+            'supplier-sh': { name: '上海电子科技', avatar: '上', bg: '#00b894', color: '#fff', tag: '报价洽谈', ctx: '电子元器件采购报价', messages: [
+                { type: 'received', text: '您好！关于您询问的电子元器件采购需求，我们的报价单已发送，总金额 ¥68,500.00，交期15天。请查收确认。' },
+                { type: 'sent', text: '已收到，正在评估中。能否在价格上再优惠一些？批量采购10万件。' },
+                { type: 'received', text: '批量采购的话我们可以给到 ¥65,000 的优惠价格，交期不变。如果确认的话我们可以立即安排生产。' }
+            ]},
+            'supplier-cd': { name: '--', avatar: '成', bg: '#6c5ce7', color: '#fff', tag: '样品确认', ctx: '机械配件样品', messages: [
+                { type: 'received', text: '您好！您要求的机械配件样品已寄出，快递单号：--。请注意查收并反馈样品质量。' },
+                { type: 'sent', text: '好的，收到后我会尽快确认。' }
+            ]},
+            'sys-order': { name: '订单通知', avatar: '', bg: 'rgba(0,229,204,0.15)', color: 'var(--primary-cyan)', tag: '系统', ctx: '订单状态变更通知', messages: [
+                { type: 'system', text: '以下是您的最新订单通知' },
+                { type: 'received', text: '【订单进度更新】\n订单 \n供应商：--\n状态：组装调试中 (65%)\n更新时间：2026-02-18 11:20' },
+                { type: 'received', text: '【物流通知】\n订单 \n供应商：--\n状态：已发货\n预计到达：2026-02-19' }
+            ]},
+            'sys-cert': { name: '认证通知', avatar: '', bg: 'rgba(255,193,7,0.15)', color: '#ffc107', tag: '系统', ctx: '资质认证审核通知', messages: [
+                { type: 'system', text: '以下是您的认证通知' },
+                { type: 'received', text: '【认证审核进度】\n认证项目：进出口经营许可认证\n编号：CERT-EXP-20260210\n当前状态：材料审核中\n预计完成：2026-02-20\n\n如有疑问请联系资质认证专员。' }
+            ]},
+            'sys-alert': { name: '预警通知', avatar: '', bg: 'rgba(255,107,107,0.15)', color: '#ff6b6b', tag: '系统', ctx: '供应链预警信息', messages: [
+                { type: 'system', text: '以下是您的预警信息' },
+                { type: 'received', text: '【生产延期预警】⚠️\n订单：\n供应商：--\n原因：原材料供应延迟\n预计延期：3天\n\n建议：联系供应商确认新的交付时间，或在个人中心预警中心进行处理。' }
+            ]}
+        };
+
+        function openChat(chatId) {
+            const data = chatData[chatId];
+            if (!data) return;
+            // 高亮联系人
+            document.querySelectorAll('.cs-contact').forEach(c => c.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            // 更新头部
+            document.getElementById('chatName').textContent = data.name;
+            document.getElementById('chatContextTag').textContent = data.tag;
+            document.getElementById('chatContextText').textContent = data.ctx;
+            // 渲染消息
+            const msgContainer = document.getElementById('chatMessages');
+            msgContainer.innerHTML = '';
+            data.messages.forEach(m => {
+                if (m.type === 'system') {
+                    msgContainer.innerHTML += `<div class="cs-msg-system">${m.text}</div>`;
+                } else if (m.type === 'time') {
+                    msgContainer.innerHTML += `<div class="cs-msg-time">${m.text}</div>`;
+                } else if (m.type === 'sent') {
+                    msgContainer.innerHTML += `<div class="cs-msg sent"><div class="cs-msg-avatar" style="background:var(--primary-cyan);color:#000;">我</div><div class="cs-msg-bubble">${m.text.replace(/\n/g,'<br>')}</div></div>`;
+                } else {
+                    msgContainer.innerHTML += `<div class="cs-msg received"><div class="cs-msg-avatar" style="background:${data.bg};color:${data.color};">${data.avatar || '系'}</div><div class="cs-msg-bubble">${m.text.replace(/\n/g,'<br>')}</div></div>`;
+                }
+            });
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+        }
+
+        // ========== 发送消息 ==========
+        function sendChatMsg() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+            const msgs = document.getElementById('chatMessages');
+            msgs.innerHTML += `<div class="cs-msg sent"><div class="cs-msg-avatar" style="background:var(--primary-cyan);color:#000;">我</div><div class="cs-msg-bubble">${text}</div></div>`;
+            input.value = '';
+            msgs.scrollTop = msgs.scrollHeight;
+            // 模拟回复
+            setTimeout(() => {
+                const replies = [
+                    t('help.reply.query'),
+                    t('help.reply.asap'),
+                    t('help.reply.assign'),
+                    t('help.reply.handle'),
+                    t('help.reply.confirm')
+                ];
+                const reply = replies[Math.floor(Math.random()*replies.length)];
+                const activeContact = document.querySelector('.cs-contact.active');
+                const avatar = activeContact ? activeContact.querySelector('.cs-contact-avatar').textContent.trim() : '客';
+                msgs.innerHTML += `<div class="cs-msg received"><div class="cs-msg-avatar" style="background:linear-gradient(135deg,#00E5CC,#00b8a3);color:#000;">${avatar}</div><div class="cs-msg-bubble">${reply}</div></div>`;
+                msgs.scrollTop = msgs.scrollHeight;
+            }, 1200);
+        }
+
+        function quickSend(text) {
+            document.getElementById('chatInput').value = text;
+            sendChatMsg();
+        }
+
+        // ========== 三方沟通闭环 ==========
+        function invitePlatform() {
+            const chatName = document.getElementById('chatName').textContent;
+            showToast(t('help.toast.platformJoin'), t('help.toast.invitedPlatform') + chatName, 'info');
+            const msgs = document.getElementById('chatMessages');
+            msgs.innerHTML += `<div class="cs-msg-system">您已邀请平台客服介入此对话</div>`;
+            setTimeout(() => {
+                msgs.innerHTML += `<div class="cs-msg received"><div class="cs-msg-avatar" style="background:linear-gradient(135deg,#00E5CC,#00b8a3);color:#000;">平</div><div class="cs-msg-bubble">您好，我是平台客服专员。已了解到您与 ${chatName} 的沟通情况，请问需要我协助处理什么问题？</div></div>`;
+                msgs.scrollTop = msgs.scrollHeight;
+            }, 1500);
+        }
+
+        function createTicket() {
+            switchSection('contact');
+            document.querySelectorAll('.cs-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.cs-tab')[2].classList.add('active');
+            showToast(t('help.toast.createTicket'), t('help.toast.fillTicketInfo'), 'info');
+        }
+
+        function submitTicket() {
+            showToast('工单已提交', '工单编号 ，我们将在24小时内处理', 'success');
+        }
+
+        // ========== FAQ ==========
+        function showFaqPanel(type) {
+            document.querySelectorAll('.faq-detail-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('faq-' + type).classList.add('active');
+        }
+
+        function toggleFaq(item) {
+            item.classList.toggle('open');
+        }
+
+        // ========== L3: 工单详情 ==========
+        const ticketData = {
+            '': {
+                title: ' - 订单  物流延迟',
+                type: '订单问题', time: '2026-02-17 09:30', order: '', status: 'processing', statusText: '处理中',
+                events: [
+                    { type:'done', time:'2026-02-17 09:30', title:'工单已创建', desc:'问题描述：订单  原定2月15日交付，但物流显示仍在广州仓库，未发货。已联系供应商但未获有效回复。请平台协助跟进。' },
+                    { type:'done', time:'2026-02-17 09:35', title:'系统自动分配', desc:'已分配至订单问题处理组 · 预计响应时间4小时内', titleColor:'var(--primary-cyan)' },
+                    { type:'staff', time:'2026-02-17 11:20', title:'客服专员 -- 回复', desc:'您好！已收到您的工单。经查询，订单  因广州仓库系统升级导致发货延迟。我们已联系供应商紧急安排发货。<br><br>处理方案：<br>1. 供应商将在24小时内完成发货<br>2. 升级为顺丰次日达，运费由供应商承担<br>3. 延迟期间按合同条款对供应商收取违约金<br><br>请您耐心等待，我们会持续跟进。', titleColor:'#6c5ce7' },
+                    { type:'current', time:'2026-02-17 16:45', title:'等待供应商发货确认', desc:'已通知供应商限时发货，等待供应商确认发货单号。', titleColor:'#ffc107' }
+                ]
+            },
+            '': {
+                title: ' - 资质认证审核进度咨询',
+                type: '资质认证', time: '2026-02-15 14:20', order: '-', status: 'open', statusText: '待回复',
+                events: [
+                    { type:'done', time:'2026-02-15 14:20', title:'工单已创建', desc:'我在2月10日提交了进出口经营许可认证申请（编号CERT-EXP-20260210），现已过5个工作日仍显示"材料审核中"。请问预计还需多久？是否需要补充材料？' },
+                    { type:'current', time:'2026-02-15 14:22', title:'系统自动分配', desc:'已分配至认证审核处理组 · 等待客服回复', titleColor:'var(--primary-cyan)' }
+                ]
+            },
+            '': {
+                title: ' - 供应商产品质量问题投诉',
+                type: '供应商投诉', time: '2026-02-10 11:15', order: '', status: 'closed', statusText: '已解决',
+                events: [
+                    { type:'done', time:'2026-02-10 11:15', title:'工单已创建', desc:'订单  收到的-- 存在质量问题：外圈有轻微磕碰痕迹，10个中有3个不合格。请安排退换货。' },
+                    { type:'done', time:'2026-02-10 11:20', title:'系统自动分配', desc:'已分配至纠纷调解处理组 · 优先级：高', titleColor:'var(--primary-cyan)' },
+                    { type:'done', time:'2026-02-10 14:30', title:'纠纷调解专员 王敏 回复', desc:'已联系供应商核实，供应商确认发货前未仔细检查。处理方案：免费补发3个合格产品+赔偿运费。供应商已同意。', titleColor:'#6c5ce7' },
+                    { type:'done', time:'2026-02-12 09:00', title:'补发货物已签收', desc:'用户确认已收到补发的3个合格轴承，质量满意。', titleColor:'#28a745' },
+                    { type:'done', time:'2026-02-12 09:15', title:t('help.event.closed'), desc:'用户确认问题已解决，工单自动关闭。供应商信用扣分-2。', titleColor:'#28a745' }
+                ]
+            }
+        };
+
+        function showTicketDetail(ticketId) {
+            const data = ticketData[ticketId];
+            if (!data) return;
+            document.getElementById('ticketListWrap').style.display = 'none';
+            document.querySelector('.ticket-form').style.display = 'none';
+            const wrap = document.getElementById('ticketDetailWrap');
+            wrap.classList.add('active');
+            document.getElementById('tdTitle').textContent = data.title;
+            document.getElementById('tdType').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg> ' + data.type;
+            document.getElementById('tdTime').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ' + data.time;
+            document.getElementById('tdOrder').innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg> ' + data.order;
+            const statusEl = document.getElementById('tdStatus');
+            statusEl.textContent = data.statusText;
+            statusEl.className = 'status-tag ' + data.status;
+            // render timeline
+            const tl = document.getElementById('tdTimeline');
+            tl.innerHTML = '';
+            data.events.forEach(function(e) {
+                tl.innerHTML += '<div class="td-event ' + e.type + '"><div class="td-event-time">' + e.time + '</div><div class="td-event-title" style="color:' + (e.titleColor || '#fff') + ';">' + e.title + '</div><div class="td-event-desc">' + e.desc + '</div></div>';
+            });
+        }
+
+        function backToTicketList() {
+            document.getElementById('ticketDetailWrap').classList.remove('active');
+            document.getElementById('ticketListWrap').style.display = '';
+            document.querySelector('.ticket-form').style.display = '';
+        }
+
+        function submitTicketReply() {
+            var input = document.getElementById('ticketReplyInput');
+            var text = input.value.trim();
+            if (!text) { showToast(t('help.toast.hint'), t('help.toast.enterReply'), 'warning'); return; }
+            var tl = document.getElementById('tdTimeline');
+            var now = new Date().toLocaleString('zh-CN');
+            tl.innerHTML += '<div class="td-event current"><div class="td-event-time">' + now + '</div><div class="td-event-title" style="color:#ffd93d;">您的回复</div><div class="td-event-desc">' + text.replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div></div>';
+            input.value = '';
+            showToast(t('help.toast.replySuccess'), t('help.toast.replySubmitted'), 'success');
+        }
+
+        function escalateTicket() {
+            if (confirm(t('help.confirm.escalate'))) {
+                showToast(t('help.toast.ticketEscalated'), t('help.toast.transferSenior'), 'info');
+                var tl = document.getElementById('tdTimeline');
+                tl.innerHTML += '<div class="td-event current"><div class="td-event-time">' + new Date().toLocaleString('zh-CN') + '</div><div class="td-event-title" style="color:#ff6b6b;">工单已升级</div><div class="td-event-desc">用户请求升级，已转至高级客服主管处理。</div></div>';
+            }
+        }
+
+        function closeTicket() {
+            if (confirm(t('help.confirm.closeTicket'))) {
+                showToast(t('help.toast.ticketClosed'), t('help.toast.markedResolved'), 'success');
+                document.getElementById('tdStatus').textContent = '已解决';
+                document.getElementById('tdStatus').className = 'status-tag closed';
+                var tl = document.getElementById('tdTimeline');
+                tl.innerHTML += '<div class="td-event done"><div class="td-event-time">' + new Date().toLocaleString('zh-CN') + '</div><div class="td-event-title" style="color:#28a745;">工单已关闭</div><div class="td-event-desc">用户确认问题已解决。</div></div>';
+                // show eval
+                setTimeout(function() { openChatEval(t('help.eval.ticketService')); }, 800);
+            }
+        }
+
+        // ========== L3: FAQ文章详情 ==========
+        const faqArticles = {
+            '如何注册平台账户？': { cat:'账户与认证', content:'<p data-i18n="help.tqcm7do">注册平台账户非常简单，只需几步即可完成。</p><h4 data-i18n="help.te2z69v">注册步骤</h4><ul><li data-i18n="help.thgmmi">点击首页右上角"登录/注册"按钮</li><li data-i18n="help.td2a0ax">选择"手机号注册"或"邮箱注册"</li><li data-i18n="help.tbbgbyf">填写手机号/邮箱，设置登录密码</li><li data-i18n="help.tywwpv5">输入收到的验证码，完成验证</li><li data-i18n="help.thn617a">注册成功后建议立即完善企业信息</li></ul><div class="tip-box"><strong style="color:var(--primary-cyan);">提示：</strong>企业用户注册后需完成企业资质认证才能使用全部功能，包括发布需求、接收报价等。</div><h4 data-i18n="help.ta9xmce">注册后建议</h4><ul><li data-i18n="help.teiknuw">完善企业基本信息和联系方式</li><li data-i18n="help.tlkdqy8">上传企业认证资质</li><li data-i18n="help.to2wqut">设置安全问题和绑定手机</li></ul>' },
+            '如何完成企业资质认证？': { cat:'账户与认证', content:'<p data-i18n="help.t7fjeee">进入"资质认证"页面，点击"申请认证"，按步骤填写企业基本信息、法人信息、上传营业执照等资质证书。提交后平台将在1-3个工作日内完成审核。</p><h4 data-i18n="help.ti720cc">认证步骤</h4><ul><li data-i18n="help.twvdcyn">填写企业基本信息（名称、统一社会信用代码等）</li><li data-i18n="help.tqgvccn">上传营业执照扫描件</li><li data-i18n="help.tdc88ag">上传其他资质证书（推荐）</li><li data-i18n="help.tojni66">提交审核，等待1-3个工作日</li></ul><div class="tip-box"><strong style="color:var(--primary-cyan);">提示：</strong>上传更多资质证书可以提高供应商匹配权重和信任度。</div>' },
+            '采购商和供应商有什么区别？': { cat:'账户与认证', content:'<p data-i18n="help.tha8mvn">采购商和供应商是平台的两种核心角色：</p><h4 data-i18n="help.tm15ts">采购商</h4><ul><li data-i18n="help.tzg77xz">可发布采购需求</li><li data-i18n="help.ts0smcu">接收供应商报价</li><li data-i18n="help.tke6co8">管理订单和合同</li><li data-i18n="help.tq4nsnx">在个人中心操作</li></ul><h4 data-i18n="help.tc4b9p">供应商</h4><ul><li data-i18n="help.tom2o3e">发布产品信息</li><li data-i18n="help.tcsbkdr">响应采购需求</li><li data-i18n="help.tx22red">管理生产和发货</li><li data-i18n="help.t4edjd6">在供应商中心操作</li></ul><div class="tip-box"><strong style="color:var(--primary-cyan);">提示：</strong>一个账户可以同时拥有两种角色。</div>' },
+            '供应商如何上传资质证书？': { cat:'账户与认证', content:'<p data-i18n="help.tcz57af">供应商可在"供应商中心 → 个人信息 → 资质认证管理"中上传各类认证证书。</p><h4 data-i18n="help.tj3c0db">支持的认证类型</h4><ul><li data-i18n="help.tay9pik">ISO9001 质量管理体系认证</li><li data-i18n="help.t533tf9">ISO14001 环境管理体系认证</li><li data-i18n="help.td8h8vs">CE/UL/FDA等产品认证</li><li data-i18n="help.t8z9q42">行业特种经营许可证</li></ul><div class="tip-box"><strong style="color:var(--primary-cyan);">提示：</strong>上传后平台会进行审核验证，通过后资质信息将展示在供应商主页。</div>' },
+            '认证过期了怎么办？': { cat:'账户与认证', content:'<p data-i18n="help.t41kebq">认证到期前30天系统会发送提醒通知。</p><h4 data-i18n="help.tgfyg4x">续期步骤</h4><ul><li data-i18n="help.twlzrz2">在"资质认证"页面找到对应认证</li><li data-i18n="help.tlt4ka3">点击"续期"按钮</li><li data-i18n="help.t3bdtaq">上传最新的证书文件</li><li data-i18n="help.tmfckxc">提交审核，等待平台确认</li></ul><div class="tip-box"><strong style="color:var(--primary-cyan);">提示：</strong>建议在到期前提前办理续期，避免影响正常业务。</div>' },
+            '如何发布采购需求？': { cat:'订单与交易', content:'<p data-i18n="help.tdv7mdm">您可以通过两种方式发布采购需求：</p><h4 data-i18n="help.t8srli">方式1：智能匹配</h4><ul><li data-i18n="help.tous959">个人中心 → 需求管理 → 发布需求</li><li data-i18n="help.t859f3u">填写产品信息和需求参数</li><li data-i18n="help.t7gr0hb">系统自动匹配推荐供应商</li></ul><h4 data-i18n="help.t6re4e9">方式2：需求论坛</h4><ul><li data-i18n="help.t40i4kw">首页 → 需求论坛 → 发布需求</li><li data-i18n="help.tb3oy46">发布特殊/定制化采购需求</li><li data-i18n="help.ta5dkzo">供应商主动浏览并响应报价</li></ul><div class="tip-box"><strong style="color:var(--primary-cyan);">提示：</strong>常规需求推荐使用智能匹配，特殊/稀缺需求推荐使用论坛发布。</div>' },
+            '智能匹配是如何工作的？': { cat:'平台功能', content:'<p data-i18n="help.tftvdpx">平台的智能匹配系统基于AI算法，多维度匹配采购需求与供应商。</p><h4 data-i18n="help.tb3s1nq">匹配维度</h4><ul><li data-i18n="help.ty0oj1e">产品品类和规格参数</li><li data-i18n="help.t1e54ff">采购数量和预算范围</li><li data-i18n="help.tausd9x">地域偏好和交期要求</li><li data-i18n="help.t8m2fdw">供应商资质和信用评分</li><li data-i18n="help.th7ng6l">历史履约率和好评度</li></ul><div class="tip-box"><strong style="color:var(--primary-cyan);">提示：</strong>需求描述越详细，匹配结果越精准。建议填写完整的技术参数和质量要求。</div>' }
+        };
+
+        function showFaqArticle(title, cat) {
+            var data = faqArticles[title];
+            document.getElementById('faqArticleTitle').textContent = title;
+            document.getElementById('faqArticleCat').textContent = cat || (data ? data.cat : '');
+            if (data) {
+                document.getElementById('faqArticleContent').innerHTML = data.content;
+            }
+            // hide main sections, show article
+            document.querySelectorAll('.cs-section').forEach(s => s.classList.remove('active'));
+            document.querySelector('.cs-banner').style.display = 'none';
+            document.querySelector('.cs-content').style.display = 'none';
+            document.getElementById('faqArticlePanel').classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function backToFaq() {
+            document.getElementById('faqArticlePanel').classList.remove('active');
+            document.querySelector('.cs-banner').style.display = '';
+            document.querySelector('.cs-content').style.display = '';
+            document.getElementById('section-faq').classList.add('active');
+            document.querySelectorAll('.cs-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.cs-tab')[1].classList.add('active');
+        }
+
+        function markHelpful(btn, helpful) {
+            btn.parentElement.querySelectorAll('.faq-helpful-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            showToast(t('help.toast.thanksFb'), helpful ? t('help.toast.positiveFb') : t('help.toast.willImprove'), helpful ? 'success' : 'info');
+        }
+
+        // 给FAQ问题添加点击跳转文章详情
+        document.querySelectorAll('.faq-item h4').forEach(function(h4) {
+            h4.addEventListener('click', function(e) {
+                var title = h4.textContent.trim();
+                if (faqArticles[title]) {
+                    e.stopPropagation();
+                    showFaqArticle(title);
+                }
+            });
+        });
+
+        // ========== L3: 聊天评价 ==========
+        function openChatEval(targetName) {
+            document.getElementById('evalTargetName').textContent = t('help.eval.ratePrefix') + targetName + t('help.eval.rateSuffix');
+            document.getElementById('chatEvalModal').classList.add('active');
+        }
+
+        function closeChatEval() {
+            document.getElementById('chatEvalModal').classList.remove('active');
+        }
+
+        function setChatEvalStar(el) {
+            var stars = el.parentElement.querySelectorAll('.chat-eval-star');
+            var idx = Array.from(stars).indexOf(el);
+            stars.forEach(function(s, i) { s.classList.toggle('active', i <= idx); });
+        }
+
+        function toggleEvalTag(el) {
+            el.classList.toggle('selected');
+        }
+
+        function submitChatEval() {
+            closeChatEval();
+            showToast(t('help.toast.evalSubmitted'), t('help.toast.thanksFeedback'), 'success');
+        }
+
+        // 在聊天中添加结束对话+评价按钮
+        function endChatAndEval() {
+            var chatName = document.getElementById('chatName').textContent;
+            openChatEval(chatName);
+        }
+    </script>
+
+    <script src="platform-scripts.js"></script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+</body>
+</html>

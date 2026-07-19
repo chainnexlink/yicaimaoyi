@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="supplierApply.ty8tb66">供应商入驻申请 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .apply-page {
+            min-height: 100vh;
+            background: var(--bg-dark);
+        }
+
+        .apply-banner {
+            background: linear-gradient(135deg, rgba(0, 229, 204, 0.15) 0%, rgba(0, 0, 0, 0) 100%);
+            padding: 60px 24px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .apply-banner h1 {
+            font-size: 32px;
+            color: var(--primary-cyan);
+            margin-bottom: 12px;
+        }
+
+        .apply-banner p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .apply-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+        }
+
+        /* 步骤指示器 */
+        .apply-steps {
+            position: sticky;
+            top: 100px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px 0;
+            border-left: 2px solid var(--border-color);
+            padding-left: 24px;
+            margin-left: 12px;
+            position: relative;
+        }
+
+        .step-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 24px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+        }
+
+        .step-item.completed::before {
+            background: var(--primary-cyan);
+            border-color: var(--primary-cyan);
+        }
+
+        .step-item.active::before {
+            background: var(--bg-dark);
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 0 4px rgba(0, 229, 204, 0.2);
+        }
+
+        .step-item.active {
+            border-left-color: var(--primary-cyan);
+        }
+
+        .step-content h3 {
+            font-size: 15px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .step-item.completed h3,
+        .step-item.active h3 {
+            color: var(--primary-cyan);
+        }
+
+        .step-content p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* 表单区域 */
+        .apply-form-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .form-section {
+            padding: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .form-section-title {
+            font-size: 18px;
+            color: var(--primary-cyan);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section-title svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-grid.single {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-group label .required {
+            color: var(--accent-red);
+            margin-left: 2px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 16px;
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: var(--transition-fast);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 229, 204, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* 上传区域 */
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-cyan);
+            background: rgba(0, 229, 204, 0.05);
+        }
+
+        .upload-area svg {
+            width: 48px;
+            height: 48px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .upload-area p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .upload-area span {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* 产品类目选择 */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .category-item {
+            padding: 12px;
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: var(--transition-fast);
+        }
+
+        .category-item:hover,
+        .category-item.selected {
+            border-color: var(--primary-cyan);
+            background: rgba(0, 229, 204, 0.1);
+        }
+
+        .category-item.selected {
+            color: var(--primary-cyan);
+        }
+
+        .category-item svg {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 8px;
+            color: inherit;
+        }
+
+        .category-item span {
+            font-size: 13px;
+            display: block;
+        }
+
+        /* 协议确认 */
+        .agreement-section {
+            padding: 20px 30px;
+            background: var(--bg-darker);
+        }
+
+        .agreement-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .agreement-check input {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            accent-color: var(--primary-cyan);
+        }
+
+        .agreement-check label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .agreement-check label a {
+            color: var(--primary-cyan);
+            text-decoration: none;
+        }
+
+        .agreement-check label a:hover {
+            text-decoration: underline;
+        }
+
+        /* 提交区域 */
+        .submit-section {
+            padding: 30px;
+            display: flex;
+            gap: 16px;
+            justify-content: flex-end;
+        }
+
+        .btn-save-draft {
+            padding: 14px 32px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 15px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .btn-save-draft:hover {
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+
+        .btn-submit-apply {
+            padding: 14px 48px;
+            background: var(--primary-cyan);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        .btn-submit-apply:hover {
+            background: var(--primary-cyan-light);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(0, 229, 204, 0.3);
+        }
+
+        /* 入驻权益卡片 */
+        .benefits-card {
+            background: linear-gradient(135deg, rgba(0, 229, 204, 0.1) 0%, transparent 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 30px;
+        }
+
+        .benefits-card h3 {
+            font-size: 16px;
+            color: var(--primary-cyan);
+            margin-bottom: 16px;
+        }
+
+        .benefit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .benefit-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .benefit-row svg {
+            width: 18px;
+            height: 18px;
+            color: var(--primary-cyan);
+        }
+
+        @media (max-width: 900px) {
+            .apply-container {
+                grid-template-columns: 1fr;
+            }
+
+            .apply-steps {
+                position: static;
+                display: flex;
+                overflow-x: auto;
+                padding-bottom: 20px;
+            }
+
+            .step-item {
+                flex-shrink: 0;
+                border-left: none;
+                border-bottom: 2px solid var(--border-color);
+                padding-left: 0;
+                padding-bottom: 16px;
+                margin-left: 0;
+                margin-right: 24px;
+            }
+
+            .step-item::before {
+                left: 0;
+                top: auto;
+                bottom: -8px;
+            }
+
+            .step-item.active {
+                border-bottom-color: var(--primary-cyan);
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+
+            .category-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <div class="apply-page">
+        <!-- 顶部导航 -->
+        <header class="header">
+            <div class="header-container">
+                <div class="header-left">
+                    <a href="javascript:history.back()" class="inline-back">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        返回
+                    </a>
+                    <a href="index.html" class="logo-link" style="color: var(--primary-cyan); font-size: 18px; font-weight: 700; text-decoration: none;">
+                        全球供应链智能匹配平台
+                    </a>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html" class="nav-link" data-i18n="nav.home">首页</a>
+                    <a href="smart-match.html" class="nav-link" data-i18n="nav.smartMatch">智能匹配</a>
+                    <a href="suppliers.html" class="nav-link">供应商库</a>
+                    <a href="login.html" class="nav-link">登录</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- 横幅 -->
+        <div class="apply-banner">
+            <h1 data-i18n="supplierApply.tmen7qf">供应商入驻申请</h1>
+            <p data-i18n="supplierApply.t3ialde">填写以下信息，开启您的供应商之旅</p>
+        </div>
+
+        <div class="apply-container">
+            <!-- 左侧步骤 -->
+            <div class="apply-steps">
+                <div class="step-item completed">
+                    <div class="step-content">
+                        <h3 data-i18n="supplierApply.tsc5o3h">1. 基本信息</h3>
+                        <p data-i18n="supplierApply.tjowk2c">企业基础资料</p>
+                    </div>
+                </div>
+                <div class="step-item active">
+                    <div class="step-content">
+                        <h3 data-i18n="supplierApply.t6rxxuj">2. 资质认证</h3>
+                        <p data-i18n="supplierApply.tniz2ln">上传企业证照</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-content">
+                        <h3 data-i18n="supplierApply.t8edkj">3. 产品信息</h3>
+                        <p data-i18n="supplierApply.t64t7xl">主营产品类目</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-content">
+                        <h3 data-i18n="supplierApply.th38lm9">4. 提交审核</h3>
+                        <p data-i18n="supplierApply.tdmf7tc">等待平台审核</p>
+                    </div>
+                </div>
+
+                <!-- 入驻权益 -->
+                <div class="benefits-card">
+                    <h3 data-i18n="supplierApply.tawpq1p">入驻权益</h3>
+                    <div class="benefit-list">
+                        <div class="benefit-row">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span data-i18n="supplierApply.tfsgjvu">智能订单匹配</span>
+                        </div>
+                        <div class="benefit-row">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span data-i18n="supplierApply.ttlmskv">全球采购商资源</span>
+                        </div>
+                        <div class="benefit-row">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span data-i18n="supplierApply.tjtac84">数据分析看板</span>
+                        </div>
+                        <div class="benefit-row">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span data-i18n="supplierApply.ty77c20">专属客服支持</span>
+                        </div>
+                        <div class="benefit-row">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span data-i18n="supplierApply.t8j5hve">营销推广服务</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧表单 -->
+            <div class="apply-form-container">
+                <!-- 企业基本信息 -->
+                <div class="form-section">
+                    <h2 class="form-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        企业基本信息
+                    </h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-i18n="supplierApply.taaky9o">企业名称 <span class="required">*</span></label>
+                            <input type="text" placeholder="请输入企业全称">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="supplierApply.t9xc3cu">统一社会信用代码 <span class="required">*</span></label>
+                            <input type="text" placeholder="18位统一社会信用代码">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="supplierApply.taarn1l">企业类型 <span class="required">*</span></label>
+                            <select>
+                                <option value="">请选择企业类型</option>
+                                <option value="manufacturer">生产制造商</option>
+                                <option value="trader">贸易商</option>
+                                <option value="agent">代理商</option>
+                                <option value="distributor">分销商</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="supplierApply.te34nik">注册资本</label>
+                            <input type="text" placeholder="如：500万元人民币">
+                        </div>
+                        <div class="form-group full-width">
+                            <label data-i18n="supplierApply.taalamh">企业地址 <span class="required">*</span></label>
+                            <input type="text" placeholder="请输入详细地址">
+                        </div>
+                        <div class="form-group full-width">
+                            <label data-i18n="supplierApply.taarfb8">企业简介</label>
+                            <textarea placeholder="请简要介绍企业情况、主营业务、优势等"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 联系人信息 -->
+                <div class="form-section">
+                    <h2 class="form-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="8" r="4"></circle>
+                            <path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path>
+                        </svg>
+                        联系人信息
+                    </h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-i18n="supplierApply.tkn13rh">联系人姓名 <span class="required">*</span></label>
+                            <input type="text" placeholder="请输入联系人姓名">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="supplierApply.tm9xx">职务</label>
+                            <input type="text" placeholder="如：销售经理">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="supplierApply.tctufzt">手机号码 <span class="required">*</span></label>
+                            <input type="tel" placeholder="请输入手机号码">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="supplierApply.tf69pdq">电子邮箱 <span class="required">*</span></label>
+                            <input type="email" placeholder="请输入电子邮箱">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 资质证照 -->
+                <div class="form-section">
+                    <h2 class="form-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        资质证照
+                    </h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label data-i18n="supplierApply.tgzxu0l">营业执照 <span class="required">*</span></label>
+                            <div class="upload-area">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <p data-i18n="supplierApply.tv6jd96">点击或拖拽上传营业执照</p>
+                                <span data-i18n="supplierApply.t4zcpwy">支持 JPG、PNG、PDF 格式，大小不超过 10MB</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="supplierApply.tryxign">其他资质证书</label>
+                            <div class="upload-area">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <p data-i18n="supplierApply.txgqjme">点击或拖拽上传其他证书</p>
+                                <span data-i18n="supplierApply.tmpnfm0">ISO认证、行业资质等</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 主营产品 -->
+                <div class="form-section">
+                    <h2 class="form-section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        </svg>
+                        主营产品类目
+                    </h2>
+                    <p class="form-hint" style="margin-bottom: 16px;">请选择您的主营产品类目（可多选）</p>
+                    <div class="category-grid">
+                        <div class="category-item selected">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                            </svg>
+                            <span data-i18n="supplierApply.tr2vu6i">电子元器件</span>
+                        </div>
+                        <div class="category-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                            </svg>
+                            <span data-i18n="supplierApply.tdgpx6n">机械设备</span>
+                        </div>
+                        <div class="category-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                            <span data-i18n="supplierApply.tdkkckl">服装纺织</span>
+                        </div>
+                        <div class="category-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            </svg>
+                            <span data-i18n="supplierApply.tbyi7fs">家居用品</span>
+                        </div>
+                        <div class="category-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                            <span data-i18n="supplierApply.teab0ya">汽车配件</span>
+                        </div>
+                        <div class="category-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                            </svg>
+                            <span data-i18n="supplierApply.tavfauh">化工原料</span>
+                        </div>
+                        <div class="category-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                                <rect x="9" y="9" width="6" height="6"></rect>
+                                <line x1="9" y1="1" x2="9" y2="4"></line>
+                                <line x1="15" y1="1" x2="15" y2="4"></line>
+                                <line x1="9" y1="20" x2="9" y2="23"></line>
+                                <line x1="15" y1="20" x2="15" y2="23"></line>
+                                <line x1="20" y1="9" x2="23" y2="9"></line>
+                                <line x1="20" y1="14" x2="23" y2="14"></line>
+                                <line x1="1" y1="9" x2="4" y2="9"></line>
+                                <line x1="1" y1="14" x2="4" y2="14"></line>
+                            </svg>
+                            <span data-i18n="supplierApply.tailv3j">五金工具</span>
+                        </div>
+                        <div class="category-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                            </svg>
+                            <span data-i18n="supplierApply.tam1beb">其他类目</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 协议确认 -->
+                <div class="agreement-section">
+                    <div class="agreement-check">
+                        <input type="checkbox" id="agreement">
+                        <label for="agreement">
+                            我已阅读并同意 <a href="#">《供应商入驻协议》</a>、<a href="#">《平台服务条款》</a> 和 <a href="#">《隐私政策》</a>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 提交 -->
+                <div class="submit-section">
+                    <button class="btn-save-draft">保存草稿</button>
+                    <button class="btn-submit-apply">提交申请</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 类目选择
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('selected');
+            });
+        });
+
+        // ========== 表单提交逻辑 ==========
+        document.querySelector('.btn-submit-apply').addEventListener('click', function() {
+            const agreementChecked = document.getElementById('agreement').checked;
+            if (!agreementChecked) {
+                alert(t('sa.alert.t0'));
+                return;
+            }
+
+            // 收集表单数据
+            const inputs = document.querySelectorAll('.form-section input, .form-section select, .form-section textarea');
+            const companyName = inputs[0] ? inputs[0].value.trim() : '';
+            const creditCode = inputs[1] ? inputs[1].value.trim() : '';
+            const companyType = inputs[2] ? inputs[2].value : '';
+            const capital = inputs[3] ? inputs[3].value.trim() : '';
+            const address = inputs[4] ? inputs[4].value.trim() : '';
+            const description = inputs[5] ? inputs[5].value.trim() : '';
+            const contactName = inputs[6] ? inputs[6].value.trim() : '';
+            const contactTitle = inputs[7] ? inputs[7].value.trim() : '';
+            const phone = inputs[8] ? inputs[8].value.trim() : '';
+            const email = inputs[9] ? inputs[9].value.trim() : '';
+
+            // 基本必填校验
+            if (!companyName || !creditCode || !companyType || !address || !contactName || !phone || !email) {
+                alert(t('sa.alert.t1'));
+                return;
+            }
+
+            // 收集选中的产品类目
+            const selectedCategories = [];
+            document.querySelectorAll('.category-item.selected span').forEach(s => {
+                selectedCategories.push(s.textContent);
+            });
+
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const application = {
+                id: 'APP' + Date.now(),
+                username: currentUser.username || '未登录用户',
+                companyName: companyName,
+                creditCode: creditCode,
+                companyType: companyType,
+                capital: capital,
+                address: address,
+                description: description,
+                contactName: contactName,
+                contactTitle: contactTitle,
+                phone: phone,
+                email: email,
+                categories: selectedCategories,
+                status: 'pending',
+                submitTime: new Date().toLocaleString('zh-CN'),
+                reviewTime: '',
+                reviewNote: ''
+            };
+
+            // 存入 localStorage
+            const applications = JSON.parse(localStorage.getItem('supplierApplications') || '[]');
+            // 检查是否已有申请（覆盖旧申请）
+            const existIdx = applications.findIndex(a => a.username === application.username);
+            if (existIdx >= 0) {
+                applications[existIdx] = application;
+            } else {
+                applications.push(application);
+            }
+            localStorage.setItem('supplierApplications', JSON.stringify(applications));
+
+            alert(t('sa.alert.t3'));
+            window.location.href = 'user-center.html';
+        });
+
+        // 保存草稿
+        document.querySelector('.btn-save-draft').addEventListener('click', function() {
+            const inputs = document.querySelectorAll('.form-section input, .form-section select, .form-section textarea');
+            const draft = {};
+            inputs.forEach((input, i) => { draft['field_' + i] = input.value; });
+            const selectedCats = [];
+            document.querySelectorAll('.category-item.selected').forEach((item, i) => { selectedCats.push(i); });
+            draft.selectedCategories = selectedCats;
+            localStorage.setItem('supplierApplyDraft', JSON.stringify(draft));
+            alert(t('sa.alert.t2'));
+        });
+
+        // 加载草稿
+        (function loadDraft() {
+            const draft = JSON.parse(localStorage.getItem('supplierApplyDraft') || 'null');
+            if (draft) {
+                const inputs = document.querySelectorAll('.form-section input, .form-section select, .form-section textarea');
+                inputs.forEach((input, i) => {
+                    if (draft['field_' + i]) input.value = draft['field_' + i];
+                });
+                if (draft.selectedCategories) {
+                    const cats = document.querySelectorAll('.category-item');
+                    draft.selectedCategories.forEach(idx => {
+                        if (cats[idx]) cats[idx].classList.add('selected');
+                    });
+                }
+            }
+        })();
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+<script src="auth-check.js"></script>
+</body>
+</html>
+</html>

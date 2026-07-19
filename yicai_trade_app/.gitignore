@@ -1,0 +1,79 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Apple/Codemagic signing secrets must never be committed.
+*.p8
+*.p12
+*.mobileprovision
+AuthKey_*.p8
+certificate_private_key
+ios/app_store_connect.json
+
+# Local build output, machine configuration, and signing material
+android/local.properties
+android/key.properties
+android/.gradle/
+android/build/
+ios/Pods/
+ios/.symlinks/
+**/xcuserdata/
+DerivedData/
+
+# Local audit/build scratch files (never part of the application source)
+build-*.log
+build_*.log
+gradle-stack.log
+code_keys.txt
+nul
+extract.py
+fix_auction.py
+test_regex.py
+test_write.py
+_fix_ws.py
+build_android_debug.ps1
+
+# Historical local copy retained for reference only
+/yicai_app/

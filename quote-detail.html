@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title data-i18n="quoteDetail.t9em3ok">报价详情 - 全球供应链智能匹配平台</title>
+    <link rel="stylesheet" href="platform-styles.css">
+    <link rel="stylesheet" href="pages-styles.css">
+    <script src="api.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .quote-detail-page {
+            min-height: 100vh;
+            background: var(--bg-dark);
+            padding-bottom: 40px;
+        }
+
+        /* 页面头部 */
+        .quote-header {
+            background: linear-gradient(135deg, rgba(0, 229, 204, 0.1) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 32px 24px;
+        }
+
+        .quote-header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .quote-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .quote-title h1 {
+            font-size: 24px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .quote-meta {
+            display: flex;
+            gap: 24px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .quote-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .quote-status {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .quote-status.pending {
+            background: rgba(255, 193, 7, 0.15);
+            color: #FFC107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .quote-status.accepted {
+            background: rgba(0, 229, 204, 0.15);
+            color: var(--primary-cyan);
+            border: 1px solid rgba(0, 229, 204, 0.3);
+        }
+
+        .quote-status.rejected {
+            background: rgba(255, 107, 107, 0.15);
+            color: #FF6B6B;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        /* 报价比较栏 */
+        .quote-comparison {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .comparison-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .comparison-item:not(:last-child) {
+            border-right: 1px solid var(--border-color);
+        }
+
+        .comparison-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .comparison-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .comparison-value.highlight {
+            color: var(--primary-cyan);
+        }
+
+        .comparison-value.price {
+            color: #FF6B6B;
+        }
+
+        /* 主内容区 */
+        .quote-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 24px;
+        }
+
+        /* 内容卡片 */
+        .content-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* 供应商信息 */
+        .supplier-profile {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .supplier-avatar-lg {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-cyan), #00B8A9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .supplier-details {
+            flex: 1;
+        }
+
+        .supplier-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .supplier-badges {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge.verified {
+            background: rgba(0, 229, 204, 0.15);
+            color: var(--primary-cyan);
+        }
+
+        .badge.gold {
+            background: rgba(255, 215, 0, 0.15);
+            color: #FFD700;
+        }
+
+        .supplier-stats {
+            display: flex;
+            gap: 24px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .supplier-stats span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .supplier-stats .rating {
+            color: #FFD700;
+        }
+
+        /* 供应商资质 */
+        .supplier-qualifications {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .qualification-item {
+            background: var(--bg-darker);
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .qualification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(0, 229, 204, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+        }
+
+        .qualification-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary-cyan);
+        }
+
+        .qualification-name {
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        /* 报价明细 */
+        .quote-items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .quote-items-table th,
+        .quote-items-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .quote-items-table th {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            background: var(--bg-darker);
+        }
+
+        .quote-items-table td {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .product-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .product-thumb {
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 10px;
+        }
+
+        .product-info h4 {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .product-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .price-cell {
+            font-weight: 600;
+            color: var(--primary-cyan);
+        }
+
+        /* 报价汇总 */
+        .quote-summary {
+            background: var(--bg-darker);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 14px;
+        }
+
+        .summary-row:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-row label {
+            color: var(--text-muted);
+        }
+
+        .summary-row span {
+            color: var(--text-primary);
+        }
+
+        .summary-row.total {
+            padding-top: 16px;
+            margin-top: 8px;
+        }
+
+        .summary-row.total label {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .summary-row.total span {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FF6B6B;
+        }
+
+        /* 报价说明 */
+        .quote-notes {
+            background: var(--bg-darker);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .quote-notes h4 {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .notes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .note-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .note-item svg {
+            width: 16px;
+            height: 16px;
+            color: var(--primary-cyan);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* 需求信息 */
+        .demand-info {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .demand-item {
+            display: flex;
+            gap: 12px;
+        }
+
+        .demand-item label {
+            min-width: 80px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .demand-item span {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .demand-item a {
+            color: var(--primary-cyan);
+            text-decoration: none;
+        }
+
+        /* 操作按钮 */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn-accept {
+            flex: 1;
+            padding: 16px;
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-accept:hover {
+            background: #00B8A9;
+            transform: translateY(-2px);
+        }
+
+        .btn-negotiate {
+            padding: 16px 32px;
+            background: transparent;
+            border: 1px solid var(--primary-cyan);
+            color: var(--primary-cyan);
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-negotiate:hover {
+            background: rgba(0, 229, 204, 0.1);
+        }
+
+        .btn-reject {
+            padding: 16px 32px;
+            background: transparent;
+            border: 1px solid #FF6B6B;
+            color: #FF6B6B;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reject:hover {
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        /* 右侧边栏 */
+        .quote-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+        }
+
+        .sidebar-card h3 {
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* 报价有效期 */
+        .validity-info {
+            text-align: center;
+            padding: 20px;
+            background: var(--bg-darker);
+            border-radius: 8px;
+        }
+
+        .validity-countdown {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-cyan);
+            margin-bottom: 8px;
+        }
+
+        .validity-label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .validity-date {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 12px;
+        }
+
+        /* 其他报价 */
+        .other-quotes {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .other-quote-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: var(--bg-darker);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .other-quote-item:hover {
+            background: rgba(0, 229, 204, 0.05);
+        }
+
+        .other-quote-item.current {
+            border: 1px solid var(--primary-cyan);
+            background: rgba(0, 229, 204, 0.05);
+        }
+
+        .quote-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .quote-info {
+            flex: 1;
+        }
+
+        .quote-info h4 {
+            font-size: 13px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .quote-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .quote-price {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-cyan);
+        }
+
+        /* 联系方式 */
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .contact-item svg {
+            width: 18px;
+            height: 18px;
+            color: var(--primary-cyan);
+        }
+
+        .btn-contact {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid var(--primary-cyan);
+            color: var(--primary-cyan);
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-contact:hover {
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+        }
+
+        /* 相关链接 */
+        .related-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .related-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-darker);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .related-link:hover {
+            background: rgba(0, 229, 204, 0.05);
+            color: var(--primary-cyan);
+        }
+
+        .related-link svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* 确认弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: rgba(0, 229, 204, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .modal-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--primary-cyan);
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .modal-header p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .modal-body {
+            background: var(--bg-darker);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .confirm-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        .confirm-item:last-child {
+            border-bottom: none;
+        }
+
+        .confirm-item label {
+            color: var(--text-muted);
+        }
+
+        .confirm-item span {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .btn-submit {
+            background: var(--primary-cyan);
+            border: none;
+            color: var(--bg-dark);
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .quote-content {
+                grid-template-columns: 1fr;
+            }
+
+            .quote-sidebar {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .quote-header-top {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .quote-meta {
+                flex-wrap: wrap;
+            }
+
+            .quote-comparison {
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+
+            .comparison-item {
+                flex: 1 1 calc(50% - 8px);
+            }
+
+            .comparison-item:not(:last-child) {
+                border-right: none;
+            }
+
+            .supplier-profile {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .supplier-stats {
+                justify-content: center;
+            }
+
+            .supplier-qualifications {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="javascript:history.back()" class="inline-back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                返回
+            </a>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">G</span>
+                <span data-i18n="quoteDetail.t9tyf6h">全球供应链平台</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="smart-match.html">智能匹配</a>
+                <a href="suppliers.html">供应商库</a>
+                <a href="orders.html">订单管理</a>
+                <a href="inquiry.html" class="active">询盘管理</a>
+            </div>
+            <div class="nav-actions">
+                <a href="messages.html" class="nav-icon" title="消息">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span class="badge">3</span>
+                </a>
+                <a href="user-center.html" class="nav-icon" title="个人中心">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="quote-detail-page">
+        <!-- 页面头部 -->
+        <div class="quote-header">
+            <div class="quote-header-inner">
+                <div class="quote-header-top">
+                    <div class="quote-title">
+                        <h1 data-i18n="quoteDetail.tcs5d75">报价详情</h1>
+                        <div class="quote-meta">
+                            <span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                报价编号：--
+                            </span>
+                            <span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                报价时间：--
+                            </span>
+                            <span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                关联需求：--
+                            </span>
+                        </div>
+                    </div>
+                    <div class="quote-status pending">待确认</div>
+                </div>
+
+                <!-- 报价比较 -->
+                <div class="quote-comparison">
+                    <div class="comparison-item">
+                        <div class="comparison-label">报价总金额</div>
+                        <div class="comparison-value price">--</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-label">单价（平均）</div>
+                        <div class="comparison-value">--</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-label">交付周期</div>
+                        <div class="comparison-value highlight">10 天</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="comparison-label">供应商评分</div>
+                        <div class="comparison-value highlight">4.9</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="quote-content">
+            <div class="main-section">
+                <!-- 供应商信息 -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 data-i18n="quoteDetail.tvm1bwl">供应商信息</h3>
+                        <a href="supplier-detail.html" style="color: var(--primary-cyan); font-size: 14px; text-decoration: none;">查看详情</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="supplier-profile">
+                            <div class="supplier-avatar-lg">深</div>
+                            <div class="supplier-details">
+                                <div class="supplier-name">深圳精密科技有限公司</div>
+                                <div class="supplier-badges">
+                                    <span class="badge verified">认证供应商</span>
+                                    <span class="badge gold">金牌会员</span>
+                                </div>
+                                <div class="supplier-stats">
+                                    <span class="rating">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" stroke-width="2">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                        </svg>
+                                        4.9 (326条评价)
+                                    </span>
+                                    <span data-i18n="quoteDetail.thrdx6j">成交订单：1,256</span>
+                                    <span data-i18n="quoteDetail.ty1v1fj">响应时间：2小时内</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="supplier-qualifications">
+                            <div class="qualification-item">
+                                <div class="qualification-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="qualification-name">ISO9001认证</div>
+                            </div>
+                            <div class="qualification-item">
+                                <div class="qualification-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                </div>
+                                <div class="qualification-name">交易保障</div>
+                            </div>
+                            <div class="qualification-item">
+                                <div class="qualification-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M16 8l-8 8M8 8l8 8"></path>
+                                    </svg>
+                                </div>
+                                <div class="qualification-name">无忧退换</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 报价明细 -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 data-i18n="quoteDetail.tcrz3e2">报价明细</h3>
+                    </div>
+                    <div class="card-body" style="padding: 0;">
+                        <table class="quote-items-table">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="quoteDetail.ta9xpns">产品信息</th>
+                                    <th data-i18n="quoteDetail.tely0">单位</th>
+                                    <th data-i18n="quoteDetail.ti1y7">数量</th>
+                                    <th data-i18n="quoteDetail.telvm">单价</th>
+                                    <th data-i18n="quoteDetail.tgfaq">小计</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="product-cell">
+                                            <div class="product-thumb">图片</div>
+                                            <div class="product-info">
+                                                <h4>--</h4>
+                                                <p data-i18n="quoteDetail.tqz0re7">规格：标准版 | 型号：--</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td data-i18n="quoteDetail.tfli">件</td>
+                                    <td>100</td>
+                                    <td class="price-cell">--.00</td>
+                                    <td>¥80,000.00</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="product-cell">
+                                            <div class="product-thumb">图片</div>
+                                            <div class="product-info">
+                                                <h4 data-i18n="quoteDetail.trgn79z">电源适配器 PA-500</h4>
+                                                <p data-i18n="quoteDetail.twkb8j8">规格：100-240V | 型号：PA-500-UNI</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td data-i18n="quoteDetail.tfli">件</td>
+                                    <td>100</td>
+                                    <td class="price-cell">¥450.00</td>
+                                    <td>--.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="quote-summary" style="margin: 20px;">
+                            <div class="summary-row">
+                                <label data-i18n="quoteDetail.tb4bjaf">商品金额</label>
+                                <span>--.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <label data-i18n="quoteDetail.tp8ix">运费</label>
+                                <span data-i18n="quoteDetail.td7kdns">¥500.00（顺丰速运）</span>
+                            </div>
+                            <div class="summary-row">
+                                <label data-i18n="quoteDetail.tljaj">税费</label>
+                                <span data-i18n="quoteDetail.tezib">含税</span>
+                            </div>
+                            <div class="summary-row">
+                                <label data-i18n="quoteDetail.tdzgo">优惠</label>
+                                <span style="color: #FF6B6B;">-¥500.00（新客优惠）</span>
+                            </div>
+                            <div class="summary-row total">
+                                <label data-i18n="quoteDetail.tu471l7">报价总金额</label>
+                                <span>--.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 报价说明 -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <h3 data-i18n="quoteDetail.tcs5eks">报价说明</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="notes-list">
+                            <div class="note-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span data-i18n="quoteDetail.tmpc5as">交付周期：确认订单后10个工作日内完成生产并发货</span>
+                            </div>
+                            <div class="note-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                                <span data-i18n="quoteDetail.txa1m4z">质量保证：产品均通过ISO9001质量体系认证，提供12个月质保</span>
+                            </div>
+                            <div class="note-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                                </svg>
+                                <span data-i18n="quoteDetail.t8x5udi">付款方式：支持30%预付款 + 70%发货前付清，或全款预付享2%折扣</span>
+                            </div>
+                            <div class="note-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="1" y="3" width="15" height="13"></rect>
+                                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                                </svg>
+                                <span data-i18n="quoteDetail.t29msbw">物流方式：默认顺丰速运，大宗订单可安排专线物流</span>
+                            </div>
+                            <div class="note-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                <span data-i18n="quoteDetail.tct24sc">增值服务：可提供定制包装、产品打标、技术支持等服务</span>
+                            </div>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="action-buttons">
+                            <button class="btn-reject" onclick="rejectQuote()">拒绝报价</button>
+                            <button class="btn-negotiate" onclick="location.href='chat.html'">竞价沟通</button>
+                            <button class="btn-accept" onclick="openAcceptModal()">接受报价</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧边栏 -->
+            <div class="quote-sidebar">
+                <!-- 报价有效期 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="quoteDetail.tu3f0cy">报价有效期</h3>
+                    <div class="validity-info">
+                        <div class="validity-countdown" id="countdown">6天12小时</div>
+                        <div class="validity-label">剩余有效时间</div>
+                        <div class="validity-date">有效期至：--</div>
+                    </div>
+                </div>
+
+                <!-- 其他报价 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="quoteDetail.t35hup5">该需求其他报价 (3)</h3>
+                    <div class="other-quotes">
+                        <div class="other-quote-item current">
+                            <div class="quote-avatar">深</div>
+                            <div class="quote-info">
+                                <h4 data-i18n="quoteDetail.tpz2io7">深圳精密科技</h4>
+                                <p data-i18n="quoteDetail.tql6bi0">交期10天 | 评分4.9</p>
+                            </div>
+                            <div class="quote-price">--</div>
+                        </div>
+                        <div class="other-quote-item" onclick="location.href='quote-detail.html?id=2'">
+                            <div class="quote-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">广</div>
+                            <div class="quote-info">
+                                <h4 data-i18n="quoteDetail.trt5gy4">广州智造科技</h4>
+                                <p data-i18n="quoteDetail.tx36930">交期12天 | 评分4.7</p>
+                            </div>
+                            <div class="quote-price">¥118,000</div>
+                        </div>
+                        <div class="other-quote-item" onclick="location.href='quote-detail.html?id=3'">
+                            <div class="quote-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">苏</div>
+                            <div class="quote-info">
+                                <h4 data-i18n="quoteDetail.trpk9m7">苏州精工电子</h4>
+                                <p data-i18n="quoteDetail.ts6xwiq">交期15天 | 评分4.8</p>
+                            </div>
+                            <div class="quote-price">¥122,500</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 联系供应商 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="quoteDetail.tkn6jye">联系供应商</h3>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span data-i18n="quoteDetail.twx5kea">联系人：李经理</span>
+                        </div>
+                        <div class="contact-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                            <span>--</span>
+                        </div>
+                        <div class="contact-item">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                            <span>sales@sztech.com</span>
+                        </div>
+                    </div>
+                    <button class="btn-contact" onclick="location.href='chat.html'">在线沟通</button>
+                </div>
+
+                <!-- 需求信息 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="quoteDetail.tatctoj">关联需求</h3>
+                    <div class="demand-info">
+                        <div class="demand-item">
+                            <label data-i18n="quoteDetail.tji3q03">需求编号</label>
+                            <span><a href="#">--</a></span>
+                        </div>
+                        <div class="demand-item">
+                            <label data-i18n="quoteDetail.tji06cz">需求标题</label>
+                            <span data-i18n="quoteDetail.tcont1p">采购智能控制模块100件</span>
+                        </div>
+                        <div class="demand-item">
+                            <label data-i18n="quoteDetail.tayuphs">发布时间</label>
+                            <span>--</span>
+                        </div>
+                        <div class="demand-item">
+                            <label data-i18n="quoteDetail.tji1olp">需求状态</label>
+                            <span style="color: var(--primary-cyan);">报价中</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 相关链接 -->
+                <div class="sidebar-card">
+                    <h3 data-i18n="quoteDetail.tfclyp6">相关操作</h3>
+                    <div class="related-links">
+                        <a href="inquiry.html" class="related-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            返回询盘列表
+                        </a>
+                        <a href="publish-demand.html" class="related-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            发布新需求
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 接受报价确认弹窗 -->
+    <div class="modal-overlay" id="acceptModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+                <h3 data-i18n="quoteDetail.tqj15x6">确认接受报价</h3>
+                <p data-i18n="quoteDetail.tz6hi5u">接受报价后将生成订单并进入合同签订流程</p>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-item">
+                    <label data-i18n="quoteDetail.tc4b9p">供应商</label>
+                    <span data-i18n="quoteDetail.tvkrwa4">深圳精密科技有限公司</span>
+                </div>
+                <div class="confirm-item">
+                    <label data-i18n="quoteDetail.tcs6ogu">报价金额</label>
+                    <span style="color: #FF6B6B; font-weight: 600;">--.00</span>
+                </div>
+                <div class="confirm-item">
+                    <label data-i18n="quoteDetail.ta91fu3">交付周期</label>
+                    <span data-i18n="quoteDetail.ty6nn4z">10个工作日</span>
+                </div>
+                <div class="confirm-item">
+                    <label data-i18n="quoteDetail.tae7ae4">付款方式</label>
+                    <span data-i18n="quoteDetail.t9qa998">30%预付 + 70%发货前</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeAcceptModal()">取消</button>
+                <button class="btn-submit" onclick="confirmAccept()">确认接受</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 打开接受报价弹窗
+        function openAcceptModal() {
+            document.getElementById('acceptModal').classList.add('show');
+        }
+
+        // 关闭接受报价弹窗
+        function closeAcceptModal() {
+            document.getElementById('acceptModal').classList.remove('show');
+        }
+
+        // 确认接受报价（调用后端API）
+        async function confirmAccept() {
+            closeAcceptModal();
+
+            var urlParams = new URLSearchParams(window.location.search);
+            var quotationId = urlParams.get('quotationId') || urlParams.get('id');
+            var currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            var buyerId = currentUser.id || 1;
+
+            try {
+                if (quotationId) {
+                    var result = await YicaiAPI.post('/inquiries/quotations/' + quotationId + '/accept?buyerId=' + buyerId);
+                    if (result && result.code === 200 && result.data) {
+                        var quo = result.data;
+                        localStorage.setItem('acceptedQuotation', JSON.stringify({
+                            quotationId: quo.id,
+                            inquiryId: quo.inquiryId,
+                            supplierId: quo.supplierId,
+                            supplierName: quo.supplierName || '',
+                            productName: quo.productName || '',
+                            unitPrice: quo.unitPrice,
+                            quantity: quo.quantity,
+                            totalAmount: quo.totalAmount,
+                            deliveryDays: quo.deliveryDays,
+                            paymentTerms: quo.paymentTerms,
+                            acceptedAt: new Date().toISOString()
+                        }));
+                        alert('报价已接受！正在跳转到合同创建页面...');
+                        setTimeout(function() {
+                            location.href = 'contract-create.html?quotationId=' + quotationId;
+                        }, 500);
+                        return;
+                    }
+                }
+            } catch (error) {
+                
+            }
+
+            alert('报价已接受！正在跳转到合同签订页面...');
+            setTimeout(function() {
+                location.href = 'contract-create.html';
+            }, 500);
+        }
+
+        // 拒绝报价
+        function rejectQuote() {
+            if (confirm(t('qd.confirm.t0'))) {
+                alert('已拒绝报价');
+                location.href = 'inquiry.html';
+            }
+        }
+
+        // 点击弹窗外部关闭
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('show');
+                }
+            });
+        });
+
+        // 倒计时更新（模拟）
+        function updateCountdown() {
+            // 实际应用中应该根据有效期计算
+            const countdownEl = document.getElementById('countdown');
+            // 这里只是示例，实际需要计算真实倒计时
+        }
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+<script src="auth-check.js"></script>
+</body>
+</html>
+</html>

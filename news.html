@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1440">
+    <title>Platform Insights | Global Supply Chain Smart Matching Platform</title>
+    <meta name="description" content="Latest insights about our B2B supply chain platform - smart matching, reverse bidding, cost savings, and full-category sourcing services for global buyers.">
+    <meta name="keywords" content="B2B supply chain, smart matching, reverse bidding, China sourcing, supplier matching, procurement platform">
+    <link rel="stylesheet" href="platform-styles.css?v=20260306">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        .news-page { max-width: 1200px; margin: 0 auto; padding: 40px 24px 80px; }
+        .news-page-title { font-size: 32px; font-weight: 700; color: #00E5CC; margin-bottom: 8px; }
+        .news-page-desc { color: rgba(255,255,255,0.5); font-size: 14px; margin-bottom: 32px; }
+        .news-filter { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+        .news-filter-btn { padding: 6px 18px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); background: transparent; color: rgba(255,255,255,0.6); font-size: 13px; cursor: pointer; transition: all 0.2s; }
+        .news-filter-btn:hover, .news-filter-btn.active { background: rgba(0,229,204,0.12); border-color: rgba(0,229,204,0.4); color: #00E5CC; }
+        .news-list { display: flex; flex-direction: column; gap: 20px; }
+        .news-list-item { display: block; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 24px 28px; text-decoration: none; transition: all 0.25s; }
+        .news-list-item:hover { background: rgba(0,229,204,0.04); border-color: rgba(0,229,204,0.15); transform: translateY(-2px); }
+        .news-list-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .news-list-tag { display: inline-block; padding: 2px 10px; background: rgba(0,229,204,0.12); color: #00E5CC; font-size: 11px; font-weight: 600; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .news-list-date { font-size: 12px; color: rgba(255,255,255,0.3); }
+        .news-list-item h2 { font-size: 18px; font-weight: 600; color: rgba(255,255,255,0.9); margin: 0 0 8px; line-height: 1.5; transition: color 0.2s; }
+        .news-list-item:hover h2 { color: #00E5CC; }
+        .news-list-item p { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.7; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .news-load-more { text-align: center; margin-top: 32px; }
+        .news-load-more button { padding: 10px 36px; border-radius: 8px; border: 1px solid rgba(0,229,204,0.3); background: transparent; color: #00E5CC; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+        .news-load-more button:hover { background: rgba(0,229,204,0.1); }
+        .news-empty { text-align: center; padding: 80px 20px; color: rgba(255,255,255,0.3); }
+        .news-empty-icon { font-size: 48px; margin-bottom: 16px; }
+
+        /* 详情模式 */
+        .news-detail { max-width: 800px; margin: 0 auto; padding: 40px 24px 80px; }
+        .news-detail-back { display: inline-flex; align-items: center; gap: 6px; color: rgba(0,229,204,0.7); text-decoration: none; font-size: 13px; margin-bottom: 24px; transition: color 0.2s; }
+        .news-detail-back:hover { color: #00E5CC; }
+        .news-detail h1 { font-size: 28px; font-weight: 700; color: rgba(255,255,255,0.95); margin-bottom: 16px; line-height: 1.5; }
+        .news-detail-meta { display: flex; gap: 16px; align-items: center; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .news-detail-body { font-size: 15px; color: rgba(255,255,255,0.7); line-height: 1.9; }
+        .news-detail-body p { margin-bottom: 16px; }
+        .news-detail-body h2, .news-detail-body h3 { color: rgba(255,255,255,0.9); margin: 28px 0 12px; }
+
+        @media (max-width: 768px) {
+            .news-page-title { font-size: 24px; }
+            .news-list-item { padding: 16px 18px; }
+            .news-list-item h2 { font-size: 15px; }
+            .news-detail h1 { font-size: 22px; }
+        }
+    </style>
+<link rel="stylesheet" href="/css/ai-chat.css">
+</head>
+<body>
+    <!-- 顶部导航（与首页一致） -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <div class="language-selector" id="langSelector">
+                    <svg class="lang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                    <span class="current-lang" id="currentLang">EN</span>
+                    <span class="dropdown-arrow">&#9660;</span>
+                </div>
+                <div class="search-box">
+                    <input type="text" placeholder="Search articles..." class="search-input">
+                    <button class="search-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    </button>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="smart-match.html" class="nav-link">Smart Match</a>
+                <a href="news.html" class="nav-link active">Insights</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 页面标题 -->
+    <div class="page-banner" style="background:linear-gradient(135deg,#001428,#002040);padding:48px 24px 36px;text-align:center;">
+        <h1 style="font-size:28px;font-weight:700;color:#00E5CC;margin:0 0 8px;">Platform Insights</h1>
+        <p style="color:rgba(255,255,255,0.45);font-size:14px;margin:0;">Discover how our supply chain platform helps global buyers source smarter, faster, and safer.</p>
+    </div>
+
+    <!-- 列表模式 -->
+    <div class="news-page" id="newsListView">
+        <div class="news-filter" id="newsFilter">
+            <button class="news-filter-btn active" data-filter="all" onclick="filterNews('all',this)">All</button>
+        </div>
+        <div class="news-list" id="newsList">
+            <div class="news-empty">
+                <div class="news-empty-icon">&#128196;</div>
+                <div>Loading articles...</div>
+            </div>
+        </div>
+        <div class="news-load-more" id="newsLoadMore" style="display:none;">
+            <button onclick="loadMoreNews()">Load More</button>
+        </div>
+    </div>
+
+    <!-- 详情模式 -->
+    <div class="news-detail" id="newsDetailView" style="display:none;">
+        <a href="news.html" class="news-detail-back">&larr; Back to all articles</a>
+        <h1 id="detailTitle"></h1>
+        <div class="news-detail-meta">
+            <span class="news-list-tag" id="detailTag"></span>
+            <span class="news-list-date" id="detailDate"></span>
+        </div>
+        <div class="news-detail-body" id="detailBody"></div>
+    </div>
+
+    <footer class="footer" style="margin-top:60px;">
+        <div class="footer-copyright">
+            <p>&copy; 2026 Global Supply Chain Smart Matching Platform | All Rights Reserved</p>
+        </div>
+        <div style="text-align:center;padding:8px 0;font-size:12px;"><a href="https://beian.miit.gov.cn" target="_blank" rel="nofollow noopener" style="color:#888;text-decoration:none;">粤ICP备2026015135号-2</a></div>
+    </footer>
+
+    <script>
+        var BACKEND = (function() {
+            var port = window.location.port;
+            if (!port || port === '80' || port === '443' || port === '8081') return '';
+            return 'http://' + window.location.hostname + ':8081';
+        })();
+        var _newsPage = 0;
+        var _newsSize = 10;
+        var _newsFilter = 'all';
+        var _allIndustries = [];
+
+        (function init() {
+            var params = new URLSearchParams(window.location.search);
+            var id = params.get('id');
+            if (id) {
+                loadNewsDetail(id);
+            } else {
+                loadIndustryFilters();
+                loadNewsList(0);
+            }
+        })();
+
+        function loadIndustryFilters() {
+            fetch(BACKEND + '/api/news/industries')
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (res.code === 200 && res.data) {
+                        _allIndustries = res.data;
+                        var container = document.getElementById('newsFilter');
+                        var html = '<button class="news-filter-btn active" data-filter="all" onclick="filterNews(\'all\',this)">All</button>';
+                        for (var i = 0; i < res.data.length; i++) {
+                            var ind = res.data[i];
+                            var industryId = String(ind.id == null ? '' : ind.id).replace(/[^A-Za-z0-9_-]/g, '');
+                            html += '<button class="news-filter-btn" data-filter="' + industryId + '" onclick="filterNews(\'' + industryId + '\',this)">' + esc(ind.nameEn || ind.name) + '</button>';
+                        }
+                        container.innerHTML = html;
+                    }
+                }).catch(function() {});
+        }
+
+        function filterNews(filter, btn) {
+            _newsFilter = filter;
+            _newsPage = 0;
+            document.querySelectorAll('.news-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+            if (btn) btn.classList.add('active');
+            loadNewsList(0);
+        }
+
+        function loadNewsList(page) {
+            _newsPage = page;
+            var url = BACKEND + '/api/news/list?page=' + page + '&size=' + _newsSize + '&lang=en';
+            if (_newsFilter !== 'all') url += '&industryId=' + _newsFilter;
+
+            fetch(url)
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (res.code === 200 && res.data) {
+                        var list = res.data.content || res.data.list || [];
+                        var total = res.data.total || 0;
+                        renderNewsList(list, page === 0);
+
+                        var loadMoreEl = document.getElementById('newsLoadMore');
+                        if ((page + 1) * _newsSize < total) {
+                            loadMoreEl.style.display = 'block';
+                        } else {
+                            loadMoreEl.style.display = 'none';
+                        }
+                    } else {
+                        if (page === 0) renderNewsList([], true);
+                    }
+                }).catch(function() {
+                    if (page === 0) renderNewsList([], true);
+                });
+        }
+
+        function loadMoreNews() {
+            _newsPage++;
+            loadNewsList(_newsPage);
+        }
+
+        function renderNewsList(list, replace) {
+            var container = document.getElementById('newsList');
+            if (!list.length && replace) {
+                container.innerHTML = '<div class="news-empty"><div class="news-empty-icon">&#128196;</div><div>No articles found. Check back soon!</div></div>';
+                return;
+            }
+            var html = '';
+            for (var i = 0; i < list.length; i++) {
+                var n = list[i];
+                var tag = n.industryName || 'Platform';
+                var date = (n.publishTime || n.createdAt || '').substring(0, 10);
+                var summary = (n.content || '').replace(/<[^>]+>/g, '').substring(0, 250);
+                html += '<a href="news.html?id=' + encodeURIComponent(String(n.id || '')) + '" class="news-list-item">'
+                    + '<div class="news-list-meta">'
+                    + '<span class="news-list-tag">' + esc(tag) + '</span>'
+                    + '<span class="news-list-date">' + esc(date) + '</span>'
+                    + '</div>'
+                    + '<h2>' + esc(n.title || '') + '</h2>'
+                    + '<p>' + esc(summary) + '</p>'
+                    + '</a>';
+            }
+            if (replace) {
+                container.innerHTML = html;
+            } else {
+                container.insertAdjacentHTML('beforeend', html);
+            }
+        }
+
+        var MOCK_NEWS = {
+            '1': {
+                title: 'How Our AI-Powered Smart Matching Connects You with the Best Suppliers',
+                industryName: 'Smart Match',
+                publishTime: '2026-03-06',
+                content: '<p>In today\'s complex global supply chain landscape, finding the right supplier can be a daunting task. Our AI-powered smart matching technology is designed to solve this challenge by connecting global buyers with verified factories in minutes.</p>'
+                    + '<h2>Intelligent Supplier Discovery</h2>'
+                    + '<p>Our platform leverages advanced machine learning algorithms to analyze buyer requirements and match them with the most suitable suppliers. The system considers factors such as product categories, quality certifications, production capacity, pricing competitiveness, and geographic location.</p>'
+                    + '<h2>Verified Factory Network</h2>'
+                    + '<p>Every supplier on our platform goes through a rigorous verification process. We verify business licenses, production facilities, quality management systems, and export capabilities to ensure buyers connect with legitimate, capable manufacturers.</p>'
+                    + '<h2>Real-Time Matching Accuracy</h2>'
+                    + '<p>With a matching accuracy rate of over 95%, our AI system continuously learns from successful transactions to improve recommendations. The more you use the platform, the better it understands your procurement needs.</p>'
+                    + '<h2>Reducing Sourcing Time</h2>'
+                    + '<p>Traditional supplier sourcing can take weeks or even months. Our smart matching technology reduces this to minutes, allowing buyers to focus on strategic decisions rather than time-consuming supplier searches.</p>'
+            },
+            '2': {
+                title: 'Save Up to 30% on Procurement Costs with Reverse Bidding',
+                industryName: 'Reverse Bidding',
+                publishTime: '2026-03-05',
+                content: '<p>Reverse auction bidding is revolutionizing procurement by creating a competitive environment where suppliers compete for your business, driving prices down while maintaining quality standards.</p>'
+                    + '<h2>How Reverse Biddings Work</h2>'
+                    + '<p>In a reverse bidding, buyers post their procurement requirements and qualified suppliers bid against each other to win the contract. Unlike traditional auctions, prices decrease as suppliers compete, resulting in significant cost savings for buyers.</p>'
+                    + '<h2>Proven Cost Savings</h2>'
+                    + '<p>Our platform data shows that buyers using reverse bidding bidding save an average of 20-30% compared to traditional procurement methods. These savings come from increased competition and market transparency.</p>'
+                    + '<h2>Quality Assurance</h2>'
+                    + '<p>While cost savings are important, quality is never compromised. Our platform includes supplier qualification requirements, minimum quality standards, and post-auction quality verification processes.</p>'
+                    + '<h2>Getting Started</h2>'
+                    + '<p>Setting up a reverse bidding on our platform is simple. Define your requirements, set qualification criteria, invite suppliers, and let the bidding begin. Our team provides full support throughout the process.</p>'
+            },
+            '3': {
+                title: 'One-Stop Sourcing: From Ceramics to Electronics, All Categories Covered',
+                industryName: 'Supply Chain',
+                publishTime: '2026-03-04',
+                content: '<p>Our platform offers comprehensive sourcing services across 50+ industries, covering everything from traditional manufacturing to cutting-edge technology products.</p>'
+                    + '<h2>Full-Category Coverage</h2>'
+                    + '<p>Whether you\'re sourcing ceramics, textiles, electronics, machinery, or chemicals, our platform connects you with specialized manufacturers across China\'s major manufacturing hubs including Guangdong, Zhejiang, Jiangsu, and Shandong.</p>'
+                    + '<h2>Industry Expertise</h2>'
+                    + '<p>Each product category on our platform is supported by industry specialists who understand the specific requirements, quality standards, and market dynamics of their respective sectors.</p>'
+                    + '<h2>Supply Chain Integration</h2>'
+                    + '<p>Beyond supplier matching, we offer integrated supply chain services including quality inspection, logistics coordination, customs clearance, and payment protection to ensure a smooth procurement experience.</p>'
+                    + '<h2>Scalable Solutions</h2>'
+                    + '<p>From small sample orders to large-scale production runs, our platform adapts to your needs. Flexible order quantities and customization options make it easy for businesses of all sizes to source effectively.</p>'
+            },
+            '4': {
+                title: 'Secure Transactions with Escrow Payment Protection for Every Order',
+                industryName: 'Security',
+                publishTime: '2026-03-03',
+                content: '<p>Trust and security are the foundation of international trade. Our escrow payment protection system ensures that your funds are safeguarded throughout every transaction.</p>'
+                    + '<h2>How Escrow Protection Works</h2>'
+                    + '<p>When you place an order through our platform, your payment is held in a secure escrow account. Funds are only released to the supplier after you confirm receipt of goods that meet the agreed-upon specifications.</p>'
+                    + '<h2>Dispute Resolution</h2>'
+                    + '<p>In the rare event of a dispute, our dedicated resolution team steps in to mediate. With clear transaction records and quality documentation, most disputes are resolved quickly and fairly.</p>'
+                    + '<h2>Compliance & Regulation</h2>'
+                    + '<p>Our payment system complies with international financial regulations and anti-money laundering requirements. All transactions are processed through licensed financial institutions.</p>'
+                    + '<h2>Building Long-Term Trust</h2>'
+                    + '<p>Secure transactions build trust between buyers and suppliers, leading to long-term business relationships. Our platform has facilitated thousands of successful transactions with a dispute rate of less than 0.5%.</p>'
+            }
+        };
+
+        function loadNewsDetail(id) {
+            document.getElementById('newsListView').style.display = 'none';
+            document.getElementById('newsDetailView').style.display = 'block';
+
+            fetch(BACKEND + '/api/news/' + id)
+                .then(function(r) {
+                    if (!r.ok && r.status !== 200) {
+                        return r.json().catch(function() { return { code: r.status }; });
+                    }
+                    return r.json();
+                })
+                .then(function(res) {
+                    if (res && res.code === 200 && res.data) {
+                        renderNewsDetail(res.data);
+                    } else {
+                        renderNewsUnavailable();
+                    }
+                }).catch(function(err) {
+                    console.error('加载新闻详情失败:', err);
+                    renderNewsUnavailable();
+                });
+        }
+
+        function renderNewsUnavailable() {
+            document.getElementById('detailBody').innerHTML =
+                '<div style="text-align:center;padding:40px 0;">'
+                + '<p style="color:rgba(255,255,255,0.5);font-size:16px;">Article not found or temporarily unavailable.</p>'
+                + '<a href="news.html" style="color:#00e5a0;text-decoration:underline;font-size:14px;">Browse all articles &rarr;</a>'
+                + '</div>';
+        }
+
+        function renderMockNewsDetail(id) {
+            var mock = MOCK_NEWS[id];
+            if (mock) {
+                renderNewsDetail(mock);
+            } else {
+                document.getElementById('detailBody').innerHTML =
+                    '<div style="text-align:center;padding:40px 0;">'
+                    + '<p style="color:rgba(255,255,255,0.5);font-size:16px;">Article not found or temporarily unavailable.</p>'
+                    + '<p style="color:rgba(255,255,255,0.3);font-size:13px;margin-top:10px;">The article may have been removed or the server is starting up.</p>'
+                    + '<a href="news.html" style="color:#00e5a0;text-decoration:underline;font-size:14px;">Browse all articles &rarr;</a>'
+                    + '</div>';
+            }
+        }
+
+        function renderNewsDetail(n) {
+            document.title = (n.title || 'Article') + ' | Platform Insights';
+            document.getElementById('detailTitle').textContent = n.title || '';
+            document.getElementById('detailTag').textContent = n.industryName || 'Platform';
+            document.getElementById('detailDate').textContent = (n.publishTime || n.createdAt || '').substring(0, 10);
+            var body = n.content || '';
+            if (body.indexOf('<') === -1) {
+                body = '<p>' + esc(body).replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>') + '</p>';
+            }
+            document.getElementById('detailBody').innerHTML = sanitizeArticleHtml(body);
+        }
+
+        function sanitizeArticleHtml(html) {
+            var template = document.createElement('template');
+            template.innerHTML = html;
+            template.content.querySelectorAll('script,iframe,object,embed,style,link,meta,base,form,input,button,textarea,select').forEach(function(node) {
+                node.remove();
+            });
+            template.content.querySelectorAll('*').forEach(function(node) {
+                Array.from(node.attributes).forEach(function(attr) {
+                    var name = attr.name.toLowerCase();
+                    var value = attr.value.trim().toLowerCase();
+                    if (name.startsWith('on') || name === 'style' || name === 'srcset'
+                            || ((name === 'href' || name === 'src') && /^(javascript|data|vbscript):/.test(value))) {
+                        node.removeAttribute(attr.name);
+                    }
+                });
+                if (node.tagName === 'A') {
+                    node.setAttribute('rel', 'noopener noreferrer');
+                }
+            });
+            return template.innerHTML;
+        }
+
+        function esc(str) {
+            var d = document.createElement('div');
+            d.textContent = str || '';
+            return d.innerHTML;
+        }
+    </script>
+<script src="/js/ai-chat.js"></script>
+<script src="lang-switcher.js"></script>
+<script src="lang-placeholder.js"></script>
+<script src="lang-hardcoded.js"></script>
+</body>
+</html>
